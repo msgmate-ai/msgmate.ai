@@ -25,6 +25,26 @@ const ReplyGenerator = () => {
   const { user } = useAuth();
   const { subscription, refetchSubscription } = useSubscription();
 
+  // Get stored usage count for non-authenticated users
+  const getLocalUsage = () => {
+    if (!user) {
+      const storedUsage = localStorage.getItem('msgmate_free_usage');
+      return storedUsage ? parseInt(storedUsage) : 0;
+    }
+    return 0;
+  };
+
+  // Update local usage for non-authenticated users
+  const updateLocalUsage = () => {
+    if (!user) {
+      const currentUsage = getLocalUsage();
+      const newUsage = currentUsage + 1;
+      localStorage.setItem('msgmate_free_usage', newUsage.toString());
+      // Force a re-render of components that depend on this value
+      window.dispatchEvent(new Event('storage'));
+    }
+  };
+
   const mutation = useMutation({
     mutationFn: async (data: { message: string; tone: string; intent?: string }) => {
       const res = await apiRequest('POST', '/api/generate-replies', data);
@@ -32,8 +52,15 @@ const ReplyGenerator = () => {
     },
     onSuccess: (data) => {
       setReplies(data.replies);
-      // Refresh subscription data to update usage count
-      refetchSubscription();
+      
+      // Update usage tracking
+      if (user) {
+        // For authenticated users, refresh subscription data to update usage count
+        refetchSubscription();
+      } else {
+        // For non-authenticated users, update local storage
+        updateLocalUsage();
+      }
     },
     onError: (error: Error) => {
       toast({

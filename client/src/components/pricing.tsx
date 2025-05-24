@@ -33,9 +33,11 @@ const Pricing = () => {
     if (!user) {
       toast({
         title: 'Authentication required',
-        description: 'Please log in to subscribe',
+        description: 'Please log in to continue',
         variant: 'destructive',
       });
+      // Redirect to login page
+      window.location.href = '/auth';
       return;
     }
     
