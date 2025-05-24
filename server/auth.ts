@@ -72,22 +72,51 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
+      // Check if username already exists
       const existingUser = await storage.getUserByUsername(req.body.username);
       if (existingUser) {
-        return res.status(400).send("Username already exists");
+        return res.status(400).json({ message: "Username already exists" });
       }
 
+      // Check if email already exists (if provided)
+      if (req.body.email) {
+        const existingEmail = await storage.getUserByEmail(req.body.email);
+        if (existingEmail) {
+          return res.status(400).json({ message: "Email already registered" });
+        }
+      }
+
+      // Create the user with hashed password
       const user = await storage.createUser({
         ...req.body,
         password: await hashPassword(req.body.password),
+        emailVerified: false, // New users start with unverified email
       });
 
+      // If email is provided, generate verification token and send email
+      if (req.body.email) {
+        const verificationToken = randomBytes(32).toString('hex');
+        await storage.setVerificationToken(user.id, verificationToken);
+        
+        // Get base URL from request or fallback to default
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        
+        // Send verification email
+        await sendVerificationEmail(
+          req.body.email,
+          verificationToken,
+          baseUrl
+        );
+      }
+
+      // Log the user in
       req.login(user, (err) => {
         if (err) return next(err);
         res.status(201).json(user);
       });
     } catch (error) {
-      next(error);
+      console.error("Registration error:", error);
+      res.status(500).json({ message: "Registration failed" });
     }
   });
 

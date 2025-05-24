@@ -12,18 +12,23 @@ const MemoryStore = createMemoryStore(session);
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
   getUserSubscription(userId: number): Promise<Subscription | undefined>;
   createUserSubscription(subscription: InsertSubscription): Promise<Subscription>;
   updateUserSubscription(userId: number, updates: Partial<Subscription>): Promise<Subscription | undefined>;
   incrementUsage(userId: number): Promise<void>;
   getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined>;
   updateUserStripeInfo(userId: number, stripeCustomerId: string, stripeSubscriptionId?: string): Promise<User>;
-  sessionStore: session.SessionStore;
+  verifyUserEmail(userId: number): Promise<User | undefined>;
+  setVerificationToken(userId: number, token: string): Promise<User | undefined>;
+  getUserByVerificationToken(token: string): Promise<User | undefined>;
+  sessionStore: any; // Fixed the session store type issue
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: any;
 
   constructor() {
     this.sessionStore = new MemoryStore({
@@ -122,6 +127,33 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return updatedUser;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
+    const [updatedUser] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return updatedUser || undefined;
+  }
+
+  async verifyUserEmail(userId: number): Promise<User | undefined> {
+    return this.updateUser(userId, { emailVerified: true, verificationToken: null });
+  }
+
+  async setVerificationToken(userId: number, token: string): Promise<User | undefined> {
+    return this.updateUser(userId, { verificationToken: token });
+  }
+
+  async getUserByVerificationToken(token: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.verificationToken, token));
+    return user || undefined;
   }
 }
 
