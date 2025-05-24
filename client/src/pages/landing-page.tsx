@@ -27,9 +27,6 @@ const LandingPage = () => {
                   className="w-auto h-auto max-w-full md:max-w-md mb-6"
                 />
               </div>
-              <h2 className="text-xl md:text-3xl font-semibold text-center md:text-left">
-                Your personal AI messaging assistant
-              </h2>
               <p className="text-lg text-muted-foreground">
                 Generate perfect replies, craft conversation starters, decode messages, and get professional coaching for your important conversations.
               </p>
@@ -45,30 +42,7 @@ const LandingPage = () => {
                 <p>No registration required to try basic features.</p>
               </div>
             </div>
-            <div className="flex-1 flex justify-center">
-              <div className="relative w-full max-w-md">
-                <div className="bg-card border rounded-xl shadow-lg p-6">
-                  <h3 className="font-medium mb-4">Example AI Replies</h3>
-                  <div className="space-y-3">
-                    <div className="bg-muted p-3 rounded-lg">
-                      <p className="text-sm">
-                        <span className="font-medium">Friendly:</span> "Thanks for reaching out! I'd love to catch up this weekend. How about coffee on Saturday?"
-                      </p>
-                    </div>
-                    <div className="bg-muted p-3 rounded-lg">
-                      <p className="text-sm">
-                        <span className="font-medium">Professional:</span> "Thank you for your inquiry. I've reviewed the proposal and can schedule a discussion this Thursday at 2pm if that works for you."
-                      </p>
-                    </div>
-                    <div className="bg-muted p-3 rounded-lg">
-                      <p className="text-sm">
-                        <span className="font-medium">Casual:</span> "Hey! Yeah I'm down for the movie tonight. Want me to bring snacks?"
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
           </div>
 
           {/* Features Section */}
