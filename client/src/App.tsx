@@ -14,6 +14,7 @@ import ContactPage from "@/pages/contact-page";
 import PrivacyPage from "@/pages/privacy-page";
 import CookiesPage from "@/pages/cookies-page";
 import TermsPage from "@/pages/terms-page";
+import EmailVerifiedPage from "@/pages/email-verified-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/privacy" component={PrivacyPage} />
       <Route path="/cookies" component={CookiesPage} />
       <Route path="/terms" component={TermsPage} />
+      <Route path="/email-verified" component={EmailVerifiedPage} />
       <Route component={NotFound} />
     </Switch>
   );
