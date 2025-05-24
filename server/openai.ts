@@ -13,6 +13,7 @@ ${intent ? `My intent for the reply is: "${intent}"` : ''}
 
 Provide the responses in JSON format as an array of objects with a 'text' property for each reply option.
 Each reply should be between 1-3 sentences, natural sounding, and appropriate for the tone requested.
+Make the replies suitable for the UK market with appropriate British humor, cultural references, and British English spelling where applicable.
 `;
 
     const response = await openai.chat.completions.create({
@@ -20,7 +21,7 @@ Each reply should be between 1-3 sentences, natural sounding, and appropriate fo
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant that helps people craft perfect message replies based on their desired tone and intent."
+          content: "You are an AI assistant that helps people craft perfect message replies for dating apps and WhatsApp conversations. Your suggestions should incorporate British humor, cultural references, and British English spelling. Focus on helping users create engaging, witty, and culturally relevant responses for the UK dating scene."
         },
         {
           role: "user",
