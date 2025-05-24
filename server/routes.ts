@@ -16,9 +16,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate message replies
   app.post('/api/generate-replies', async (req, res, next) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
+      // Allow unauthenticated users to access the free tier features
+      // Authenticated users will have their usage tracked
       
       const schema = z.object({
         message: z.string().min(1, "Message is required"),
@@ -33,25 +32,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { message, tone, intent } = result.data;
       
-      // Check if user has reached their tier limit
-      const subscription = await storage.getUserSubscription(req.user.id);
-      const usageCount = subscription ? subscription.usage : 0;
-      const usageLimit = subscription?.tier === 'pro' ? 400 : subscription?.tier === 'basic' ? 100 : 10;
+      // Check if user is authenticated
+      const isAuthenticated = req.isAuthenticated();
       
-      if (usageCount >= usageLimit) {
-        return res.status(403).json({ message: `You've reached your plan limit of ${usageLimit} messages. Please upgrade your plan.` });
-      }
+      // Set default values for non-authenticated users (free tier)
+      let usageCount = 0;
+      let usageLimit = 10;
+      let availableTones = ['friendly', 'professional', 'casual', 'enthusiastic', 'clear'];
       
-      // Check if user has access to the selected tone
-      const freeTones = ['friendly', 'professional', 'casual', 'enthusiastic', 'clear'];
-      const basicTones = [...freeTones, 'empathetic', 'humorous', 'supportive', 'confident', 'curious'];
-      const proTones = [...basicTones, 'flirty', 'assertive', 'grateful', 'diplomatic', 'apologetic'];
-      
-      let availableTones = freeTones;
-      if (subscription?.tier === 'basic') {
-        availableTones = basicTones;
-      } else if (subscription?.tier === 'pro') {
-        availableTones = proTones;
+      // If authenticated, check subscription tier and usage
+      if (isAuthenticated && req.user) {
+        const subscription = await storage.getUserSubscription(req.user.id);
+        usageCount = subscription ? subscription.usage : 0;
+        usageLimit = subscription?.tier === 'pro' ? 400 : subscription?.tier === 'basic' ? 100 : 10;
+        
+        // Set available tones based on subscription tier
+        const freeTones = ['friendly', 'professional', 'casual', 'enthusiastic', 'clear'];
+        const basicTones = [...freeTones, 'empathetic', 'humorous', 'supportive', 'confident', 'curious'];
+        const proTones = [...basicTones, 'flirty', 'assertive', 'grateful', 'diplomatic', 'apologetic'];
+        
+        if (subscription?.tier === 'basic') {
+          availableTones = basicTones;
+        } else if (subscription?.tier === 'pro') {
+          availableTones = proTones;
+        }
       }
       
       if (!availableTones.includes(tone)) {
@@ -61,8 +65,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate replies
       const replies = await generateMessageReplies(message, tone, intent);
       
-      // Update usage count
-      await storage.incrementUsage(req.user.id);
+      // Update usage count for authenticated users only
+      if (isAuthenticated && req.user) {
+        await storage.incrementUsage(req.user.id);
+      }
       
       res.json({ replies: replies.map((reply, index) => ({ id: index + 1, text: reply.text })) });
     } catch (error: any) {
