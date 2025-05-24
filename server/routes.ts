@@ -302,6 +302,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Resend verification email route
+  app.post('/api/resend-verification', async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+      }
+      
+      // Generate new verification token
+      const verificationToken = randomBytes(32).toString('hex');
+      
+      // Update the user's verification token
+      const user = await storage.setVerificationToken(req.user.id, verificationToken);
+      
+      if (!user) {
+        return res.status(400).json({ success: false, message: 'Failed to update verification token' });
+      }
+      
+      // Send verification email
+      const emailSent = await sendVerificationEmail(user.username, verificationToken);
+      
+      if (!emailSent) {
+        return res.status(500).json({ success: false, message: 'Failed to send verification email' });
+      }
+      
+      res.json({ success: true, message: 'Verification email sent successfully' });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+  
   // Reset password route
   app.post('/api/reset-password', async (req, res, next) => {
     try {
