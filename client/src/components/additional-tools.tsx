@@ -21,26 +21,26 @@ const AdditionalTools = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Conversation Starters (Basic+) */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="bg-primary-light p-4 text-white">
+          <div className="bg-card border rounded-xl shadow-md overflow-hidden">
+            <div className="bg-primary text-primary-foreground p-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-medium text-lg">Conversation Starters</h3>
+                <h3 className="font-bold text-xl">Conversation Starters</h3>
                 <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Basic+</span>
               </div>
             </div>
             
             <div className="p-5">
-              <p className="text-secondary-dark mb-4">
+              <p className="text-muted-foreground mb-4">
                 Generate engaging openers based on interests and profile context.
               </p>
               
               {!hasBasicPlan ? (
-                <div className="bg-secondary-light rounded-lg p-4 text-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-secondary mb-2" viewBox="0 0 20 20" fill="currentColor">
+                <div className="bg-muted rounded-lg p-4 text-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-muted-foreground mb-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                   </svg>
                   <p className="mb-2 font-medium">This feature requires Basic+ plan</p>
-                  <a href="#pricing" className="text-primary hover:underline font-medium">Upgrade to unlock</a>
+                  <a href="/pricing" className="text-primary hover:underline font-medium">Upgrade to unlock</a>
                 </div>
               ) : (
                 <Button 
@@ -54,16 +54,16 @@ const AdditionalTools = () => {
           </div>
           
           {/* Message Coach (Pro) */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="bg-primary-light p-4 text-white">
+          <div className="bg-card border rounded-xl shadow-md overflow-hidden">
+            <div className="bg-primary text-primary-foreground p-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-medium text-lg">Message Coach</h3>
+                <h3 className="font-bold text-xl">Message Coach</h3>
                 <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">Pro</span>
               </div>
             </div>
             
             <div className="p-5">
-              <p className="text-secondary-dark mb-4">
+              <p className="text-muted-foreground mb-4">
                 Get feedback on your drafted messages for tone, clarity, and emotional impact.
               </p>
               
@@ -87,16 +87,16 @@ const AdditionalTools = () => {
           </div>
           
           {/* Message Decoder (Pro) */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="bg-primary-light p-4 text-white">
+          <div className="bg-card border rounded-xl shadow-md overflow-hidden">
+            <div className="bg-primary text-primary-foreground p-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-medium text-lg">Message Decoder</h3>
+                <h3 className="font-bold text-xl">Message Decoder</h3>
                 <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">Pro</span>
               </div>
             </div>
             
             <div className="p-5">
-              <p className="text-secondary-dark mb-4">
+              <p className="text-muted-foreground mb-4">
                 Analyze received messages to understand intent, tone, subtext, and how to interpret them.
               </p>
               
