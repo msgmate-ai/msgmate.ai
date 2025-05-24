@@ -6,8 +6,8 @@ export type Tone = {
 
 export const getTones = () => {
   const freeTones: Tone[] = [
-    { value: 'natural', label: 'Natural', tier: 'free' },
-    { value: 'genuine', label: 'Genuine', tier: 'free' },
+    { value: 'authentic', label: 'Authentic', tier: 'free' },
+    { value: 'supportive', label: 'Supportive', tier: 'free' },
     { value: 'casual', label: 'Casual', tier: 'free' },
     { value: 'witty', label: 'Witty', tier: 'free' },
     { value: 'playful', label: 'Playful', tier: 'free' },
