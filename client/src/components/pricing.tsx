@@ -31,13 +31,11 @@ const Pricing = () => {
 
   const handleSubscribe = (tier: string) => {
     if (!user) {
-      // Redirect to auth page instead of just showing a toast
       toast({
         title: 'Authentication required',
-        description: 'Redirecting to login page...',
+        description: 'Please log in to subscribe',
+        variant: 'destructive',
       });
-      // Redirect to auth page with a return_to parameter
-      window.location.href = `/auth?return_to=${encodeURIComponent('/pricing')}`;
       return;
     }
     
