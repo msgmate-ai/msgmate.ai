@@ -2,6 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { Link } from "wouter";
 
 interface UsageStatusProps {
   className?: string;
@@ -40,9 +41,9 @@ const UsageStatus = ({ className }: UsageStatusProps) => {
           </p>
           <Progress value={usagePercentage} className="w-full md:w-64 h-2.5 mt-2" />
         </div>
-        <a href="#pricing" className="text-primary hover:underline font-medium transition-all">
+        <Link to="/pricing" className="text-primary hover:underline font-medium transition-all">
           {usageCount >= usageLimit * 0.8 ? 'Upgrade for more messages →' : 'View plans →'}
-        </a>
+        </Link>
       </div>
     </div>
   );
