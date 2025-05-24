@@ -15,7 +15,7 @@ export const getTones = () => {
 
   const basicTones: Tone[] = [
     { value: 'flirty', label: 'Flirty', tier: 'basic' },
-    { value: 'enthusiastic', label: 'Enthusiastic', tier: 'basic' },
+    { value: 'teasing', label: 'Teasing', tier: 'basic' },
     { value: 'mysterious', label: 'Mysterious', tier: 'basic' },
     { value: 'confident', label: 'Confident', tier: 'basic' },
     { value: 'curious', label: 'Curious', tier: 'basic' },
