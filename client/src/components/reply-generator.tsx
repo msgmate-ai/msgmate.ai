@@ -175,7 +175,7 @@ const ReplyGenerator = () => {
         
         <div className="mb-6">
           <label htmlFor="reply-intent" className="block text-sm font-medium text-secondary-dark mb-1">
-            Have a rough idea of what you want to say? <span className="text-secondary text-xs">(Optional - only fill this box if you have a rough idea of what you want to say)</span>
+            Have a rough idea of what you want to say? <span className="text-secondary text-xs">(Optional - only fill the box if you want to guide the reply)</span>
           </label>
           <Textarea 
             id="reply-intent" 
