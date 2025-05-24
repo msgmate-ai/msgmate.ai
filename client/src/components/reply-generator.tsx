@@ -107,7 +107,7 @@ const ReplyGenerator = () => {
 
   return (
     <section className="bg-white rounded-xl shadow-md p-6 mb-10">
-      <h2 className="text-2xl font-semibold text-primary mb-6">Get help with your reply</h2>
+      <h2 className="text-2xl font-semibold text-primary mb-6">Reply Generator: Get help with your reply</h2>
       
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

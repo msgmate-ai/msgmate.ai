@@ -24,7 +24,7 @@ const AppPage = () => {
           <div className="mb-8 max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-2">Your AI Dating Assistant</h1>
             <p className="text-muted-foreground">
-              {user ? 'Welcome back! Generate perfect replies for any conversation.' : 'Struggling with replies on dating apps? Get help crafting the perfect message. No sign up required.'}
+              {user ? 'Welcome back! Generate perfect replies for any conversation.' : 'Struggling with replies on dating apps? Get help crafting the perfect message.'}
             </p>
             
             {user && <UsageStatus className="mt-4" />}
