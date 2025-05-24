@@ -46,97 +46,194 @@ const LandingPage = () => {
           </div>
 
           {/* Features Section */}
-          <div className="py-12 space-y-12">
-            <h2 className="text-3xl font-bold text-center">Features</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="bg-card border rounded-lg p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Reply Generator</h3>
-                <p className="text-muted-foreground">Create perfect replies in multiple tones for any message you receive.</p>
-                <p className="text-sm font-medium text-primary">Available in Free Tier</p>
+          <div className="py-16 bg-gradient-to-b from-background to-muted/30 rounded-3xl my-12">
+            <h2 className="text-4xl font-bold text-center mb-16 text-primary">Features</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 px-8">
+              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
+                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
+                <div className="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <h3 className="text-2xl font-bold">Reply Generator</h3>
+                  <p className="text-muted-foreground my-3">Create perfect replies in multiple tones for any message you receive.</p>
+                  <div className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold">
+                    Available in Free Tier
+                  </div>
+                </div>
               </div>
-              <div className="bg-card border rounded-lg p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Conversation Starters</h3>
-                <p className="text-muted-foreground">Generate engaging conversation starters based on profiles and interests.</p>
-                <p className="text-sm font-medium">Basic+ Subscription</p>
+              
+              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
+                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
+                <div className="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                  </svg>
+                  <h3 className="text-2xl font-bold">Conversation Starters</h3>
+                  <p className="text-muted-foreground my-3">Generate engaging conversation starters based on profiles and interests.</p>
+                  <div className="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-600 rounded-full text-sm font-bold">
+                    Basic+ Subscription
+                  </div>
+                </div>
               </div>
-              <div className="bg-card border rounded-lg p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Message Coach</h3>
-                <p className="text-muted-foreground">Get professional feedback on your draft messages with tone analysis and suggestions.</p>
-                <p className="text-sm font-medium">Pro Subscription</p>
+              
+              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
+                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
+                <div className="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                  <h3 className="text-2xl font-bold">Message Coach</h3>
+                  <p className="text-muted-foreground my-3">Get professional feedback on your draft messages with tone analysis and suggestions.</p>
+                  <div className="inline-block px-3 py-1 bg-purple-500/10 text-purple-600 rounded-full text-sm font-bold">
+                    Pro Subscription
+                  </div>
+                </div>
               </div>
-              <div className="bg-card border rounded-lg p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Message Decoder</h3>
-                <p className="text-muted-foreground">Analyze received messages to understand hidden meanings and intents.</p>
-                <p className="text-sm font-medium">Pro Subscription</p>
+              
+              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
+                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
+                <div className="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4"></path>
+                    <path d="M12 8h.01"></path>
+                  </svg>
+                  <h3 className="text-2xl font-bold">Message Decoder</h3>
+                  <p className="text-muted-foreground my-3">Analyze received messages to understand hidden meanings and intents.</p>
+                  <div className="inline-block px-3 py-1 bg-purple-500/10 text-purple-600 rounded-full text-sm font-bold">
+                    Pro Subscription
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Pricing Summary */}
-          <div className="py-12 space-y-8">
-            <h2 className="text-3xl font-bold text-center">Pricing Plans</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-card border rounded-lg p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Free</h3>
-                <p className="text-3xl font-bold">£0 <span className="text-base font-normal text-muted-foreground">/month</span></p>
-                <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>5 Basic Tones</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>10 messages per month</span>
-                  </li>
-                </ul>
-                <Button asChild className="w-full mt-4" variant="outline">
-                  <Link href="/app">Get Started</Link>
-                </Button>
-              </div>
-              <div className="bg-card border rounded-lg p-6 space-y-4 relative">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
-                  Popular
+          <div className="py-16 mb-12">
+            <h2 className="text-4xl font-bold text-center mb-16 text-primary">Pricing Plans</h2>
+            <div className="grid md:grid-cols-3 gap-8 px-6">
+              {/* Free Plan */}
+              <div className="bg-card border-2 border-muted hover:border-primary transition-all duration-300 rounded-2xl overflow-hidden shadow-lg group hover:shadow-xl">
+                <div className="p-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-primary/20 group-hover:via-primary/10 group-hover:to-transparent transition-all duration-500"></div>
+                <div className="px-8 pt-8 pb-4">
+                  <h3 className="text-2xl font-bold">Free</h3>
+                  <div className="mt-4 mb-6">
+                    <span className="text-4xl font-extrabold">£0</span>
+                    <span className="text-base text-muted-foreground">/month</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-6">Perfect for trying out MsgMate.AI</div>
                 </div>
-                <h3 className="text-xl font-semibold">Basic+</h3>
-                <p className="text-3xl font-bold">£4.99 <span className="text-base font-normal text-muted-foreground">/month</span></p>
-                <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>10 Tones</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>Conversation Starters</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>100 messages per month</span>
-                  </li>
-                </ul>
-                <Button asChild className="w-full mt-4">
-                  <Link href="/auth">Subscribe</Link>
-                </Button>
+                <div className="px-8 pb-8">
+                  <ul className="space-y-4 mb-8">
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>5 Basic Tones</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>10 messages per month</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>No credit card required</span>
+                    </li>
+                  </ul>
+                  <Button asChild className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-300" variant="outline">
+                    <Link href="/app">Get Started</Link>
+                  </Button>
+                </div>
               </div>
-              <div className="bg-card border rounded-lg p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Pro</h3>
-                <p className="text-3xl font-bold">£9.99 <span className="text-base font-normal text-muted-foreground">/month</span></p>
-                <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>15 Tones</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>All Features Included</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">✓</span>
-                    <span>400 messages per month</span>
-                  </li>
-                </ul>
-                <Button asChild className="w-full mt-4">
-                  <Link href="/auth">Subscribe</Link>
-                </Button>
+
+              {/* Basic+ Plan */}
+              <div className="bg-card border-2 border-primary rounded-2xl overflow-hidden shadow-xl transform scale-105 relative z-10">
+                <div className="p-1 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent"></div>
+                <div className="absolute -top-5 inset-x-0 flex justify-center">
+                  <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                    Most Popular
+                  </div>
+                </div>
+                <div className="px-8 pt-10 pb-4">
+                  <h3 className="text-2xl font-bold">Basic+</h3>
+                  <div className="mt-4 mb-6">
+                    <span className="text-4xl font-extrabold">£4.99</span>
+                    <span className="text-base text-muted-foreground">/month</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-6">Enhanced dating conversation support</div>
+                </div>
+                <div className="px-8 pb-8">
+                  <ul className="space-y-4 mb-8">
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span><span className="font-semibold">10 Tones</span> including empathetic, humorous</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span><span className="font-semibold">Conversation Starters</span> for dating profiles</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span><span className="font-semibold">100 messages</span> per month</span>
+                    </li>
+                  </ul>
+                  <Button asChild className="w-full bg-primary hover:bg-primary/90">
+                    <Link href="/auth">Subscribe</Link>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Pro Plan */}
+              <div className="bg-card border-2 border-muted hover:border-primary transition-all duration-300 rounded-2xl overflow-hidden shadow-lg group hover:shadow-xl">
+                <div className="p-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-primary/20 group-hover:via-primary/10 group-hover:to-transparent transition-all duration-500"></div>
+                <div className="px-8 pt-8 pb-4">
+                  <h3 className="text-2xl font-bold">Pro</h3>
+                  <div className="mt-4 mb-6">
+                    <span className="text-4xl font-extrabold">£9.99</span>
+                    <span className="text-base text-muted-foreground">/month</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-6">Complete dating messaging toolkit</div>
+                </div>
+                <div className="px-8 pb-8">
+                  <ul className="space-y-4 mb-8">
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span><span className="font-semibold">15 Tones</span> including flirty, assertive</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span><span className="font-semibold">All premium features</span> included</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span><span className="font-semibold">400 messages</span> per month</span>
+                    </li>
+                  </ul>
+                  <Button asChild className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-300" variant="outline">
+                    <Link href="/auth">Subscribe</Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
