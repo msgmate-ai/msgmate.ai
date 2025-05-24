@@ -13,7 +13,8 @@ ${intent ? `My intent for the reply is: "${intent}"` : ''}
 
 Provide the responses in JSON format as an array of objects with a 'text' property for each reply option.
 Each reply should be between 1-3 sentences, natural sounding, and appropriate for the tone requested.
-Make the replies suitable for the UK market with appropriate British humor, cultural references, and British English spelling where applicable.
+Use UK English spelling (e.g., "favourite" instead of "favorite") and phrasing that feels natural to British users.
+The tone should be subtly British without relying on stereotypes, forced slang, or exaggerated regionalisms.
 `;
 
     const response = await openai.chat.completions.create({
@@ -21,7 +22,7 @@ Make the replies suitable for the UK market with appropriate British humor, cult
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant that helps people craft perfect message replies for dating apps and WhatsApp conversations. Your suggestions should incorporate British humor, cultural references, and British English spelling. Focus on helping users create engaging, witty, and culturally relevant responses for the UK dating scene."
+          content: "You are an AI assistant that helps people craft perfect message replies for dating apps and WhatsApp conversations. Your suggestions should use natural UK English spelling and phrasing with subtly British communication styles. Aim for a tone that feels authentically British without stereotypes or forced slang. Focus on creating responses that would resonate with UK users while maintaining the requested tone. Avoid exaggerated Britishness or regional clichés."
         },
         {
           role: "user",
