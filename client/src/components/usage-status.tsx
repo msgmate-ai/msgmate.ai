@@ -11,7 +11,7 @@ const UsageStatus = ({ className }: UsageStatusProps) => {
   const { user } = useAuth();
   const { subscription } = useSubscription();
 
-  if (!user) return null;
+  // Allow displaying for non-authenticated users too (free tier)
 
   const getUsageLimit = () => {
     if (!subscription) return 10; // Free tier default

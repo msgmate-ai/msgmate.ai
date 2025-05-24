@@ -42,6 +42,7 @@ const AppPage = () => {
                     </button>
                   </Link>
                 </div>
+                <UsageStatus className="mt-4" />
               </div>
             )}
           </div>
