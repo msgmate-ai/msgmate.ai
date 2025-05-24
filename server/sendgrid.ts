@@ -102,3 +102,55 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
     `
   });
 }
+
+export async function sendSubscriptionConfirmationEmail(email: string, tier: string): Promise<boolean> {
+  const tierName = tier === 'pro' ? 'Pro' : 'Basic+';
+  const monthlyMessages = tier === 'pro' ? '400' : '100';
+  const baseUrl = process.env.APP_URL || 'http://localhost:5000';
+  
+  return sendEmail({
+    to: email,
+    subject: `Your MsgMate.AI ${tierName} Subscription is Active!`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(to right, #4f46e5, #7c3aed); padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: white; margin: 0;">Subscription Confirmed!</h1>
+        </div>
+        
+        <div style="padding: 20px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+          <p>Thank you for subscribing to MsgMate.AI <strong>${tierName} Plan</strong>!</p>
+          
+          <div style="background-color: #f9fafb; border-radius: 8px; padding: 15px; margin: 20px 0;">
+            <h2 style="color: #4f46e5; margin-top: 0;">Your Subscription Details</h2>
+            <p><strong>Plan:</strong> ${tierName}</p>
+            <p><strong>Messages:</strong> ${monthlyMessages} per month</p>
+            <p><strong>Status:</strong> Active</p>
+          </div>
+          
+          <p>You now have access to all ${tierName} features:</p>
+          <ul>
+            ${tier === 'pro' ? `
+            <li>400 messages per month</li>
+            <li>All 15 messaging tones</li>
+            <li>Conversation Starters</li>
+            <li>Message Coach</li>
+            <li>Message Decoder</li>
+            ` : `
+            <li>100 messages per month</li>
+            <li>10 messaging tones</li>
+            <li>Conversation Starters</li>
+            `}
+          </ul>
+          
+          <div style="margin: 30px 0;">
+            <a href="${baseUrl}/account" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Manage Your Subscription</a>
+          </div>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #6b7280;">
+            <p>Best regards,<br>The MsgMate.AI Team</p>
+          </div>
+        </div>
+      </div>
+    `
+  });
+}
