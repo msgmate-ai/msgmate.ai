@@ -6,27 +6,27 @@ export type Tone = {
 
 export const getTones = () => {
   const freeTones: Tone[] = [
+    { value: 'natural', label: 'Natural', tier: 'free' },
     { value: 'friendly', label: 'Friendly', tier: 'free' },
-    { value: 'professional', label: 'Professional', tier: 'free' },
     { value: 'casual', label: 'Casual', tier: 'free' },
     { value: 'enthusiastic', label: 'Enthusiastic', tier: 'free' },
-    { value: 'clear', label: 'Clear & Direct', tier: 'free' },
+    { value: 'playful', label: 'Playful', tier: 'free' },
   ];
 
   const basicTones: Tone[] = [
-    { value: 'empathetic', label: 'Empathetic', tier: 'basic' },
-    { value: 'humorous', label: 'Humorous', tier: 'basic' },
-    { value: 'supportive', label: 'Supportive', tier: 'basic' },
+    { value: 'flirty', label: 'Flirty', tier: 'basic' },
+    { value: 'witty', label: 'Witty', tier: 'basic' },
+    { value: 'mysterious', label: 'Mysterious', tier: 'basic' },
     { value: 'confident', label: 'Confident', tier: 'basic' },
     { value: 'curious', label: 'Curious', tier: 'basic' },
   ];
 
   const proTones: Tone[] = [
-    { value: 'flirty', label: 'Flirty', tier: 'pro' },
-    { value: 'assertive', label: 'Assertive', tier: 'pro' },
-    { value: 'grateful', label: 'Grateful', tier: 'pro' },
-    { value: 'diplomatic', label: 'Diplomatic', tier: 'pro' },
-    { value: 'apologetic', label: 'Apologetic', tier: 'pro' },
+    { value: 'romantic', label: 'Romantic', tier: 'pro' },
+    { value: 'passionate', label: 'Passionate', tier: 'pro' },
+    { value: 'charming', label: 'Charming', tier: 'pro' },
+    { value: 'deep', label: 'Deep & Thoughtful', tier: 'pro' },
+    { value: 'bold', label: 'Bold', tier: 'pro' },
   ];
 
   return {
