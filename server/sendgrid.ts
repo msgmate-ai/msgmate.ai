@@ -34,7 +34,8 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<boolean> {
-  const verificationLink = `${process.env.APP_URL || 'http://localhost:5000'}/verify-email?token=${token}`;
+  const baseUrl = process.env.APP_URL || 'http://localhost:5000';
+  const verificationLink = `${baseUrl}/verify-email?token=${token}`;
   
   return sendEmail({
     to: email,
@@ -81,7 +82,8 @@ export async function sendWelcomeEmail(email: string): Promise<boolean> {
 }
 
 export async function sendPasswordResetEmail(email: string, token: string): Promise<boolean> {
-  const resetLink = `${process.env.APP_URL || 'http://localhost:5000'}/reset-password?token=${token}`;
+  const baseUrl = process.env.APP_URL || 'http://localhost:5000';
+  const resetLink = `${baseUrl}/reset-password?token=${token}`;
   
   return sendEmail({
     to: email,

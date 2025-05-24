@@ -193,8 +193,15 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.resetPasswordToken, token))
-      .where(b => b.gt(users.resetPasswordExpires, new Date()));
+      .where(eq(users.resetPasswordToken, token));
+    
+    // Check if token is expired
+    if (user && user.resetPasswordExpires) {
+      const now = new Date();
+      if (user.resetPasswordExpires < now) {
+        return undefined; // Token has expired
+      }
+    }
     
     return user || undefined;
   }
