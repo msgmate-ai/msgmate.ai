@@ -11,6 +11,9 @@ import AuthPage from "@/pages/auth-page";
 import PricingPage from "@/pages/pricing-page";
 import AboutPage from "@/pages/about-page";
 import ContactPage from "@/pages/contact-page";
+import PrivacyPage from "@/pages/privacy-page";
+import CookiesPage from "@/pages/cookies-page";
+import TermsPage from "@/pages/terms-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 
@@ -24,6 +27,9 @@ function Router() {
       <Route path="/pricing" component={PricingPage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/contact" component={ContactPage} />
+      <Route path="/privacy" component={PrivacyPage} />
+      <Route path="/cookies" component={CookiesPage} />
+      <Route path="/terms" component={TermsPage} />
       <Route component={NotFound} />
     </Switch>
   );
