@@ -7,15 +7,15 @@ export type Tone = {
 export const getTones = () => {
   const freeTones: Tone[] = [
     { value: 'natural', label: 'Natural', tier: 'free' },
-    { value: 'friendly', label: 'Friendly', tier: 'free' },
+    { value: 'genuine', label: 'Genuine', tier: 'free' },
     { value: 'casual', label: 'Casual', tier: 'free' },
-    { value: 'enthusiastic', label: 'Enthusiastic', tier: 'free' },
+    { value: 'witty', label: 'Witty', tier: 'free' },
     { value: 'playful', label: 'Playful', tier: 'free' },
   ];
 
   const basicTones: Tone[] = [
     { value: 'flirty', label: 'Flirty', tier: 'basic' },
-    { value: 'witty', label: 'Witty', tier: 'basic' },
+    { value: 'enthusiastic', label: 'Enthusiastic', tier: 'basic' },
     { value: 'mysterious', label: 'Mysterious', tier: 'basic' },
     { value: 'confident', label: 'Confident', tier: 'basic' },
     { value: 'curious', label: 'Curious', tier: 'basic' },
