@@ -34,6 +34,15 @@ Message: "${message}"
 ${intent ? `My intent for the reply is: "${intent}"` : ''}
 
 ${instructions}
+
+FORMAT YOUR RESPONSE AS JSON with this exact structure:
+{
+  "replies": [
+    {"text": "First reply option here"},
+    {"text": "Second reply option here"},
+    {"text": "Third reply option here"}
+  ]
+}
 `;
 
     const response = await openai.chat.completions.create({
@@ -56,8 +65,27 @@ ${instructions}
       throw new Error("No content received from OpenAI");
     }
 
-    const parsedData = JSON.parse(content);
-    return parsedData.replies || [];
+    try {
+      const parsedData = JSON.parse(content);
+      
+      // Validate the response format
+      if (!parsedData.replies || !Array.isArray(parsedData.replies)) {
+        console.warn("OpenAI returned unexpected format:", content);
+        // Create a default format with the raw content as fallback
+        return [{ text: "Sorry, I couldn't generate proper replies. Please try again." }];
+      }
+      
+      // Ensure we have at least one reply
+      if (parsedData.replies.length === 0) {
+        return [{ text: "I need a bit more context to generate a good reply. Could you provide more details?" }];
+      }
+      
+      return parsedData.replies;
+    } catch (parseError) {
+      console.error("Error parsing OpenAI response:", parseError, "Content:", content);
+      // Try to extract something useful from the raw content
+      return [{ text: "Sorry, I couldn't generate proper replies. Please try again." }];
+    }
   } catch (error: any) {
     console.error("OpenAI error generating replies:", error);
     throw new Error(`Failed to generate replies: ${error.message}`);
