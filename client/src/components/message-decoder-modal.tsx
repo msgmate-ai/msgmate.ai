@@ -122,7 +122,7 @@ const MessageDecoderModal = ({ isOpen, onClose }: MessageDecoderModalProps) => {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <h4 className="text-lg font-medium text-primary mb-4">Message Decoded</h4>
             
-            <div className="space-y-6">
+            <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2">
               <div>
                 <h5 className="font-medium text-primary mb-2">Overall Interpretation</h5>
                 <div className="bg-secondary-light p-4 rounded-lg">

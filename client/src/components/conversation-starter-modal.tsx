@@ -144,7 +144,7 @@ const ConversationStarterModal = ({ isOpen, onClose }: ConversationStarterModalP
           <div className="mt-8 pt-6 border-t border-gray-200">
             <h4 className="text-lg font-medium text-primary mb-4">Generated Conversation Starters</h4>
             
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
               {starters.map((starter, index) => (
                 <div key={starter.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
                   <div className="flex justify-between items-start mb-2">
