@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/footer';
 import { useAuth } from '@/hooks/use-auth';
+import msgMateLogo from '@/assets/msgmate-logo.png';
 
 const LandingPage = () => {
   const { user } = useAuth();
@@ -17,12 +18,16 @@ const LandingPage = () => {
       <main className="flex-1">
         <div className="container px-4 mx-auto">
           {/* Hero Section */}
-          <div className="py-12 md:py-20 flex flex-col md:flex-row items-center gap-8">
+          <div className="py-8 md:py-16 flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1 space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold text-primary">
-                MsgMate.AI
-              </h1>
-              <h2 className="text-2xl md:text-3xl font-semibold">
+              <div className="flex flex-col items-center md:items-start">
+                <img 
+                  src={msgMateLogo} 
+                  alt="MsgMate.AI Logo" 
+                  className="w-auto h-auto max-w-full md:max-w-md mb-6"
+                />
+              </div>
+              <h2 className="text-xl md:text-3xl font-semibold text-center md:text-left">
                 Your personal AI messaging assistant
               </h2>
               <p className="text-lg text-muted-foreground">
