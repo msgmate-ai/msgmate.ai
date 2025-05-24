@@ -28,41 +28,46 @@ const AboutPage = () => {
             <section>
               <h2 className="text-2xl font-semibold mb-3">Our Mission</h2>
               <p className="text-muted-foreground">
-                At MsgMate.AI, we're on a mission to transform how people communicate in the digital age. 
-                We believe that everyone deserves to express themselves clearly, confidently, and authentically
-                in every conversation.
+                At MsgMate.AI, we're dedicated to helping people make meaningful connections through better communication.
+                Online dating can be challenging, and finding the right words doesn't always come naturally to everyone.
+              </p>
+              <p className="text-muted-foreground mt-3">
+                Our AI-powered platform helps you craft authentic, engaging messages that represent your personality
+                while increasing your chances of making a connection in the dating world.
               </p>
             </section>
             
             <section>
-              <h2 className="text-2xl font-semibold mb-3">What We Do</h2>
+              <h2 className="text-2xl font-semibold mb-3">How It Works</h2>
               <p className="text-muted-foreground mb-3">
-                MsgMate.AI is your personal AI-powered messaging assistant that helps you craft the perfect 
-                responses for any situation. Whether you're networking professionally, connecting with friends, 
-                or navigating complex social situations, our tools help you communicate with confidence.
+                MsgMate.AI uses the latest in artificial intelligence to help you create messages that stand out
+                in your dating conversations. Simply paste a message you've received, choose a tone that matches
+                your personality, and our AI will generate thoughtful reply options.
               </p>
               <p className="text-muted-foreground">
-                Our suite of tools includes reply generation in multiple tones, conversation starters, 
-                message analysis, and response coaching—all designed to enhance your natural communication style.
+                With various subscription tiers, we offer features ranging from basic reply generation to
+                advanced conversation starters, message coaching, and detailed message analysis to help you
+                improve your dating communication skills over time.
               </p>
             </section>
             
             <section>
-              <h2 className="text-2xl font-semibold mb-3">Our Technology</h2>
-              <p className="text-muted-foreground">
-                MsgMate.AI is powered by advanced AI language models that understand context, tone, and intent. 
-                We've developed our technology to provide suggestions that sound natural and authentic to your
-                personal style, while helping you communicate more effectively.
-              </p>
+              <h2 className="text-2xl font-semibold mb-3">Features For Dating Success</h2>
+              <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
+                <li><span className="font-medium">Reply Generator</span> - Create engaging responses to messages in your dating apps</li>
+                <li><span className="font-medium">Conversation Starters</span> - Generate intriguing openers based on dating profiles</li>
+                <li><span className="font-medium">Message Coach</span> - Get feedback on your messages before you send them</li>
+                <li><span className="font-medium">Message Decoder</span> - Understand the subtext and intent behind messages you receive</li>
+              </ul>
             </section>
             
             <section>
               <h2 className="text-2xl font-semibold mb-3">Our Values</h2>
               <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
-                <li><span className="font-medium">Authenticity</span> - We help enhance your natural voice, not replace it</li>
-                <li><span className="font-medium">Privacy</span> - Your messages and data are handled with the utmost care</li>
-                <li><span className="font-medium">Accessibility</span> - Communication tools should be available to everyone</li>
-                <li><span className="font-medium">Growth</span> - We're constantly improving our technology to serve you better</li>
+                <li><span className="font-medium">Authenticity</span> - We help you express your true self, not create a false persona</li>
+                <li><span className="font-medium">Confidence</span> - We give you the tools to communicate with confidence in dating scenarios</li>
+                <li><span className="font-medium">Privacy</span> - Your dating conversations and data are handled with the utmost care</li>
+                <li><span className="font-medium">Empowerment</span> - We believe everyone deserves meaningful connections, regardless of natural communication skills</li>
               </ul>
             </section>
           </div>
