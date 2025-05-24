@@ -23,7 +23,7 @@ const ReplyGenerator = () => {
   const [showLockedToneMessage, setShowLockedToneMessage] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const { subscription } = useSubscription();
+  const { subscription, refetchSubscription } = useSubscription();
 
   const mutation = useMutation({
     mutationFn: async (data: { message: string; tone: string; intent?: string }) => {
@@ -32,6 +32,8 @@ const ReplyGenerator = () => {
     },
     onSuccess: (data) => {
       setReplies(data.replies);
+      // Refresh subscription data to update usage count
+      refetchSubscription();
     },
     onError: (error: Error) => {
       toast({
