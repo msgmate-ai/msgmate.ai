@@ -5,6 +5,8 @@ import { setupAuth } from "./auth";
 import { z } from "zod";
 import { generateMessageReplies, generateConversationStarters, analyzeMessage, decodeMessage } from "./openai";
 import { setupStripe, createCheckoutSession, handleStripeWebhook } from "./stripe";
+import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./sendgrid";
+import { randomBytes } from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
@@ -238,6 +240,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.updateUserSubscription(req.user.id, { tier: 'free', usage: 0 });
       
       res.json({ message: 'Subscription cancelled successfully' });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+  
+  // Email verification route
+  app.get('/api/verify-email/:token', async (req, res, next) => {
+    try {
+      const { token } = req.params;
+      
+      if (!token) {
+        return res.status(400).json({ success: false, message: 'Verification token is required' });
+      }
+      
+      const user = await storage.verifyUserEmail(token);
+      
+      if (!user) {
+        return res.status(400).json({ success: false, message: 'Invalid or expired verification token' });
+      }
+      
+      // Send welcome email after successful verification
+      await sendWelcomeEmail(user.username);
+      
+      res.json({ success: true, message: 'Email verification successful' });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+  
+  // Forgot password route
+  app.post('/api/forgot-password', async (req, res, next) => {
+    try {
+      const schema = z.object({
+        username: z.string().email("Please enter a valid email address")
+      });
+      
+      const result = schema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ success: false, message: result.error.errors[0].message });
+      }
+      
+      const { username } = result.data;
+      
+      // Generate token and expiry (24 hours from now)
+      const token = randomBytes(32).toString('hex');
+      const expires = new Date();
+      expires.setHours(expires.getHours() + 24);
+      
+      const user = await storage.setPasswordResetToken(username, token, expires);
+      
+      if (user) {
+        // Send password reset email
+        await sendPasswordResetEmail(username, token);
+      }
+      
+      // Always return success even if email doesn't exist for security reasons
+      res.json({ success: true, message: 'If an account with that email exists, a password reset link has been sent' });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+  
+  // Reset password route
+  app.post('/api/reset-password', async (req, res, next) => {
+    try {
+      const schema = z.object({
+        token: z.string().min(1, "Reset token is required"),
+        password: z.string().min(6, "Password must be at least 6 characters")
+      });
+      
+      const result = schema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ success: false, message: result.error.errors[0].message });
+      }
+      
+      const { token, password } = result.data;
+      
+      // Get user by reset token
+      const user = await storage.getUserByResetToken(token);
+      
+      if (!user) {
+        return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
+      }
+      
+      // Update password
+      await storage.updatePassword(user.id, password);
+      
+      res.json({ success: true, message: 'Password has been reset successfully' });
     } catch (error: any) {
       next(error);
     }

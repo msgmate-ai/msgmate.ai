@@ -63,7 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["/api/subscription"] });
       toast({
         title: "Registration successful",
-        description: `Welcome, ${user.username}!`,
+        description: `Welcome, ${user.username}! Please check your email for a verification link to complete your registration.`,
+        duration: 6000,
       });
     },
     onError: (error: Error) => {

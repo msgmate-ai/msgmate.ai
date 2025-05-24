@@ -23,8 +23,8 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
       to: params.to,
       from: FROM_EMAIL,
       subject: params.subject,
-      text: params.text,
-      html: params.html,
+      text: params.text || '',
+      html: params.html || '',
     });
     return true;
   } catch (error) {
@@ -34,6 +34,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<boolean> {
+  // Use https for production, http for local development
   const baseUrl = process.env.APP_URL || 'http://localhost:5000';
   const verificationLink = `${baseUrl}/verify-email?token=${token}`;
   
