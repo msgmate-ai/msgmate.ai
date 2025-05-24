@@ -4,15 +4,38 @@ import OpenAI from "openai";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Generate replies based on received message, tone, and optional intent
-export async function generateMessageReplies(message: string, tone: string, intent?: string): Promise<Array<{ text: string }>> {
+export async function generateMessageReplies(message: string, tone: string, intent?: string): Promise<Array<{ text: string; id: number }>> {
   try {
-    const prompt = `Generate 3 different reply options to the following message in a ${tone} tone.
+    // Map tone values to descriptive instructions for the AI
+    const toneDescriptions: Record<string, string> = {
+      'authentic': 'genuine and real, without pretense',
+      'supportive': 'encouraging and understanding',
+      'casual': 'relaxed and informal',
+      'witty': 'clever and humorous',
+      'playful': 'fun and light-hearted',
+      'flirty': 'suggestive and showing romantic interest',
+      'teasing': 'playfully provocative',
+      'mysterious': 'intriguing and not revealing too much',
+      'confident': 'self-assured and direct',
+      'curious': 'inquisitive and interested',
+      'romantic': 'expressing deep affection and love',
+      'passionate': 'showing intense emotion and desire',
+      'charming': 'attractively polite and pleasant',
+      'deep': 'thoughtful and meaningful',
+      'bold': 'direct and fearless'
+    };
+
+    const toneDescription = toneDescriptions[tone] || tone;
+    
+    const prompt = `Generate 3 different dating app reply options to the following message in a ${toneDescription} tone.
     
 Message: "${message}"
 ${intent ? `My intent for the reply is: "${intent}"` : ''}
 
-Provide the responses in JSON format as an array of objects with a 'text' property for each reply option.
-Each reply should be between 1-3 sentences, natural sounding, and appropriate for the tone requested.
+Provide the responses in JSON format as an array of objects with 'id' and 'text' properties for each reply option.
+Example format: { "replies": [{"id": 1, "text": "Reply text here"}, {"id": 2, "text": "Second reply here"}, {"id": 3, "text": "Third reply here"}] }
+
+Each reply should be between 1-3 sentences, natural sounding, and perfect for a dating conversation using the ${toneDescription} tone.
 `;
 
     const response = await openai.chat.completions.create({
@@ -20,7 +43,7 @@ Each reply should be between 1-3 sentences, natural sounding, and appropriate fo
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant that helps people craft perfect message replies based on their desired tone and intent."
+          content: "You are an AI dating message assistant that helps people craft perfect dating app replies. Always respond with a JSON object containing an array called 'replies', where each reply has an 'id' (number) and 'text' (string) property. Example format: {\"replies\": [{\"id\": 1, \"text\": \"Reply text here\"}, {\"id\": 2, \"text\": \"Second reply here\"}]}."
         },
         {
           role: "user",
