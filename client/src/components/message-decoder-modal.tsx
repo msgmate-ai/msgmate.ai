@@ -186,8 +186,8 @@ const MessageDecoderModal = ({ isOpen, onClose }: MessageDecoderModalProps) => {
               
               <div>
                 <h5 className="font-medium text-primary mb-2">Suggested Response Strategy</h5>
-                <div className="bg-primary bg-opacity-10 p-4 rounded-lg">
-                  <p className="text-gray-700">
+                <div className="bg-white border border-green-300 p-4 rounded-lg">
+                  <p className="text-gray-800 font-medium">
                     {analysis.suggestedResponse}
                   </p>
                 </div>

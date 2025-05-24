@@ -100,8 +100,16 @@ export async function generateConversationStarters(profileContext: string, inter
 Profile Context: "${profileContext}"
 ${interests ? `My interests: "${interests}"` : ''}
 
-Provide the starters in JSON format as an array of objects with a 'text' property for each starter.
-Each starter should be 1-2 sentences, feel natural, and be likely to spark an engaging conversation.
+FORMAT YOUR RESPONSE AS JSON with this exact structure:
+{
+  "starters": [
+    {"text": "First conversation starter here"},
+    {"text": "Second conversation starter here"},
+    {"text": "Third conversation starter here"}
+  ]
+}
+
+Each starter should be 1-2 sentences, feel natural, and be likely to spark an engaging conversation in a UK dating context.
 `;
 
     const response = await openai.chat.completions.create({
@@ -109,7 +117,7 @@ Each starter should be 1-2 sentences, feel natural, and be likely to spark an en
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant that helps people start conversations based on profile information and shared interests."
+          content: "You are an AI assistant that helps people start conversations based on profile information and shared interests. You always return exactly 3 conversation starters in the requested format."
         },
         {
           role: "user",
@@ -124,8 +132,39 @@ Each starter should be 1-2 sentences, feel natural, and be likely to spark an en
       throw new Error("No content received from OpenAI");
     }
 
-    const parsedData = JSON.parse(content);
-    return parsedData.starters || [];
+    try {
+      const parsedData = JSON.parse(content);
+      
+      // Validate the response format
+      if (!parsedData.starters || !Array.isArray(parsedData.starters)) {
+        console.warn("OpenAI returned unexpected format:", content);
+        // Create a default format with fallback starters
+        return [
+          { text: "I noticed something interesting in your profile. What inspired you to include that?" },
+          { text: "Your profile caught my attention. What's the story behind your interest in [topic mentioned in profile]?" },
+          { text: "I'm curious about what you mentioned. Could you tell me more about that?" }
+        ];
+      }
+      
+      // Ensure we have at least one starter
+      if (parsedData.starters.length === 0) {
+        return [
+          { text: "I noticed something interesting in your profile. What inspired you to include that?" },
+          { text: "Your profile caught my attention. What's the story behind your interest in [topic mentioned in profile]?" },
+          { text: "I'm curious about what you mentioned. Could you tell me more about that?" }
+        ];
+      }
+      
+      return parsedData.starters;
+    } catch (parseError) {
+      console.error("Error parsing OpenAI response:", parseError, "Content:", content);
+      // Return fallback starters
+      return [
+        { text: "I noticed something interesting in your profile. What inspired you to include that?" },
+        { text: "Your profile caught my attention. What's the story behind your interest in [topic mentioned in profile]?" },
+        { text: "I'm curious about what you mentioned. Could you tell me more about that?" }
+      ];
+    }
   } catch (error: any) {
     console.error("OpenAI error generating conversation starters:", error);
     throw new Error(`Failed to generate conversation starters: ${error.message}`);
