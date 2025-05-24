@@ -1,0 +1,82 @@
+📌 FULL APP REBUILD INSTRUCTION — MsgMate.AI
+
+Please rebuild the MsgMate.AI app from scratch in a clean Replit project with all features listed below. This is a complete reset — all code must be clean, stable, and professionally structured. No legacy bugs or memory issues should be carried over.
+
+✅ CORE FUNCTIONALITY:
+1. **Reply Generator (Free)**  
+   - Users input a message they received and choose a tone  
+   - Optionally, users can add a rough idea of what they want to say (intent box)  
+   - The app generates 3 suggested replies  
+   - Replies appear directly underneath the generator  
+   - Include a loading spinner during generation
+
+2. **Tones by Tier:**  
+   - Free = 5 tones  
+   - Basic+ = 10 tones  
+   - Pro = 15 tones  
+   - Tone list can be placed in a dropdown grouped by tier  
+   - If a user selects a locked tone, show a small message suggesting upgrade
+
+3. **Conversation Starters (Basic+ Tier)**  
+   - Allow user to input interests and profile context  
+   - Button to generate conversation starters  
+   - Output below the form  
+   - Only visible to logged-in Basic+ or Pro users
+
+4. **Message Coach (Pro Tier)**  
+   - Lets the user paste their drafted reply and get inline feedback  
+   - Provide analysis: tone, clarity, emotional impact  
+   - Clearly marked as a Pro feature
+
+5. **Message Decoder (Pro Tier)**  
+   - NEW tool replacing Conversation Memory  
+   - User pastes a received message  
+   - Tool explains: possible intent, tone, subtext, and how to interpret it  
+   - Clearly marked as a Pro feature
+
+✅ SUBSCRIPTION & AUTH
+6. **User Login System**  
+   - Required for subscriptions  
+   - Simple email + password (no OAuth required)  
+   - Login and Sign Up pages required  
+   - Session persistence
+
+7. **Subscription System**  
+   - Stripe-powered (test keys for now)  
+   - Tier access gates:
+     - Free: 10 replies total, 5 tones
+     - Basic+ (£4.99/mo): 100 messages/month, 10 tones, unlocks Conversation Starters
+     - Pro (£9.99/mo): 400 messages/month, 15 tones, unlocks Message Coach + Message Decoder  
+   - Elite tier placeholder: “Coming Soon”
+   - Subscription page showing benefits per tier and upgrade/downgrade options  
+   - Prevent use of locked features or tones without active plan
+
+✅ BRANDING, UI & COLORS
+8. **Brand Identity**
+   - Name: MsgMate.AI  
+   - Tagline: “Your personal AI Wingmate”  
+   - Logo: Speech bubble with red heart (use placeholder)  
+   - Font: Clean, modern sans-serif  
+   - Colors: Dark blue primary (#001E3C), greys for secondary sections (#F3F4F6, #6B7280), white background, buttons in brand dark blue
+
+9. **Layout & UX**
+   - Place reply generator at the top of homepage  
+   - Place additional tools underneath it  
+   - Clear headings: “Get help with your reply”, “Additional Tools”  
+   - Show/hide tools based on subscription status  
+   - Place a fixed login & subscription nav bar at the top of the site
+
+✅ DEPLOYMENT
+10. **Domain & Deployment**
+   - Link to existing domain: www.msgmate.ai  
+   - Use Replit’s custom domain integration  
+   - Ensure SendGrid email config remains functional  
+   - Ensure the app works reliably on both desktop and mobile
+
+📦 Final Deliverables
+- Fully working web app with all features above
+- No legacy issues (especially Conversation Memory bugs)
+- Fully commented code with clean structure
+- All tier restrictions tested
+
+Once complete, I’ll manually test the app and verify functionality across features. Thank you!
