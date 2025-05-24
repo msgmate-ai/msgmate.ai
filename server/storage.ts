@@ -27,11 +27,11 @@ export interface IStorage {
   setPasswordResetToken(username: string, token: string, expires: Date): Promise<User | undefined>;
   getUserByResetToken(token: string): Promise<User | undefined>;
   updatePassword(userId: number, password: string): Promise<User>;
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Using any for session store to avoid type issues
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Using any for session store to avoid type issues
 
   constructor() {
     this.sessionStore = new MemoryStore({
