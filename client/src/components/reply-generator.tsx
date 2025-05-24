@@ -137,7 +137,12 @@ const ReplyGenerator = () => {
               <SelectGroup>
                 <SelectLabel>Free Tones</SelectLabel>
                 {freeTones.map(tone => (
-                  <SelectItem key={tone.value} value={tone.value}>{tone.emoji} {tone.label}</SelectItem>
+                  <SelectItem key={tone.value} value={tone.value} title={tone.description}>
+                    <div className="flex items-center">
+                      <span>{tone.emoji} {tone.label}</span>
+                      <span className="ml-2 text-xs text-gray-500 hidden md:inline-block">{tone.description}</span>
+                    </div>
+                  </SelectItem>
                 ))}
               </SelectGroup>
               <SelectGroup>
@@ -147,8 +152,12 @@ const ReplyGenerator = () => {
                     key={tone.value} 
                     value={tone.value}
                     disabled={!subscription || subscription.tier === 'free'}
+                    title={tone.description}
                   >
-                    {tone.emoji} {tone.label} {(!subscription || subscription.tier === 'free') ? '🔒' : ''}
+                    <div className="flex items-center">
+                      <span>{tone.emoji} {tone.label} {(!subscription || subscription.tier === 'free') ? '🔒' : ''}</span>
+                      <span className="ml-2 text-xs text-gray-500 hidden md:inline-block">{tone.description}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -159,8 +168,12 @@ const ReplyGenerator = () => {
                     key={tone.value} 
                     value={tone.value}
                     disabled={!subscription || ['free', 'basic'].includes(subscription.tier)}
+                    title={tone.description}
                   >
-                    {tone.emoji} {tone.label} {(!subscription || ['free', 'basic'].includes(subscription.tier)) ? '🔒' : ''}
+                    <div className="flex items-center">
+                      <span>{tone.emoji} {tone.label} {(!subscription || ['free', 'basic'].includes(subscription.tier)) ? '🔒' : ''}</span>
+                      <span className="ml-2 text-xs text-gray-500 hidden md:inline-block">{tone.description}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectGroup>

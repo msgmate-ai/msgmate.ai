@@ -6,15 +6,34 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 // Generate replies based on received message, tone, and optional intent
 export async function generateMessageReplies(message: string, tone: string, intent?: string): Promise<Array<{ text: string }>> {
   try {
+    // Special handling for authentic tone to provide more substantive replies
+    const isAuthenticTone = tone === 'authentic';
+    
+    let instructions = `
+Provide the responses in JSON format as an array of objects with a 'text' property for each reply option.
+Each reply should be between 1-3 sentences, natural sounding, and appropriate for the tone requested.
+Use UK English spelling (e.g., "favourite" instead of "favorite") and phrasing that feels natural to British users.
+The tone should be subtly British without relying on stereotypes, forced slang, or exaggerated regionalisms.
+`;
+
+    // Enhanced instructions for authentic tone
+    if (isAuthenticTone) {
+      instructions += `
+Since the 'authentic' tone was selected, create replies that:
+- Show genuine thoughtfulness and deeper engagement with the message content
+- Include personal insights or values where appropriate
+- Demonstrate self-awareness and emotional intelligence
+- Are slightly longer and more substantive than other tones (2-4 sentences)
+- Balance honesty with tactfulness in a dating context
+`;
+    }
+    
     const prompt = `Generate 3 different reply options to the following message in a ${tone} tone.
     
 Message: "${message}"
 ${intent ? `My intent for the reply is: "${intent}"` : ''}
 
-Provide the responses in JSON format as an array of objects with a 'text' property for each reply option.
-Each reply should be between 1-3 sentences, natural sounding, and appropriate for the tone requested.
-Use UK English spelling (e.g., "favourite" instead of "favorite") and phrasing that feels natural to British users.
-The tone should be subtly British without relying on stereotypes, forced slang, or exaggerated regionalisms.
+${instructions}
 `;
 
     const response = await openai.chat.completions.create({
