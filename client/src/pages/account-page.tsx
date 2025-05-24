@@ -352,20 +352,20 @@ function AccountPageContent() {
                   
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-500">Account Created</p>
-                    <p>{user?.createdAt ? formatDate(user.createdAt) : 'N/A'}</p>
+                    <p>{user?.createdAt ? formatDate(user.createdAt.toString()) : 'N/A'}</p>
                   </div>
                   
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-500">Email Verified</p>
                     <div className="flex items-center">
-                      <div className={`h-2.5 w-2.5 rounded-full mr-2 ${user?.emailVerified ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                      <p>{user?.emailVerified ? 'Verified' : 'Not verified'}</p>
+                      <div className={`h-2.5 w-2.5 rounded-full mr-2 ${user?.isVerified ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+                      <p>{user?.isVerified ? 'Verified' : 'Not verified'}</p>
                     </div>
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col sm:flex-row gap-4">
-                {!user?.emailVerified && (
+                {!user?.isVerified && (
                   <Button
                     onClick={() => {
                       apiRequest('POST', '/api/resend-verification', {})

@@ -8,7 +8,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
-  apiVersion: "2023-10-16",
+  apiVersion: "2023-10-16" as any,
 });
 
 // Price IDs should be environment variables in production
@@ -69,11 +69,12 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro'): 
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.BASE_URL || 'http://localhost:5000'}/?success=true`,
-      cancel_url: `${process.env.BASE_URL || 'http://localhost:5000'}/?canceled=true`,
+      success_url: `${process.env.BASE_URL || 'http://localhost:5000'}/subscription-success`,
+      cancel_url: `${process.env.BASE_URL || 'http://localhost:5000'}/account`,
       metadata: {
         userId: user.id.toString(),
-        tier
+        tier,
+        email: user.username
       }
     });
     
@@ -114,6 +115,7 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
       // Extract metadata
       const userId = parseInt(session.metadata?.userId || '0');
       const tier = session.metadata?.tier as 'basic' | 'pro';
+      const email = session.metadata?.email;
       
       if (userId && tier) {
         // Update user subscription
@@ -129,6 +131,12 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
             session.customer as string, 
             session.subscription as string
           );
+        }
+        
+        // Send confirmation email
+        if (email) {
+          const { sendSubscriptionConfirmationEmail } = await import('./sendgrid');
+          await sendSubscriptionConfirmationEmail(email, tier);
         }
       }
       break;

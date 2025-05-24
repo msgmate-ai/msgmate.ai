@@ -17,8 +17,11 @@ import ContactPage from "@/pages/contact-page";
 import PrivacyPage from "@/pages/privacy-page";
 import CookiesPage from "@/pages/cookies-page";
 import TermsPage from "@/pages/terms-page";
+import AccountPage from "@/pages/account-page";
+import SubscriptionSuccessPage from "@/pages/subscription-success-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
+import { SubscriptionProvider } from "./hooks/use-subscription";
 
 function Router() {
   return (
@@ -36,6 +39,8 @@ function Router() {
       <Route path="/privacy" component={PrivacyPage} />
       <Route path="/cookies" component={CookiesPage} />
       <Route path="/terms" component={TermsPage} />
+      <Route path="/account" component={AccountPage} />
+      <Route path="/subscription-success" component={SubscriptionSuccessPage} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -45,10 +50,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <SubscriptionProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </SubscriptionProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
