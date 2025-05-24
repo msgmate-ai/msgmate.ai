@@ -59,10 +59,15 @@ const Navbar = () => {
           
           {user ? (
             <div className="flex items-center space-x-4">
-              <span>{user.username}</span>
-              <Badge className={`px-2 py-0.5 rounded-full text-xs ${getPlanColor()}`}>
-                {getPlanLabel()}
-              </Badge>
+              <Link href="/account" className="hover:text-gray-300 transition-all flex items-center">
+                <span>{user.username}</span>
+                <Badge className={`px-2 py-0.5 rounded-full text-xs ml-2 ${getPlanColor()}`}>
+                  {getPlanLabel()}
+                </Badge>
+              </Link>
+              <Link href="/account" className="hover:text-gray-300 transition-all">
+                My Account
+              </Link>
               <Button 
                 variant="outline" 
                 onClick={handleLogout} 
