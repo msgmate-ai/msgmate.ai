@@ -6,6 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
+import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./sendgrid";
 
 declare global {
   namespace Express {
@@ -69,6 +70,9 @@ export function setupAuth(app: Express) {
     }
   });
 
+  // Helper function to generate random token
+  const generateToken = () => randomBytes(32).toString('hex');
+
   app.post("/api/register", async (req, res, next) => {
     try {
       const existingUser = await storage.getUserByUsername(req.body.username);
@@ -76,10 +80,22 @@ export function setupAuth(app: Express) {
         return res.status(400).send("Username already exists");
       }
 
+      // Create the user with email set to username (since username is email)
       const user = await storage.createUser({
         ...req.body,
+        email: req.body.username, // Store email in both fields for backward compatibility
         password: await hashPassword(req.body.password),
       });
+
+      // Generate verification token
+      const verificationToken = generateToken();
+      await storage.setVerificationToken(user.id, verificationToken);
+
+      // Send verification email
+      await sendVerificationEmail(user.username, verificationToken);
+      
+      // Send welcome email
+      await sendWelcomeEmail(user.username);
 
       req.login(user, (err) => {
         if (err) return next(err);

@@ -19,6 +19,14 @@ export interface IStorage {
   incrementUsage(userId: number): Promise<void>;
   getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined>;
   updateUserStripeInfo(userId: number, stripeCustomerId: string, stripeSubscriptionId?: string): Promise<User>;
+  // Email verification methods
+  setVerificationToken(userId: number, token: string): Promise<User>;
+  verifyUserEmail(token: string): Promise<User | undefined>;
+  getUserByVerificationToken(token: string): Promise<User | undefined>;
+  // Password reset methods
+  setPasswordResetToken(username: string, token: string, expires: Date): Promise<User | undefined>;
+  getUserByResetToken(token: string): Promise<User | undefined>;
+  updatePassword(userId: number, password: string): Promise<User>;
   sessionStore: session.SessionStore;
 }
 
@@ -118,6 +126,87 @@ export class DatabaseStorage implements IStorage {
     const [updatedUser] = await db
       .update(users)
       .set(updates)
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  // Email verification methods
+  async setVerificationToken(userId: number, token: string): Promise<User> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({ verificationToken: token })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  async verifyUserEmail(token: string): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .update(users)
+        .set({ 
+          isVerified: true,
+          verificationToken: null 
+        })
+        .where(eq(users.verificationToken, token))
+        .returning();
+      
+      return user;
+    } catch (error) {
+      console.error('Error verifying user email:', error);
+      return undefined;
+    }
+  }
+
+  async getUserByVerificationToken(token: string): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.verificationToken, token));
+    
+    return user || undefined;
+  }
+
+  // Password reset methods
+  async setPasswordResetToken(username: string, token: string, expires: Date): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .update(users)
+        .set({
+          resetPasswordToken: token,
+          resetPasswordExpires: expires
+        })
+        .where(eq(users.username, username))
+        .returning();
+      
+      return user;
+    } catch (error) {
+      console.error('Error setting password reset token:', error);
+      return undefined;
+    }
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.resetPasswordToken, token))
+      .where(b => b.gt(users.resetPasswordExpires, new Date()));
+    
+    return user || undefined;
+  }
+
+  async updatePassword(userId: number, password: string): Promise<User> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        password,
+        resetPasswordToken: null,
+        resetPasswordExpires: null
+      })
       .where(eq(users.id, userId))
       .returning();
     
