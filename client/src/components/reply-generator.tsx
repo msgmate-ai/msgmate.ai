@@ -137,7 +137,7 @@ const ReplyGenerator = () => {
               <SelectGroup>
                 <SelectLabel>Free Tones</SelectLabel>
                 {freeTones.map(tone => (
-                  <SelectItem key={tone.value} value={tone.value}>{tone.label}</SelectItem>
+                  <SelectItem key={tone.value} value={tone.value}>{tone.emoji} {tone.label}</SelectItem>
                 ))}
               </SelectGroup>
               <SelectGroup>
@@ -148,7 +148,7 @@ const ReplyGenerator = () => {
                     value={tone.value}
                     disabled={!subscription || subscription.tier === 'free'}
                   >
-                    {tone.label} {(!subscription || subscription.tier === 'free') ? '🔒' : ''}
+                    {tone.emoji} {tone.label} {(!subscription || subscription.tier === 'free') ? '🔒' : ''}
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -160,7 +160,7 @@ const ReplyGenerator = () => {
                     value={tone.value}
                     disabled={!subscription || ['free', 'basic'].includes(subscription.tier)}
                   >
-                    {tone.label} {(!subscription || ['free', 'basic'].includes(subscription.tier)) ? '🔒' : ''}
+                    {tone.emoji} {tone.label} {(!subscription || ['free', 'basic'].includes(subscription.tier)) ? '🔒' : ''}
                   </SelectItem>
                 ))}
               </SelectGroup>
