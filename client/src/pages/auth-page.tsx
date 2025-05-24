@@ -31,7 +31,11 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<string>('login');
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
+  
+  // Get return_to parameter from URL if it exists
+  const searchParams = new URLSearchParams(window.location.search);
+  const returnTo = searchParams.get('return_to') || '/';
 
   // Set page title
   useEffect(() => {
@@ -41,9 +45,9 @@ const AuthPage = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate(returnTo);
     }
-  }, [user, navigate]);
+  }, [user, navigate, returnTo]);
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
