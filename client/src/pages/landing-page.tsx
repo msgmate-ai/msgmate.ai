@@ -28,7 +28,7 @@ const LandingPage = () => {
                 />
               </div>
               <p className="text-lg text-muted-foreground">
-                Generate perfect replies, craft conversation starters, decode messages, and get professional coaching for your important conversations.
+                Struggle with what to say on dating apps? MsgMate helps you reply with confidence, start great conversations, and decode tricky messages — all with one smart tool.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="font-semibold">
