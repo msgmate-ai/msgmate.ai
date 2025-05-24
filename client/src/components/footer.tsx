@@ -1,4 +1,5 @@
 import Logo from '@/components/ui/logo';
+import { Link } from 'wouter';
 
 const Footer = () => {
   return (
@@ -18,19 +19,19 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li><a href="/" className="text-gray-300 hover:text-white transition-all">Home</a></li>
-              <li><a href="#pricing" className="text-gray-300 hover:text-white transition-all">Pricing</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-all">About Us</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-all">Contact</a></li>
+              <li><Link href="/" className="text-gray-300 hover:text-white transition-all">Home</Link></li>
+              <li><Link href="/pricing" className="text-gray-300 hover:text-white transition-all">Pricing</Link></li>
+              <li><Link href="/about" className="text-gray-300 hover:text-white transition-all">About Us</Link></li>
+              <li><Link href="/contact" className="text-gray-300 hover:text-white transition-all">Contact</Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-all">Terms of Service</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-all">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-all">Cookie Policy</a></li>
+              <li><Link href="/terms" className="text-gray-300 hover:text-white transition-all">Terms of Service</Link></li>
+              <li><Link href="/privacy" className="text-gray-300 hover:text-white transition-all">Privacy Policy</Link></li>
+              <li><Link href="/cookies" className="text-gray-300 hover:text-white transition-all">Cookie Policy</Link></li>
             </ul>
           </div>
         </div>
