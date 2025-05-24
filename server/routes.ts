@@ -38,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Set default values for non-authenticated users (free tier)
       let usageCount = 0;
       let usageLimit = 10;
-      let availableTones = ['friendly', 'professional', 'casual', 'enthusiastic', 'clear'];
+      let availableTones = ['authentic', 'supportive', 'casual', 'witty', 'playful'];
       
       // If authenticated, check subscription tier and usage
       if (isAuthenticated && req.user) {
@@ -47,9 +47,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         usageLimit = subscription?.tier === 'pro' ? 400 : subscription?.tier === 'basic' ? 100 : 10;
         
         // Set available tones based on subscription tier
-        const freeTones = ['friendly', 'professional', 'casual', 'enthusiastic', 'clear'];
-        const basicTones = [...freeTones, 'empathetic', 'humorous', 'supportive', 'confident', 'curious'];
-        const proTones = [...basicTones, 'flirty', 'assertive', 'grateful', 'diplomatic', 'apologetic'];
+        const freeTones = ['authentic', 'supportive', 'casual', 'witty', 'playful'];
+        const basicTones = [...freeTones, 'flirty', 'teasing', 'mysterious', 'confident', 'curious'];
+        const proTones = [...basicTones, 'romantic', 'passionate', 'charming', 'deep', 'bold'];
         
         if (subscription?.tier === 'basic') {
           availableTones = basicTones;
