@@ -22,9 +22,9 @@ const AppPage = () => {
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-6">
           <div className="mb-8 max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-2">Your AI Messaging Assistant</h1>
+            <h1 className="text-3xl font-bold mb-2">Your AI Dating Assistant</h1>
             <p className="text-muted-foreground">
-              {user ? 'Welcome back! Generate perfect replies for any conversation.' : 'Try our AI-powered message tools for free. No registration required.'}
+              {user ? 'Welcome back! Generate perfect replies for any conversation.' : 'Struggling with replies on dating apps? Get help crafting the perfect message. No sign up required.'}
             </p>
             
             {user && <UsageStatus className="mt-4" />}
