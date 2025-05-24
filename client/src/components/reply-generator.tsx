@@ -175,7 +175,7 @@ const ReplyGenerator = () => {
         
         <div className="mb-6">
           <label htmlFor="reply-intent" className="block text-sm font-medium text-secondary-dark mb-1">
-            Have a rough idea of what you want to say? <span className="text-secondary text-xs">(Optional - only fill the box if you want to guide the reply)</span>
+            What would you like to say? <span className="text-secondary text-xs">(Optional)</span>
           </label>
           <Textarea 
             id="reply-intent" 
@@ -183,7 +183,7 @@ const ReplyGenerator = () => {
             value={replyIntent}
             onChange={(e) => setReplyIntent(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-            placeholder="Write your message here and we will help you say it better"
+            placeholder="e.g., I want to agree but can't meet tonight, or I want to politely decline..."
           />
         </div>
         
