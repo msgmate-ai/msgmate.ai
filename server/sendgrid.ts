@@ -15,7 +15,8 @@ interface EmailParams {
 }
 
 // Create a from email that uses the domain of your app
-const FROM_EMAIL = 'noreply@msgmate.ai';
+// Use a verified sender email address from your SendGrid account
+const FROM_EMAIL = 'Msgmateai@gmail.com';
 
 export async function sendEmail(params: EmailParams): Promise<boolean> {
   try {
