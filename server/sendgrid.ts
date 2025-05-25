@@ -1,5 +1,8 @@
 import { MailService } from '@sendgrid/mail';
 
+// Log whether the SendGrid API key is present (without revealing the actual key)
+console.log("SendGrid key present:", !!process.env.SENDGRID_API_KEY);
+
 if (!process.env.SENDGRID_API_KEY) {
   throw new Error("SENDGRID_API_KEY environment variable must be set");
 }
@@ -15,20 +18,30 @@ interface EmailParams {
 }
 
 // Create a from email that uses the domain of your app
-const FROM_EMAIL = 'noreply@msgmate.ai';
+// Using a verified sender email for testing
+const FROM_EMAIL = 'msgmateai@gmail.com';
 
 export async function sendEmail(params: EmailParams): Promise<boolean> {
+  console.log("Attempting to send email to:", params.to);
+  
+  const msg = {
+    to: params.to,
+    from: FROM_EMAIL,
+    subject: params.subject,
+    text: params.text || '',
+    html: params.html || '',
+  };
+  
   try {
-    await mailService.send({
-      to: params.to,
-      from: FROM_EMAIL,
-      subject: params.subject,
-      text: params.text || '',
-      html: params.html || '',
-    });
+    await mailService.send(msg);
+    console.log("Email sent successfully to:", params.to);
     return true;
   } catch (error) {
     console.error('SendGrid email error:', error);
+    // Log more detailed error information if available
+    if (error.response && error.response.body) {
+      console.error('SendGrid error details:', JSON.stringify(error.response.body));
+    }
     return false;
   }
 }
