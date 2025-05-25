@@ -56,19 +56,16 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-6">
           <Link href="/" className="hover:text-gray-300 transition-all">Home</Link>
           <Link href="/#pricing" className="hover:text-gray-300 transition-all">Pricing</Link>
-          {user && <Link href="/account" className="hover:text-gray-300 transition-all">Account</Link>}
+          {user && <Link href="/account" className="hover:text-gray-300 transition-all font-medium">My Account</Link>}
           
           {user ? (
             <div className="flex items-center space-x-4">
-              <Link href="/account" className="hover:text-gray-300 transition-all flex items-center">
+              <div className="flex items-center">
                 <span>{user.username}</span>
                 <Badge className={`px-2 py-0.5 rounded-full text-xs ml-2 ${getPlanColor()}`}>
                   {getPlanLabel()}
                 </Badge>
-              </Link>
-              <Link href="/account" className="hover:text-gray-300 transition-all">
-                My Account
-              </Link>
+              </div>
               <Button 
                 variant="outline" 
                 onClick={handleLogout} 
