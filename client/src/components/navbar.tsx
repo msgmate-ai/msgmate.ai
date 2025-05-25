@@ -56,6 +56,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-6">
           <Link href="/" className="hover:text-gray-300 transition-all">Home</Link>
           <Link href="/#pricing" className="hover:text-gray-300 transition-all">Pricing</Link>
+          {user && <Link href="/account" className="hover:text-gray-300 transition-all">Account</Link>}
           
           {user ? (
             <div className="flex items-center space-x-4">
