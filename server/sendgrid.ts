@@ -14,12 +14,18 @@ interface EmailParams {
   html?: string;
 }
 
-// Create a from email that uses the domain of your app
 // Use a verified sender email address from your SendGrid account
-const FROM_EMAIL = 'Msgmateai@gmail.com';
+// The email must be formatted with a name and address for better deliverability
+const FROM_EMAIL = {
+  email: 'mrbombuk@yahoo.co.uk', // Use your verified sender email
+  name: 'MsgMate.AI'
+};
 
 export async function sendEmail(params: EmailParams): Promise<boolean> {
   try {
+    // Add more debugging information
+    console.log('Sending email to:', params.to);
+    
     await mailService.send({
       to: params.to,
       from: FROM_EMAIL,
@@ -27,9 +33,15 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
       text: params.text || '',
       html: params.html || '',
     });
+    
+    console.log('Email sent successfully');
     return true;
   } catch (error) {
     console.error('SendGrid email error:', error);
+    // Log more detailed error information
+    if (error.response) {
+      console.error('Error details:', error.response.body);
+    }
     return false;
   }
 }
