@@ -19,6 +19,7 @@ interface EmailParams {
 
 // Create a from email that uses the domain of your app
 // This should be a domain-authenticated sender in SendGrid
+// Ensure this matches exactly with the authenticated sender in SendGrid dashboard
 const FROM_EMAIL = 'noreply@msgmate.ai';
 
 export async function sendEmail(params: EmailParams): Promise<boolean> {
@@ -28,9 +29,16 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
     await mailService.send({
       to: params.to,
       from: FROM_EMAIL,
+      replyTo: 'msgmateai@gmail.com', // Add reply-to address to improve deliverability
       subject: params.subject,
       text: params.text || ' ', // Ensure at least one character
       html: params.html || '<p> </p>', // Ensure at least one character
+      // Add headers to improve email deliverability
+      headers: {
+        'X-Priority': '1',
+        'Importance': 'high',
+        'X-MSMail-Priority': 'High'
+      }
     });
     console.log("Email sent successfully to:", params.to);
     return true;
