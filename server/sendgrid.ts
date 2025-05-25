@@ -14,14 +14,11 @@ interface EmailParams {
   html?: string;
 }
 
-// For SendGrid, we need to use a simple string email format
-const FROM_EMAIL = 'mrbombuk@yahoo.co.uk';
+// Create a from email that uses the domain of your app
+const FROM_EMAIL = 'noreply@msgmate.ai';
 
 export async function sendEmail(params: EmailParams): Promise<boolean> {
   try {
-    // Add more debugging information
-    console.log('Sending email to:', params.to);
-    
     await mailService.send({
       to: params.to,
       from: FROM_EMAIL,
@@ -29,15 +26,9 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
       text: params.text || '',
       html: params.html || '',
     });
-    
-    console.log('Email sent successfully');
     return true;
-  } catch (error: any) {
+  } catch (error) {
     console.error('SendGrid email error:', error);
-    // Log more detailed error information
-    if (error.response) {
-      console.error('Error details:', error.response.body);
-    }
     return false;
   }
 }
@@ -47,24 +38,9 @@ export async function sendVerificationEmail(email: string, token: string): Promi
   const baseUrl = process.env.APP_URL || 'http://localhost:5000';
   const verificationLink = `${baseUrl}/verify-email?token=${token}`;
   
-  // Create plain text version for better deliverability
-  const textContent = `
-    Welcome to MsgMate.AI
-    
-    Thank you for signing up! Please verify your email address to activate your account.
-    
-    Verify your email by visiting this link: ${verificationLink}
-    
-    If you did not create an account, you can safely ignore this email.
-    
-    Best regards,
-    The MsgMate.AI Team
-  `;
-  
   return sendEmail({
     to: email,
     subject: 'Verify Your MsgMate.AI Account',
-    text: textContent,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #4f46e5;">Welcome to MsgMate.AI</h2>
