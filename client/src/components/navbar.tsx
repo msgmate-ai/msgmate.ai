@@ -55,7 +55,7 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
           <Link href="/" className="hover:text-gray-300 transition-all">Home</Link>
-          <Link href="/#pricing" className="hover:text-gray-300 transition-all">Pricing</Link>
+          <Link href="/pricing" className="hover:text-gray-300 transition-all">Pricing</Link>
           {user && <Link href="/account" className="hover:text-gray-300 transition-all font-medium">My Account</Link>}
           
           {user ? (
@@ -106,7 +106,7 @@ const Navbar = () => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-primary-light mt-2 rounded">
             <Link href="/" className="block px-3 py-2 rounded hover:bg-primary-dark">Home</Link>
-            <Link href="/#pricing" className="block px-3 py-2 rounded hover:bg-primary-dark">Pricing</Link>
+            <Link href="/pricing" className="block px-3 py-2 rounded hover:bg-primary-dark">Pricing</Link>
             
             {user ? (
               <>
