@@ -24,59 +24,21 @@ const FROM_EMAIL = 'noreply@msgmate.ai';
 export async function sendEmail(params: EmailParams): Promise<boolean> {
   console.log("Attempting to send email to:", params.to);
   
-  // Ensure content is properly structured for SendGrid API
-  const msg = {
-    to: params.to,
-    from: FROM_EMAIL,
-    subject: params.subject,
-    content: [
-      {
-        type: 'text/plain',
-        value: params.text || ' ' // Ensure at least one character
-      },
-      {
-        type: 'text/html',
-        value: params.html || '<p> </p>' // Ensure at least one character
-      }
-    ]
-  };
-  
   try {
-    console.log("SendGrid request payload:", JSON.stringify({
+    await mailService.send({
       to: params.to,
       from: FROM_EMAIL,
-      subject: params.subject
-    }));
-    
-    await mailService.send(msg);
+      subject: params.subject,
+      text: params.text || ' ', // Ensure at least one character
+      html: params.html || '<p> </p>', // Ensure at least one character
+    });
     console.log("Email sent successfully to:", params.to);
     return true;
   } catch (error: any) {
-    console.error('SendGrid email error occurred');
-    
-    // Log the error status code if available
-    if (error.code) {
-      console.error('SendGrid error code:', error.code);
+    console.error('SendGrid email error:', error);
+    if (error.response && error.response.body) {
+      console.error('SendGrid error details:', JSON.stringify(error.response.body));
     }
-    
-    // Log detailed error information from the response
-    if (error.response) {
-      console.error('SendGrid status code:', error.response.statusCode);
-      if (error.response.body) {
-        if (typeof error.response.body === 'object') {
-          console.error('SendGrid error details:', JSON.stringify(error.response.body));
-        } else {
-          console.error('SendGrid error response:', error.response.body);
-        }
-      }
-      if (error.response.headers) {
-        console.error('SendGrid response headers:', JSON.stringify(error.response.headers));
-      }
-    } else {
-      // If no response object, log the error message
-      console.error('SendGrid error message:', error.message);
-    }
-    
     return false;
   }
 }

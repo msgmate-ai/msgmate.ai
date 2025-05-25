@@ -3,7 +3,7 @@ import { sendEmail } from './sendgrid';
 async function testEmailSending() {
   console.log('Testing email sending functionality...');
   
-  const testEmail = 'your-test-email@example.com'; // Replace with your email for testing
+  const testEmail = 'testuser@msgmate.ai'; // Test email address
   
   const result = await sendEmail({
     to: testEmail,
