@@ -9,7 +9,7 @@ import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import UsageStatus from "@/components/usage-status";
-import { Loader2, CreditCard, Calendar, Settings, LogOut } from "lucide-react";
+import { Loader2, CreditCard, Calendar, Settings, LogOut, ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ProtectedRoute } from "@/lib/protected-route";
 
@@ -87,6 +87,15 @@ function AccountPageContent() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
+        <Button 
+          variant="ghost" 
+          className="mb-4 flex items-center text-muted-foreground hover:text-foreground" 
+          onClick={() => navigate("/")}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to App
+        </Button>
+        
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-primary">Account Settings</h1>
