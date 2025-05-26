@@ -3,10 +3,9 @@ import { sendVerificationEmail } from './sendgrid';
 async function testWithMailTester() {
   console.log('Testing email deliverability with mail-tester.com...');
   
-  // Generate a unique mail-tester address
-  const timestamp = Date.now();
-  const mailTesterEmail = `test-${timestamp}@mail-tester.com`;
-  const testToken = 'test-token-' + timestamp;
+  // Use the provided mail-tester address
+  const mailTesterEmail = 'test-ilbi88et8@srv1.mail-tester.com';
+  const testToken = 'test-token-' + Date.now();
   
   console.log(`Sending test email to: ${mailTesterEmail}`);
   console.log('After sending, visit: https://www.mail-tester.com/ to check the spam score');
