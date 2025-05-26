@@ -84,7 +84,7 @@ export async function sendVerificationEmail(email: string, token: string): Promi
   
   return sendEmail({
     to: email,
-    subject: 'Complete Your MsgMate.AI Registration - Verify Email',
+    subject: 'Please confirm your email address',
     text: `Hello,
 
 You recently created an account with MsgMate.AI using this email address.
