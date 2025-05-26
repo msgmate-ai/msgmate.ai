@@ -25,31 +25,48 @@ const FROM_EMAIL = 'noreply@msgmate.ai';
 export async function sendEmail(params: EmailParams): Promise<boolean> {
   console.log("Attempting to send email to:", params.to);
   
+  // Ensure we have proper text content for better deliverability
+  if (!params.text && params.html) {
+    // Convert basic HTML to text if no text version provided
+    params.text = params.html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  }
+  
   try {
-    await mailService.send({
+    const response = await mailService.send({
       to: params.to,
       from: FROM_EMAIL,
-      replyTo: 'msgmateai@gmail.com', // Add reply-to address to improve deliverability
+      replyTo: 'msgmateai@gmail.com',
       subject: params.subject,
-      text: params.text || ' ', // Ensure at least one character
-      html: params.html || '<p> </p>', // Ensure at least one character
-      // Add headers to improve email deliverability
+      text: params.text || 'Please enable HTML email to view this message.',
+      html: params.html || '<p>This email requires HTML support.</p>',
+      // Remove aggressive headers that might trigger spam filters
       headers: {
-        'X-Priority': '1',
-        'Importance': 'high',
-        'X-MSMail-Priority': 'High'
+        'List-Unsubscribe': '<mailto:unsubscribe@msgmate.ai>',
+        'X-Entity-ID': 'msgmate-ai'
       },
-      // Disable click tracking to avoid SSL issues with branded domains
+      // Disable all tracking to ensure direct links
       trackingSettings: {
         clickTracking: {
           enable: false
         },
         openTracking: {
           enable: false
+        },
+        subscriptionTracking: {
+          enable: false
         }
+      },
+      // Add custom args for tracking
+      customArgs: {
+        source: 'verification-system',
+        domain: 'msgmate.ai'
       }
     });
+    
     console.log("Email sent successfully to:", params.to);
+    console.log("SendGrid response status:", response[0]?.statusCode);
+    console.log("SendGrid message ID:", response[0]?.headers?.['x-message-id']);
+    
     return true;
   } catch (error: any) {
     console.error('SendGrid email error:', error);
@@ -67,28 +84,66 @@ export async function sendVerificationEmail(email: string, token: string): Promi
   
   return sendEmail({
     to: email,
-    subject: 'Verify Your MsgMate.AI Account',
-    text: `Welcome to MsgMate.AI! 
+    subject: 'Complete Your MsgMate.AI Registration - Verify Email',
+    text: `Hello,
 
-Thank you for signing up! Please verify your email address to activate your account.
+You recently created an account with MsgMate.AI using this email address.
 
-Click this link to verify your email: ${verificationLink}
+To complete your registration and start using our AI messaging assistant, please verify your email address by clicking the link below:
 
-If you did not create an account, you can safely ignore this email.
+${verificationLink}
 
-Best regards,
-The MsgMate.AI Team`,
+This verification link will expire in 24 hours for security purposes.
+
+If you did not sign up for MsgMate.AI, please disregard this message.
+
+Thank you,
+MsgMate.AI Support Team
+https://msgmate.ai
+
+---
+This is an automated message from MsgMate.AI. Please do not reply to this email.`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #4f46e5;">Welcome to MsgMate.AI</h2>
-        <p>Thank you for signing up! Please verify your email address to activate your account.</p>
-        <div style="margin: 30px 0;">
-          <a href="${verificationLink}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Verify Email Address</a>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #4f46e5; margin: 0;">MsgMate.AI</h1>
+          <p style="color: #6b7280; margin: 5px 0;">AI-Powered Messaging Assistant</p>
         </div>
-        <p>If the button doesn't work, copy and paste this link into your browser:</p>
-        <p style="word-break: break-all; color: #4f46e5;">${verificationLink}</p>
-        <p>If you did not create an account, you can safely ignore this email.</p>
-        <p>Best regards,<br>The MsgMate.AI Team</p>
+        
+        <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <h2 style="color: #1f2937; margin-top: 0;">Complete Your Registration</h2>
+          <p style="color: #374151; line-height: 1.6;">
+            You recently created an account with MsgMate.AI using this email address.
+            To complete your registration and start using our AI messaging assistant, 
+            please verify your email address.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verificationLink}" 
+             style="background-color: #4f46e5; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600;">
+            Verify Email Address
+          </a>
+        </div>
+        
+        <div style="background-color: #fef3c7; padding: 15px; border-radius: 6px; margin: 20px 0;">
+          <p style="margin: 0; color: #92400e; font-size: 14px;">
+            <strong>Security Notice:</strong> This verification link will expire in 24 hours.
+          </p>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; line-height: 1.5;">
+          If the button above doesn't work, copy and paste this link into your browser:<br>
+          <span style="word-break: break-all; color: #4f46e5;">${verificationLink}</span>
+        </p>
+        
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+        
+        <div style="color: #6b7280; font-size: 12px; text-align: center;">
+          <p>This is an automated message from MsgMate.AI. Please do not reply to this email.</p>
+          <p>If you did not sign up for MsgMate.AI, please disregard this message.</p>
+          <p>© 2025 MsgMate.AI. All rights reserved.</p>
+        </div>
       </div>
     `
   });
