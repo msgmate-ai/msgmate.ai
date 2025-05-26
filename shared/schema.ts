@@ -7,8 +7,12 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   email: text("email"),
+  phoneNumber: text("phone_number"),
   isVerified: boolean("is_verified").default(false),
+  isPhoneVerified: boolean("is_phone_verified").default(false),
   verificationToken: text("verification_token"),
+  smsVerificationCode: text("sms_verification_code"),
+  smsCodeExpires: timestamp("sms_code_expires"),
   resetPasswordToken: text("reset_password_token"),
   resetPasswordExpires: timestamp("reset_password_expires"),
   stripeCustomerId: text("stripe_customer_id"),
@@ -29,6 +33,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   email: true,
+  phoneNumber: true,
 });
 
 export const insertSubscriptionSchema = createInsertSchema(subscriptions).pick({

@@ -27,6 +27,10 @@ export interface IStorage {
   setPasswordResetToken(username: string, token: string, expires: Date): Promise<User | undefined>;
   getUserByResetToken(token: string): Promise<User | undefined>;
   updatePassword(userId: number, password: string): Promise<User>;
+  // SMS verification methods
+  setSMSVerificationCode(userId: number, code: string, expires: Date): Promise<User>;
+  verifySMSCode(userId: number, code: string): Promise<User | undefined>;
+  updatePhoneNumber(userId: number, phoneNumber: string): Promise<User>;
   sessionStore: any; // Using any for session store to avoid type issues
 }
 
@@ -213,6 +217,69 @@ export class DatabaseStorage implements IStorage {
         password,
         resetPasswordToken: null,
         resetPasswordExpires: null
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  // SMS verification methods
+  async setSMSVerificationCode(userId: number, code: string, expires: Date): Promise<User> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({
+        smsVerificationCode: code,
+        smsCodeExpires: expires
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  async verifySMSCode(userId: number, code: string): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId));
+      
+      if (!user || !user.smsVerificationCode || !user.smsCodeExpires) {
+        return undefined;
+      }
+      
+      // Check if code matches and hasn't expired
+      const now = new Date();
+      if (user.smsVerificationCode !== code || user.smsCodeExpires < now) {
+        return undefined;
+      }
+      
+      // Mark phone as verified and clear SMS code
+      const [verifiedUser] = await db
+        .update(users)
+        .set({
+          isPhoneVerified: true,
+          isVerified: true, // Also mark overall account as verified
+          smsVerificationCode: null,
+          smsCodeExpires: null
+        })
+        .where(eq(users.id, userId))
+        .returning();
+      
+      return verifiedUser;
+    } catch (error) {
+      console.error('Error verifying SMS code:', error);
+      return undefined;
+    }
+  }
+
+  async updatePhoneNumber(userId: number, phoneNumber: string): Promise<User> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        phoneNumber,
+        isPhoneVerified: false // Reset phone verification when number changes
       })
       .where(eq(users.id, userId))
       .returning();
