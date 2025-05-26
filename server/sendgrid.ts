@@ -38,6 +38,15 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
         'X-Priority': '1',
         'Importance': 'high',
         'X-MSMail-Priority': 'High'
+      },
+      // Disable click tracking to avoid SSL issues with branded domains
+      trackingSettings: {
+        clickTracking: {
+          enable: false
+        },
+        openTracking: {
+          enable: false
+        }
       }
     });
     console.log("Email sent successfully to:", params.to);
