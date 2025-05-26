@@ -6,6 +6,7 @@ import { z } from "zod";
 import { generateMessageReplies, generateConversationStarters, analyzeMessage, decodeMessage } from "./openai";
 import { setupStripe, createCheckoutSession, handleStripeWebhook } from "./stripe";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./sendgrid";
+import { sendVerificationSMS, generateVerificationCode, isTwilioConfigured } from "./twilio";
 import { randomBytes } from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -327,6 +328,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       res.json({ success: true, message: 'Verification email sent successfully' });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+  
+  // SMS Verification routes
+  
+  // Send SMS verification code
+  app.post('/api/send-sms-verification', async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+      }
+      
+      const schema = z.object({
+        phoneNumber: z.string().min(10, "Please enter a valid phone number")
+      });
+      
+      const result = schema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ success: false, message: result.error.errors[0].message });
+      }
+      
+      const { phoneNumber } = result.data;
+      
+      if (!isTwilioConfigured()) {
+        return res.status(500).json({ success: false, message: 'SMS service is not configured' });
+      }
+      
+      // Generate verification code and set expiry (10 minutes from now)
+      const code = generateVerificationCode();
+      const expires = new Date();
+      expires.setMinutes(expires.getMinutes() + 10);
+      
+      // Update user's phone number and set SMS verification code
+      await storage.updatePhoneNumber(req.user.id, phoneNumber);
+      await storage.setSMSVerificationCode(req.user.id, code, expires);
+      
+      // Send SMS
+      const smsSent = await sendVerificationSMS(phoneNumber, code);
+      
+      if (!smsSent) {
+        return res.status(500).json({ success: false, message: 'Failed to send SMS verification code' });
+      }
+      
+      res.json({ success: true, message: 'SMS verification code sent successfully' });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+  
+  // Verify SMS code
+  app.post('/api/verify-sms', async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+      }
+      
+      const schema = z.object({
+        code: z.string().length(6, "Verification code must be 6 digits")
+      });
+      
+      const result = schema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ success: false, message: result.error.errors[0].message });
+      }
+      
+      const { code } = result.data;
+      
+      const user = await storage.verifySMSCode(req.user.id, code);
+      
+      if (!user) {
+        return res.status(400).json({ success: false, message: 'Invalid or expired verification code' });
+      }
+      
+      // Send welcome email after successful verification
+      await sendWelcomeEmail(user.username);
+      
+      res.json({ success: true, message: 'Phone verification successful', user });
     } catch (error: any) {
       next(error);
     }

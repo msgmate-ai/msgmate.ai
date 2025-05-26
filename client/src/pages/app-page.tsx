@@ -1,15 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import Navbar from '@/components/navbar';
 import ReplyGenerator from '@/components/reply-generator';
 import AdditionalTools from '@/components/additional-tools';
 import Footer from '@/components/footer';
 import UsageStatus from '@/components/usage-status';
+import { SMSVerificationModal } from '@/components/sms-verification-modal';
 import { useAuth } from '@/hooks/use-auth';
 import { SubscriptionProvider } from '@/hooks/use-subscription';
+import { useToast } from '@/hooks/use-toast';
 
 const AppPage = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [isSMSModalOpen, setIsSMSModalOpen] = useState(false);
   
   // Set page title
   useEffect(() => {
@@ -40,32 +44,52 @@ const AppPage = () => {
                         <p className="text-sm text-yellow-700 mb-2">
                           We've sent a verification link to {user.email}. Please check your inbox and spam folder.
                         </p>
-                        <button 
-                          onClick={() => {
-                            fetch('/api/resend-verification', {
-                              method: 'POST',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              credentials: 'include'
-                            })
-                            .then(res => res.json())
-                            .then(data => {
-                              if (data.success) {
-                                alert('Verification email sent! Please check your inbox and spam folder.');
-                              } else {
-                                alert('Error sending verification email. Please try again later.');
-                              }
-                            })
-                            .catch(err => {
-                              console.error('Error:', err);
-                              alert('Error sending verification email. Please try again later.');
-                            });
-                          }}
-                          className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                        >
-                          Resend verification email
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <button 
+                            onClick={() => {
+                              fetch('/api/resend-verification', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                credentials: 'include'
+                              })
+                              .then(res => res.json())
+                              .then(data => {
+                                if (data.success) {
+                                  toast({
+                                    title: "Email Sent",
+                                    description: "Verification email sent! Check your inbox and spam folder.",
+                                  });
+                                } else {
+                                  toast({
+                                    title: "Error",
+                                    description: "Error sending verification email. Please try again later.",
+                                    variant: "destructive",
+                                  });
+                                }
+                              })
+                              .catch(err => {
+                                console.error('Error:', err);
+                                toast({
+                                  title: "Error",
+                                  description: "Error sending verification email. Please try again later.",
+                                  variant: "destructive",
+                                });
+                              });
+                            }}
+                            className="text-sm text-blue-600 hover:text-blue-800 font-medium underline"
+                          >
+                            Resend verification email
+                          </button>
+                          <span className="text-sm text-yellow-700 hidden sm:inline">or</span>
+                          <button 
+                            onClick={() => setIsSMSModalOpen(true)}
+                            className="text-sm text-green-600 hover:text-green-800 font-medium underline"
+                          >
+                            Verify by phone instead
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -98,6 +122,16 @@ const AppPage = () => {
           </div>
         </main>
         <Footer />
+        
+        {/* SMS Verification Modal */}
+        <SMSVerificationModal
+          isOpen={isSMSModalOpen}
+          onClose={() => setIsSMSModalOpen(false)}
+          onSuccess={() => {
+            // Refresh the page to update user verification status
+            window.location.reload();
+          }}
+        />
       </div>
     </SubscriptionProvider>
   );
