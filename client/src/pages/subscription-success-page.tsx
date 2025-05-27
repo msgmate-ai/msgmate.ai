@@ -14,31 +14,31 @@ export default function SubscriptionSuccessPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Redirect to login if not authenticated
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-
-    // Refresh subscription data
-    const fetchData = async () => {
-      try {
-        await refetchSubscription();
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching subscription data:", error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Show welcome toast
+    // Show welcome toast immediately
     toast({
-      title: "Subscription Activated",
+      title: "Payment Successful!",
       description: "Thank you for subscribing to MsgMate.AI!",
     });
-  }, [user, navigate, refetchSubscription, toast]);
+
+    // Set loading to false after a short delay to show the page
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    // Refresh subscription data if user is available
+    if (user) {
+      const fetchData = async () => {
+        try {
+          await refetchSubscription();
+        } catch (error) {
+          console.error("Error fetching subscription data:", error);
+        }
+      };
+      fetchData();
+    }
+
+    return () => clearTimeout(timer);
+  }, [user, refetchSubscription, toast]);
 
   const getSubscriptionDetails = () => {
     if (!subscription) return { name: "Free Plan", messages: 10, features: ["5 basic tones", "Message replies"] };
@@ -88,9 +88,9 @@ export default function SubscriptionSuccessPage() {
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="bg-gradient-to-r from-green-500 to-emerald-600 py-8 px-6 text-center">
           <CheckCircle className="h-16 w-16 mx-auto text-white mb-4" />
-          <h1 className="text-3xl font-bold text-white mb-2">Subscription Successful!</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Payment Successful!</h1>
           <p className="text-white text-opacity-90">
-            Thank you for subscribing to MsgMate.AI
+            Your subscription to MsgMate.AI is being processed
           </p>
         </div>
 
