@@ -5,6 +5,7 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function SubscriptionSuccessPage() {
   const [location, navigate] = useLocation();
@@ -12,6 +13,7 @@ export default function SubscriptionSuccessPage() {
   const { subscription, refetchSubscription } = useSubscription();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [isActivating, setIsActivating] = useState(false);
 
   useEffect(() => {
     // Show welcome toast immediately
@@ -75,6 +77,38 @@ export default function SubscriptionSuccessPage() {
 
   const details = getSubscriptionDetails();
 
+  const handleActivateSubscription = async (tier: 'basic' | 'pro') => {
+    setIsActivating(true);
+    try {
+      const response = await fetch('/api/activate-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tier }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to activate subscription');
+      }
+      
+      await refetchSubscription();
+      
+      toast({
+        title: "Subscription Activated!",
+        description: `Your ${tier} subscription is now active.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Activation Failed",
+        description: error.message || "Failed to activate subscription",
+        variant: "destructive",
+      });
+    } finally {
+      setIsActivating(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -137,6 +171,35 @@ export default function SubscriptionSuccessPage() {
               <li>Check your subscription details in your account</li>
             </ol>
           </div>
+
+          {subscription?.tier === 'free' && (
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <h4 className="text-yellow-800 font-medium mb-2">Complete Your Subscription</h4>
+              <p className="text-yellow-700 text-sm mb-3">
+                Your payment was successful! Click below to activate your subscription features.
+              </p>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => handleActivateSubscription('basic')}
+                  disabled={isActivating}
+                  size="sm"
+                  className="bg-yellow-600 hover:bg-yellow-700"
+                >
+                  {isActivating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Activate Basic+ Plan
+                </Button>
+                <Button 
+                  onClick={() => handleActivateSubscription('pro')}
+                  disabled={isActivating}
+                  size="sm"
+                  className="bg-yellow-600 hover:bg-yellow-700"
+                >
+                  {isActivating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Activate Pro Plan
+                </Button>
+              </div>
+            </div>
+          )}
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button 
