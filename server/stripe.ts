@@ -26,7 +26,7 @@ export function setupStripe() {
   // Any setup required
 }
 
-export async function createCheckoutSession(user: User, tier: 'basic' | 'pro'): Promise<string> {
+export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', req?: any): Promise<string> {
   try {
     console.log('Creating checkout session for user:', user.id, user.username);
     let stripeCustomerId = user.stripeCustomerId;
@@ -104,8 +104,8 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro'): 
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.BASE_URL || 'http://localhost:5000'}/subscription-success`,
-      cancel_url: `${process.env.BASE_URL || 'http://localhost:5000'}/account`,
+      success_url: `${process.env.BASE_URL || `${req.protocol}://${req.get('host')}`}/subscription-success`,
+      cancel_url: `${process.env.BASE_URL || `${req.protocol}://${req.get('host')}`}/account`,
       metadata: {
         userId: user.id.toString(),
         tier,

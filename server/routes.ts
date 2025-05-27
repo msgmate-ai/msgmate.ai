@@ -223,7 +223,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { tier } = result.data;
       
       // Create checkout session
-      const sessionUrl = await createCheckoutSession(req.user, tier);
+      const sessionUrl = await createCheckoutSession(req.user, tier, req);
       res.json({ url: sessionUrl });
     } catch (error: any) {
       next(error);
