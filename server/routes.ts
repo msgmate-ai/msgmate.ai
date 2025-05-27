@@ -202,7 +202,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create subscription checkout session
   app.post('/api/create-subscription', async (req, res, next) => {
     try {
+      console.log('Create subscription request - isAuthenticated:', req.isAuthenticated());
+      console.log('Session ID:', req.sessionID);
+      console.log('User in session:', req.user);
+      
       if (!req.isAuthenticated()) {
+        console.log('Authentication failed - redirecting to login');
         return res.status(401).json({ message: 'Authentication required' });
       }
       
