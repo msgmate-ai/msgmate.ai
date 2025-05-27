@@ -230,37 +230,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Manual subscription activation (for testing when webhooks aren't configured)
-  app.post('/api/activate-subscription', async (req, res, next) => {
-    try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
-      
-      const schema = z.object({
-        tier: z.enum(['basic', 'pro'])
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ message: result.error.errors[0].message });
-      }
-      
-      const { tier } = result.data;
-      
-      // Update user subscription
-      await storage.updateUserSubscription(req.user.id, {
-        tier,
-        usage: 0
-      });
-      
-      console.log(`Manually activated ${tier} subscription for user ${req.user.id}`);
-      res.json({ success: true, message: `${tier} subscription activated successfully` });
-    } catch (error: any) {
-      next(error);
-    }
-  });
-  
   // Cancel subscription
   app.post('/api/cancel-subscription', async (req, res, next) => {
     try {
