@@ -7,19 +7,18 @@ if (!process.env.STRIPE_SECRET_KEY) {
   console.warn("STRIPE_SECRET_KEY is not set. Stripe functionality will not work correctly.");
 }
 
+// Determine if we're in test mode based on the secret key
+const isTestMode = !process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
+console.log('Stripe mode:', isTestMode ? 'TEST' : 'LIVE');
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
   apiVersion: "2023-10-16" as any,
 });
 
-// Price IDs should be environment variables in production
-const PRICE_IDS = {
-  basic: process.env.STRIPE_BASIC_PRICE_ID || 'price_basic',
-  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_pro'
-};
-
+// Test mode price configuration - using price_data for consistency
 const PRICES = {
-  basic: 499, // £4.99
-  pro: 999   // £9.99
+  basic: 499, // £4.99 in pence
+  pro: 999   // £9.99 in pence
 };
 
 export function setupStripe() {
@@ -81,7 +80,7 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', r
       }
     }
     
-    // Create checkout session
+    // Create checkout session with explicit test mode configuration
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       payment_method_types: ['card'],
@@ -109,8 +108,23 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', r
       metadata: {
         userId: user.id.toString(),
         tier,
-        email: user.username
-      }
+        email: user.username,
+        test_mode: isTestMode.toString()
+      },
+      // Force test mode if using test keys
+      ...(isTestMode && { 
+        payment_intent_data: { 
+          setup_future_usage: 'off_session' 
+        }
+      })
+    });
+    
+    console.log('Checkout session created:', {
+      id: session.id,
+      mode: session.mode,
+      customer: session.customer,
+      metadata: session.metadata,
+      url: session.url
     });
     
     return session.url || '';
@@ -202,14 +216,14 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
       const user = await storage.getUserByStripeCustomerId(stripeCustomerId);
       
       if (user) {
-        // Update subscription tier based on price
+        // Update subscription tier based on price amount (since we're using price_data)
         const items = subscription.items.data;
         if (items && items.length > 0) {
-          const priceId = items[0].price.id;
+          const priceAmount = items[0].price.unit_amount;
           
-          if (priceId === PRICE_IDS.basic) {
+          if (priceAmount === PRICES.basic) {
             await storage.updateUserSubscription(user.id, { tier: 'basic' });
-          } else if (priceId === PRICE_IDS.pro) {
+          } else if (priceAmount === PRICES.pro) {
             await storage.updateUserSubscription(user.id, { tier: 'pro' });
           }
         }
