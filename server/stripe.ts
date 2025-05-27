@@ -28,10 +28,13 @@ export function setupStripe() {
 
 export async function createCheckoutSession(user: User, tier: 'basic' | 'pro'): Promise<string> {
   try {
+    console.log('Creating checkout session for user:', user.id, user.username);
     let stripeCustomerId = user.stripeCustomerId;
+    console.log('Existing stripe customer ID:', stripeCustomerId);
     
     // Create or get customer
     if (!stripeCustomerId) {
+      console.log('Creating new Stripe customer...');
       const customer = await stripe.customers.create({
         email: user.username,
         name: user.username,
@@ -41,9 +44,13 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro'): 
       });
       
       stripeCustomerId = customer.id;
+      console.log('Created Stripe customer:', stripeCustomerId);
       
       // Update user with Stripe customer ID
       await storage.updateUserStripeInfo(user.id, stripeCustomerId);
+      console.log('Updated user with Stripe customer ID');
+    } else {
+      console.log('Using existing Stripe customer:', stripeCustomerId);
     }
     
     // Create checkout session
