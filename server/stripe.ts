@@ -51,6 +51,34 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro'): 
       console.log('Updated user with Stripe customer ID');
     } else {
       console.log('Using existing Stripe customer:', stripeCustomerId);
+      
+      // Verify the customer still exists in Stripe
+      try {
+        await stripe.customers.retrieve(stripeCustomerId);
+        console.log('Stripe customer verified successfully');
+      } catch (error: any) {
+        if (error.type === 'StripeInvalidRequestError' && error.code === 'resource_missing') {
+          console.log('Stripe customer no longer exists, creating new one...');
+          
+          // Customer doesn't exist — reset the ID so a new one can be created
+          const customer = await stripe.customers.create({
+            email: user.username,
+            name: user.username,
+            metadata: {
+              userId: user.id.toString()
+            }
+          });
+          
+          stripeCustomerId = customer.id;
+          console.log('Created new Stripe customer:', stripeCustomerId);
+          
+          // Update user with new Stripe customer ID
+          await storage.updateUserStripeInfo(user.id, stripeCustomerId);
+          console.log('Updated user with new Stripe customer ID');
+        } else {
+          throw error;
+        }
+      }
     }
     
     // Create checkout session
