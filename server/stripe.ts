@@ -110,13 +110,7 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', r
         tier,
         email: user.username,
         test_mode: isTestMode.toString()
-      },
-      // Force test mode if using test keys
-      ...(isTestMode && { 
-        payment_intent_data: { 
-          setup_future_usage: 'off_session' 
-        }
-      })
+      }
     });
     
     console.log('Checkout session created:', {
