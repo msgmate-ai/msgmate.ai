@@ -15,10 +15,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder'
   apiVersion: "2023-10-16" as any,
 });
 
-// Test mode price configuration - using price_data for consistency
-const PRICES = {
-  basic: 499, // £4.99 in pence
-  pro: 999   // £9.99 in pence
+// Test mode product and price IDs from Stripe dashboard
+const PRODUCTS = {
+  basic: 'prod_SJPkOcAOBNIWA8', // Basic+ Plan
+  pro: 'prod_SJPmqxh8m9Neim'    // Pro Plan
+};
+
+// Price IDs - these need to be retrieved from your Stripe test dashboard
+// You'll need to provide the actual price_xxx IDs associated with these products
+const PRICE_IDS = {
+  basic: process.env.STRIPE_BASIC_PRICE_ID || 'price_basic_placeholder',
+  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_pro_placeholder'
 };
 
 export function setupStripe() {
@@ -86,19 +93,7 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', r
       payment_method_types: ['card'],
       line_items: [
         {
-          price_data: {
-            currency: 'gbp',
-            product_data: {
-              name: tier === 'basic' ? 'MsgMate.AI Basic+ Plan' : 'MsgMate.AI Pro Plan',
-              description: tier === 'basic' 
-                ? '100 messages/month, 10 tones, Conversation Starters'
-                : '400 messages/month, 15 tones, all premium features'
-            },
-            unit_amount: tier === 'basic' ? PRICES.basic : PRICES.pro,
-            recurring: {
-              interval: 'month'
-            }
-          },
+          price: tier === 'basic' ? PRICE_IDS.basic : PRICE_IDS.pro,
           quantity: 1,
         },
       ],
@@ -210,15 +205,17 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
       const user = await storage.getUserByStripeCustomerId(stripeCustomerId);
       
       if (user) {
-        // Update subscription tier based on price amount (since we're using price_data)
+        // Update subscription tier based on price ID
         const items = subscription.items.data;
         if (items && items.length > 0) {
-          const priceAmount = items[0].price.unit_amount;
+          const priceId = items[0].price.id;
           
-          if (priceAmount === PRICES.basic) {
+          if (priceId === PRICE_IDS.basic) {
             await storage.updateUserSubscription(user.id, { tier: 'basic' });
-          } else if (priceAmount === PRICES.pro) {
+            console.log('Updated user to basic tier via subscription.updated');
+          } else if (priceId === PRICE_IDS.pro) {
             await storage.updateUserSubscription(user.id, { tier: 'pro' });
+            console.log('Updated user to pro tier via subscription.updated');
           }
         }
       }
