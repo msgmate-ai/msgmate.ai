@@ -113,6 +113,7 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', r
       mode: session.mode,
       customer: session.customer,
       metadata: session.metadata,
+      priceId: tier === 'basic' ? PRICE_IDS.basic : PRICE_IDS.pro,
       url: session.url
     });
     
@@ -124,12 +125,12 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', r
 }
 
 export async function handleStripeWebhook(req: express.Request, res: express.Response) {
-  console.log('Stripe webhook received');
+  console.log('🔗 Stripe webhook received');
   const sig = req.headers['stripe-signature'] as string;
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
   if (!endpointSecret) {
-    console.error('STRIPE_WEBHOOK_SECRET not configured');
+    console.error('❌ STRIPE_WEBHOOK_SECRET not configured');
     return res.status(400).send('Webhook secret not configured');
   }
   
@@ -137,15 +138,15 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
   
   try {
     const body = req.body;
-    console.log('Webhook body type:', typeof body);
+    console.log('📦 Webhook body type:', typeof body);
     event = stripe.webhooks.constructEvent(
       body, 
       sig, 
       endpointSecret
     );
-    console.log('Webhook event verified:', event.type);
+    console.log('✅ Webhook event verified:', event.type);
   } catch (err: any) {
-    console.error(`Webhook Error: ${err.message}`);
+    console.error(`❌ Webhook Error: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
   
@@ -153,46 +154,77 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log('Processing checkout.session.completed for session:', session.id);
+      console.log('💳 Processing checkout.session.completed for session:', session.id);
+      console.log('💰 Customer ID:', session.customer);
       
       // Extract metadata
       const userId = parseInt(session.metadata?.userId || '0');
       const tier = session.metadata?.tier as 'basic' | 'pro';
       const email = session.metadata?.email;
       
-      console.log('Session metadata - userId:', userId, 'tier:', tier, 'email:', email);
+      console.log('📋 Session metadata - userId:', userId, 'tier:', tier, 'email:', email);
       
-      if (userId && tier) {
-        console.log('Updating user subscription for userId:', userId, 'to tier:', tier);
+      // Get line items to determine the price ID
+      if (session.line_items?.data?.[0]?.price?.id) {
+        const priceId = session.line_items.data[0].price.id;
+        console.log('💵 Price ID from session:', priceId);
         
-        // Update user subscription
-        const updatedSubscription = await storage.updateUserSubscription(userId, {
-          tier,
-          usage: 0
-        });
-        
-        console.log('Subscription updated successfully:', updatedSubscription);
-        
-        // Store subscription ID with user
-        if (session.subscription) {
-          console.log('Updating user Stripe info with subscription ID:', session.subscription);
-          await storage.updateUserStripeInfo(
-            userId, 
-            session.customer as string, 
-            session.subscription as string
-          );
-          console.log('User Stripe info updated successfully');
+        // Determine tier from price ID for accuracy
+        let actualTier: 'basic' | 'pro' | 'free' = 'free';
+        if (priceId === PRICE_IDS.basic) {
+          actualTier = 'basic';
+        } else if (priceId === PRICE_IDS.pro) {
+          actualTier = 'pro';
         }
         
-        // Send confirmation email
-        if (email) {
-          console.log('Sending confirmation email to:', email);
-          const { sendSubscriptionConfirmationEmail } = await import('./sendgrid');
-          await sendSubscriptionConfirmationEmail(email, tier);
-          console.log('Confirmation email sent successfully');
+        console.log('🎯 Determined tier from price ID:', actualTier);
+        
+        if (userId && actualTier !== 'free') {
+          console.log('🔄 Updating user subscription for userId:', userId, 'to tier:', actualTier);
+          
+          // Update user subscription
+          const updatedSubscription = await storage.updateUserSubscription(userId, {
+            tier: actualTier,
+            usage: 0
+          });
+          
+          console.log('✅ Subscription updated successfully:', updatedSubscription);
+          
+          // Store subscription ID with user
+          if (session.subscription) {
+            console.log('🔗 Updating user Stripe info with subscription ID:', session.subscription);
+            await storage.updateUserStripeInfo(
+              userId, 
+              session.customer as string, 
+              session.subscription as string
+            );
+            console.log('✅ User Stripe info updated successfully');
+          }
+          
+          // Send confirmation email
+          if (email) {
+            console.log('📧 Sending confirmation email to:', email);
+            const { sendSubscriptionConfirmationEmail } = await import('./sendgrid');
+            await sendSubscriptionConfirmationEmail(email, actualTier);
+            console.log('✅ Confirmation email sent successfully');
+          }
+        } else {
+          console.error('❌ Missing required data - userId:', userId, 'tier:', actualTier);
         }
       } else {
-        console.error('Missing required metadata - userId or tier is missing');
+        // Fallback to metadata if line items not available
+        if (userId && tier) {
+          console.log('🔄 Fallback: Using metadata tier for userId:', userId, 'to tier:', tier);
+          
+          const updatedSubscription = await storage.updateUserSubscription(userId, {
+            tier,
+            usage: 0
+          });
+          
+          console.log('✅ Subscription updated successfully (fallback):', updatedSubscription);
+        } else {
+          console.error('❌ Missing required metadata - userId or tier is missing');
+        }
       }
       break;
     }
