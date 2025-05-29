@@ -5,7 +5,6 @@ import ReplyGenerator from '@/components/reply-generator';
 import AdditionalTools from '@/components/additional-tools';
 import Footer from '@/components/footer';
 import UsageStatus from '@/components/usage-status';
-// import { SMSVerificationModal } from '@/components/sms-verification-modal';
 import { useAuth } from '@/hooks/use-auth';
 import { SubscriptionProvider } from '@/hooks/use-subscription';
 import { useToast } from '@/hooks/use-toast';
@@ -130,17 +129,7 @@ const AppPage = () => {
         </main>
         <Footer />
         
-        {/* SMS Verification Modal */}
-        {SMS_ENABLED && (
-          <SMSVerificationModal
-            isOpen={isSMSModalOpen}
-            onClose={() => setIsSMSModalOpen(false)}
-            onSuccess={() => {
-              // Refresh the page to update user verification status
-              window.location.reload();
-            }}
-          />
-        )}
+        {/* SMS Verification Modal - Disabled */}
       </div>
     </SubscriptionProvider>
   );
