@@ -7,7 +7,6 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
-
 declare global {
   namespace Express {
     interface User extends SelectUser {}
@@ -36,6 +35,19 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+console.log("🔐 setupAuth running");
+
+// Debug session and passport middleware setup
+app.use((req, res, next) => {
+  console.log("MIDDLEWARE: Incoming request", {
+    method: req.method,
+    url: req.url,
+    session: req.session,
+    user: req.user
+  });
+  next();
+});
+ 
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "msgmate-ai-secret",
     resave: false,
@@ -77,6 +89,10 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: number, done) => {
     console.log('DESERIALIZE: Attempting to load user with ID:', id);
     try {
+      if (!storage) {
+        console.error('DESERIALIZE: Storage not initialized');
+        return done(null, false);
+      }
       const user = await storage.getUser(id);
       if (!user) {
         console.log('DESERIALIZE: User not found for ID:', id);
@@ -233,3 +249,14 @@ export function setupAuth(app: Express) {
     }
   });
 }
+router.post('/auth/login', (req, res) => {
+  // Fake login for testing
+  req.session.user = {
+    id: 1,
+    email: 'msgmate.ai@gmail.com',
+    isVerified: true
+  };
+
+  console.log("✅ Session set:", req.session.user);
+  res.json({ message: 'Logged in' });
+});
