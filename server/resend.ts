@@ -44,7 +44,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<boolean> {
-  const baseUrl = process.env.NODE_ENV === 'production' ? 'https://msgmate.replit.app' : `http://localhost:5000`;
+  const baseUrl = process.env.NODE_ENV === 'production' ? 'https://msgmate.ai' : `http://localhost:5000`;
   const verificationLink = `${baseUrl}/verify-email?token=${token}`;
   
   return await sendEmail({
@@ -124,7 +124,7 @@ export async function sendWelcomeEmail(email: string): Promise<boolean> {
 }
 
 export async function sendPasswordResetEmail(email: string, token: string): Promise<boolean> {
-  const baseUrl = process.env.NODE_ENV === 'production' ? 'https://msgmate.replit.app' : `http://localhost:5000`;
+  const baseUrl = process.env.NODE_ENV === 'production' ? 'https://msgmate.ai' : `http://localhost:5000`;
   const resetLink = `${baseUrl}/reset-password?token=${token}`;
   
   return await sendEmail({
