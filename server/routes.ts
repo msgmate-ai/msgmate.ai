@@ -24,7 +24,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     const isPublicRoute = publicRoutes.some(route => req.path.startsWith(route));
     
-    if (!isPublicRoute && req.session && req.session.passport && req.session.passport.user && !req.user) {
+    if (!isPublicRoute && req.session && (req.session as any).passport && (req.session as any).passport.user && !req.user) {
       // Session exists but user deserialization failed - clear session and redirect
       req.session.destroy((err) => {
         if (err) console.error('Error destroying session:', err);

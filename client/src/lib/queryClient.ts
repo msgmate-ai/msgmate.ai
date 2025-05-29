@@ -2,8 +2,20 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    try {
+      const json = await res.json();
+      
+      // Handle session expiration
+      if (res.status === 401 && json.redirect) {
+        window.location.href = json.redirect;
+        return;
+      }
+      
+      throw new Error(json.message || `${res.status}: ${res.statusText}`);
+    } catch (parseError) {
+      const text = (await res.text()) || res.statusText;
+      throw new Error(`${res.status}: ${text}`);
+    }
   }
 }
 
