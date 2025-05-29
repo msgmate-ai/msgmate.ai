@@ -105,6 +105,8 @@ export function setupAuth(app: Express) {
 
   app.post("/api/login", (req, res, next) => {
     console.log('Login attempt for:', req.body.username);
+    console.log('Session before login:', req.sessionID, req.session);
+    
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
         console.error('Login error:', err);
@@ -120,7 +122,10 @@ export function setupAuth(app: Express) {
           console.error('Session creation error:', err);
           return next(err);
         }
-        console.log('Login successful for:', user.username, 'Session ID:', req.sessionID);
+        console.log('Login successful for:', user.username);
+        console.log('Session after login:', req.sessionID, req.session);
+        console.log('req.user:', req.user);
+        console.log('req.isAuthenticated():', req.isAuthenticated());
         res.status(200).json(user);
       });
     })(req, res, next);
@@ -134,7 +139,10 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
-    console.log('User check - Session ID:', req.sessionID, 'Authenticated:', req.isAuthenticated(), 'User:', req.user?.username);
+    console.log('User check - Session ID:', req.sessionID);
+    console.log('Session data:', req.session);
+    console.log('Authenticated:', req.isAuthenticated());
+    console.log('User:', req.user?.username);
     if (!req.isAuthenticated()) return res.sendStatus(401);
     res.json(req.user);
   });
