@@ -32,10 +32,21 @@ const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<string>('login');
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
   const [, navigate] = useLocation();
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   // Set page title
   useEffect(() => {
     document.title = "MsgMate.AI - Log in or Sign up";
+  }, []);
+
+  // Check for session expiration parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('expired') === 'true') {
+      setSessionExpired(true);
+      // Clear the URL parameter
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, []);
   
   // Redirect if already logged in
@@ -71,11 +82,13 @@ const AuthPage = () => {
     registerMutation.mutate(userData);
   };
 
-  // Don't render anything if we're going to redirect
-  if (user) {
+  if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-secondary-light flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
+          <p>Loading...</p>
+        </div>
       </div>
     );
   }
@@ -108,6 +121,13 @@ const AuthPage = () => {
                   <CardDescription>
                     Enter your details to access your account
                   </CardDescription>
+                  {sessionExpired && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
+                      <p className="text-sm text-yellow-800">
+                        Your session has expired. Please log in again.
+                      </p>
+                    </div>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <Form {...loginForm}>
@@ -132,17 +152,13 @@ const AuthPage = () => {
                           <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                              <Input type="password" placeholder="••••••••" {...field} />
+                              <Input type="password" placeholder="Enter your password" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <Button 
-                        type="submit" 
-                        className="w-full bg-primary hover:bg-primary-light"
-                        disabled={loginMutation.isPending}
-                      >
+                      <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
                         {loginMutation.isPending ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -152,27 +168,15 @@ const AuthPage = () => {
                           'Login'
                         )}
                       </Button>
-                      <div className="text-center mt-2">
-                        <Link href="/forgot-password">
-                          <Button variant="link" className="text-sm text-secondary hover:text-primary">
-                            Forgot password?
-                          </Button>
-                        </Link>
-                      </div>
                     </form>
                   </Form>
                 </CardContent>
-                <CardFooter className="flex justify-center">
-                  <p className="text-sm text-secondary">
-                    Don't have an account?{' '}
-                    <button 
-                      type="button" 
-                      onClick={() => setActiveTab('register')}
-                      className="text-primary hover:underline font-medium"
-                    >
-                      Sign Up
-                    </button>
-                  </p>
+                <CardFooter className="flex flex-col items-center space-y-2">
+                  <Link href="/forgot-password">
+                    <Button variant="link" className="text-sm">
+                      Forgot your password?
+                    </Button>
+                  </Link>
                 </CardFooter>
               </Card>
             </TabsContent>
@@ -180,9 +184,9 @@ const AuthPage = () => {
             <TabsContent value="register">
               <Card>
                 <CardHeader>
-                  <CardTitle>Create an Account</CardTitle>
+                  <CardTitle>Create Account</CardTitle>
                   <CardDescription>
-                    Sign up to start crafting perfect messages
+                    Sign up to start using MsgMate.AI
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -197,9 +201,6 @@ const AuthPage = () => {
                             <FormControl>
                               <Input placeholder="you@example.com" {...field} />
                             </FormControl>
-                            <FormDescription>
-                              This will be your username for login
-                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -211,8 +212,11 @@ const AuthPage = () => {
                           <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                              <Input type="password" placeholder="••••••••" {...field} />
+                              <Input type="password" placeholder="Create a password" {...field} />
                             </FormControl>
+                            <FormDescription>
+                              Password must be at least 6 characters long
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -224,17 +228,13 @@ const AuthPage = () => {
                           <FormItem>
                             <FormLabel>Confirm Password</FormLabel>
                             <FormControl>
-                              <Input type="password" placeholder="••••••••" {...field} />
+                              <Input type="password" placeholder="Confirm your password" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <Button 
-                        type="submit" 
-                        className="w-full bg-primary hover:bg-primary-light"
-                        disabled={registerMutation.isPending}
-                      >
+                      <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
                         {registerMutation.isPending ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -247,16 +247,20 @@ const AuthPage = () => {
                     </form>
                   </Form>
                 </CardContent>
-                <CardFooter className="flex justify-center">
-                  <p className="text-sm text-secondary">
-                    Already have an account?{' '}
-                    <button 
-                      type="button" 
-                      onClick={() => setActiveTab('login')}
-                      className="text-primary hover:underline font-medium"
-                    >
-                      Login
-                    </button>
+                <CardFooter>
+                  <p className="text-xs text-muted-foreground text-center w-full">
+                    By creating an account, you agree to our{' '}
+                    <Link href="/terms">
+                      <Button variant="link" className="text-xs p-0 h-auto">
+                        Terms of Service
+                      </Button>
+                    </Link>{' '}
+                    and{' '}
+                    <Link href="/privacy">
+                      <Button variant="link" className="text-xs p-0 h-auto">
+                        Privacy Policy
+                      </Button>
+                    </Link>
                   </p>
                 </CardFooter>
               </Card>
@@ -264,21 +268,33 @@ const AuthPage = () => {
           </Tabs>
         </div>
         
-        {/* Hero Content */}
-        <div className="bg-primary rounded-xl p-8 text-white flex flex-col justify-center order-first lg:order-last">
-          <h2 className="text-3xl font-bold mb-4">Your AI Messaging Assistant</h2>
-          <p className="mb-6">
-            MsgMate.AI helps you craft the perfect messages for any situation, offering smart replies, conversation starters, and message analysis.
-          </p>
+        {/* Features Showcase */}
+        <div className="hidden lg:flex flex-col justify-center bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-8 text-white">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold mb-4">Your AI Wingmate for Perfect Messages</h2>
+            <p className="text-xl text-primary-light opacity-90">
+              Transform your dating conversations with AI-powered message crafting, tone analysis, and conversation starters.
+            </p>
+          </div>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="flex items-start">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               <div>
-                <h3 className="font-semibold text-lg">AI-Powered Replies</h3>
-                <p className="text-gray-300">Generate perfectly tailored responses in multiple tones</p>
+                <h3 className="font-semibold text-lg">Smart Reply Generation</h3>
+                <p className="text-gray-300">Get personalized message suggestions in any tone</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <div>
+                <h3 className="font-semibold text-lg">Message Analysis</h3>
+                <p className="text-gray-300">Understand tone, sentiment, and improve your communication</p>
               </div>
             </div>
             

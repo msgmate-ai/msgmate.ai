@@ -13,6 +13,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
   
+  // Middleware to handle session deserialization failures gracefully
+  app.use('/api', (req, res, next) => {
+    // Only check for authenticated routes
+    const publicRoutes = [
+      '/api/register', '/api/login', '/api/forgot-password', '/api/reset-password',
+      '/api/verify-email', '/api/webhook', '/api/generate-replies', '/api/generate-conversation-starters',
+      '/api/analyze-message', '/api/decode-message'
+    ];
+    
+    const isPublicRoute = publicRoutes.some(route => req.path.startsWith(route));
+    
+    if (!isPublicRoute && req.session && req.session.passport && req.session.passport.user && !req.user) {
+      // Session exists but user deserialization failed - clear session and redirect
+      req.session.destroy((err) => {
+        if (err) console.error('Error destroying session:', err);
+        res.status(401).json({ 
+          message: 'Session expired', 
+          redirect: '/login?expired=true' 
+        });
+      });
+      return;
+    }
+    
+    next();
+  });
+  
   // Set up Stripe webhook handler
   app.post('/api/webhook', handleStripeWebhook);
   
