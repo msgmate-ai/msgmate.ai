@@ -42,7 +42,7 @@ function Router() {
       <Route path="/terms" component={TermsPage} />
       <Route path="/account" component={AccountPage} />
       <Route path="/subscription-success" component={SubscriptionSuccessPage} />
-      <Route path="/dev/dashboard" component={DevDashboardPage} />
+      <Route path="/dashboard" component={DevDashboardPage} />
       <Route component={NotFound} />
     </Switch>
   );
