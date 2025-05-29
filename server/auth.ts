@@ -122,21 +122,7 @@ export function setupAuth(app: Express) {
     res.json(req.user);
   });
 
-  // Email verification route
-  app.get("/api/verify-email/:token", async (req, res, next) => {
-    try {
-      const { token } = req.params;
-      const user = await storage.verifyUserEmail(token);
-      
-      if (!user) {
-        return res.status(400).json({ message: "Invalid or expired verification token" });
-      }
-      
-      res.json({ success: true, message: "Email verified successfully" });
-    } catch (error) {
-      next(error);
-    }
-  });
+
 
   // Request password reset
   app.post("/api/forgot-password", async (req, res, next) => {
