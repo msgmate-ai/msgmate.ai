@@ -121,7 +121,7 @@ export function setupAuth(app: Express) {
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
     // Store user in session for additional backup
     if (req.user) {
-      req.session.user = req.user;
+      (req.session as any).user = req.user;
       console.log('User logged in successfully:', req.user.username, 'Session ID:', req.sessionID);
     }
     res.status(200).json(req.user);
@@ -132,7 +132,7 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       // Clear session user as well
       if (req.session) {
-        req.session.user = null;
+        delete (req.session as any).user;
       }
       res.sendStatus(200);
     });
