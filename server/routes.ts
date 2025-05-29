@@ -13,8 +13,7 @@ import { randomBytes } from "crypto";
 const SMS_ENABLED = false;
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Set up authentication routes
-  setupAuth(app);
+  // Authentication is now set up in server/index.ts before routes
   
   // Middleware to handle session deserialization failures gracefully
   app.use('/api', (req, res, next) => {
