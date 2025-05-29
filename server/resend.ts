@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Resend API configuration
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_2hPjYiX9_K2pznnYgKnecT8fWNUmAkGYC';
+const RESEND_API_KEY = 're_2hPjYiX9_K2pznnYgKnecT8fWNUmAkGYC';
 const FROM_EMAIL = 'MsgMate <onboarding@resend.dev>';
 
 interface EmailParams {

@@ -3,8 +3,8 @@ import { sendVerificationEmail } from './resend';
 async function testResendEmail() {
   console.log('Testing Resend email integration...');
   
-  // Test email address
-  const testEmail = 'barryforduk@yahoo.co.uk';
+  // Test email address - using Resend's test address
+  const testEmail = 'delivered@resend.dev';
   const testToken = 'test-verification-token-' + Date.now();
   
   console.log(`Sending verification email to ${testEmail} with token: ${testToken}`);
