@@ -19,6 +19,7 @@ import CookiesPage from "@/pages/cookies-page";
 import TermsPage from "@/pages/terms-page";
 import AccountPage from "@/pages/account-page";
 import SubscriptionSuccessPage from "@/pages/subscription-success-page";
+import DevDashboardPage from "@/pages/dev-dashboard-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 import { SubscriptionProvider } from "./hooks/use-subscription";
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/terms" component={TermsPage} />
       <Route path="/account" component={AccountPage} />
       <Route path="/subscription-success" component={SubscriptionSuccessPage} />
+      <Route path="/dev/dashboard" component={DevDashboardPage} />
       <Route component={NotFound} />
     </Switch>
   );

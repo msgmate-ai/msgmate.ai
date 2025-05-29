@@ -543,6 +543,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Developer dashboard routes (development only)
+  const DEV_ADMIN_EMAILS = ['developer@msgmate.ai', 'admin@msgmate.ai'];
+  
+  // Check if user is developer/admin
+  const isDeveloper = (user: any) => {
+    return process.env.NODE_ENV === 'development' && user && DEV_ADMIN_EMAILS.includes(user.username);
+  };
+  
+  // Get analytics data (developers only)
+  app.get('/api/dev/analytics', async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated() || !isDeveloper(req.user)) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+      
+      const limit = parseInt(req.query.limit as string) || 50;
+      const events = getEvents(limit);
+      const stats = getEventStats();
+      
+      res.json({ events, stats });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+  
+  // Clear analytics data (developers only)
+  app.post('/api/dev/analytics/clear', async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated() || !isDeveloper(req.user)) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+      
+      clearEvents();
+      res.json({ message: 'Analytics data cleared' });
+    } catch (error: any) {
+      next(error);
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
