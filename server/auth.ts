@@ -96,9 +96,6 @@ export function setupAuth(app: Express) {
 
       // Send verification email
       await sendVerificationEmail(user.username, verificationToken);
-      
-      // Send welcome email
-      await sendWelcomeEmail(user.username);
 
       req.login(user, (err) => {
         if (err) return next(err);

@@ -103,22 +103,73 @@ export async function sendVerificationEmail(email: string, token: string): Promi
 }
 
 export async function sendWelcomeEmail(email: string): Promise<boolean> {
+  const BASE_URL = process.env.BASE_URL || 'https://msgmate.ai';
+  
   return await sendEmail({
     to: email,
-    subject: 'Welcome to MsgMate.AI!',
+    subject: 'Welcome to MsgMate.AI – Your AI Wingmate Awaits',
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #4f46e5;">Welcome to MsgMate.AI!</h2>
-        <p>Your email has been verified successfully. You can now start using our AI-powered dating communication tools.</p>
-        <p>Get started by logging into your account and exploring our features:</p>
-        <ul>
-          <li>AI Reply Generator</li>
-          <li>Message Decoder</li>
-          <li>Conversation Starters</li>
-          <li>Message Coach</li>
-        </ul>
-        <p>Happy dating!</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #4f46e5; font-size: 28px; margin: 0;">MsgMate.AI</h1>
+          <p style="color: #6b7280; font-size: 16px; margin: 10px 0 0 0;">Your AI-Powered Dating Wingmate</p>
+        </div>
+        
+        <div style="background-color: #f8fafc; padding: 30px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
+          <h2 style="color: #1f2937; font-size: 24px; margin: 0 0 20px 0;">Welcome to MsgMate.AI!</h2>
+          <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+            Congratulations! Your account is now ready. MsgMate.AI is here to help you craft perfect messages, decode conversations, and boost your dating confidence with AI-powered insights.
+          </p>
+          
+          <a href="${BASE_URL}/app" style="display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; font-size: 16px;">
+            Start Your First Message
+          </a>
+        </div>
+        
+        <div style="margin: 30px 0;">
+          <h3 style="color: #1f2937; font-size: 18px; margin: 0 0 15px 0;">What you can do with MsgMate.AI:</h3>
+          <ul style="color: #4b5563; font-size: 16px; line-height: 1.8; margin: 0; padding-left: 20px;">
+            <li><strong>AI Reply Generator:</strong> Get perfect responses for any message</li>
+            <li><strong>Message Decoder:</strong> Understand what they really mean</li>
+            <li><strong>Conversation Starters:</strong> Break the ice with confidence</li>
+            <li><strong>Message Coach:</strong> Improve your communication style</li>
+          </ul>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <p style="color: #4b5563; font-size: 16px; margin: 0 0 20px 0;">
+            Ready to transform your dating conversations?
+          </p>
+          <a href="${BASE_URL}/app" style="display: inline-block; background-color: #10b981; color: white; text-decoration: none; padding: 10px 25px; border-radius: 6px; font-weight: bold;">
+            Try Your First Message →
+          </a>
+        </div>
+        
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+        
+        <div style="color: #6b7280; font-size: 12px; text-align: center;">
+          <p>Need help? Check out our guides at <a href="${BASE_URL}/about" style="color: #4f46e5;">msgmate.ai/about</a></p>
+          <p>© 2025 MsgMate.AI. All rights reserved.</p>
+        </div>
       </div>
+    `,
+    text: `
+      Welcome to MsgMate.AI – Your AI Wingmate Awaits!
+      
+      Congratulations! Your account is now ready. MsgMate.AI is here to help you craft perfect messages, decode conversations, and boost your dating confidence with AI-powered insights.
+      
+      What you can do with MsgMate.AI:
+      • AI Reply Generator: Get perfect responses for any message
+      • Message Decoder: Understand what they really mean  
+      • Conversation Starters: Break the ice with confidence
+      • Message Coach: Improve your communication style
+      
+      Ready to transform your dating conversations?
+      Start here: ${BASE_URL}/app
+      
+      Need help? Visit: ${BASE_URL}/about
+      
+      © 2025 MsgMate.AI. All rights reserved.
     `
   });
 }
