@@ -66,6 +66,13 @@ const Navbar = () => {
                   {getPlanLabel()}
                 </Badge>
               </div>
+              {user.username === 'msgmate.ai@gmail.com' && (
+                <Link href="/dashboard">
+                  <Button className="bg-yellow-500 text-black hover:bg-yellow-600 text-sm">
+                    Dashboard
+                  </Button>
+                </Link>
+              )}
               <Button 
                 variant="outline" 
                 onClick={handleLogout} 
