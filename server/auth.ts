@@ -40,8 +40,10 @@ export function setupAuth(app: Express) {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
       secure: false, // Set to true in production with HTTPS
-      sameSite: 'lax' // Better cross-site compatibility
-    }
+      sameSite: 'lax', // Better cross-site compatibility
+      domain: undefined // Don't set domain for localhost
+    },
+    name: 'msgmate.sid' // Custom session name
   };
 
   app.set("trust proxy", 1);
