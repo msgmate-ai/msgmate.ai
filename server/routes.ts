@@ -190,6 +190,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update usage count
       await storage.incrementUsage(req.user.id);
       
+      // Log message coach usage
+      logEvent('message_coach', req.user.id, req.user.username, {
+        messageLength: message.length
+      });
+      
       res.json(analysis);
     } catch (error: any) {
       next(error);
@@ -224,6 +229,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update usage count
       await storage.incrementUsage(req.user.id);
+      
+      // Log message decoder usage
+      logEvent('message_decoder', req.user.id, req.user.username, {
+        messageLength: message.length
+      });
       
       res.json(decoded);
     } catch (error: any) {

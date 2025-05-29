@@ -7,6 +7,7 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
+import { logEvent } from "./utils/analytics";
 
 declare global {
   namespace Express {
@@ -95,6 +96,9 @@ export function setupAuth(app: Express) {
         email: req.body.username, // Store email in both fields for backward compatibility
         password: await hashPassword(req.body.password),
       });
+
+      // Log signup event
+      logEvent('signup', user.id, user.username);
 
       // Generate verification token
       const verificationToken = generateToken();

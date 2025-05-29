@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { storage } from "./storage";
 import { User } from "@shared/schema";
 import express from "express";
+import { logEvent } from "./utils/analytics";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   console.warn("STRIPE_SECRET_KEY is not set. Stripe functionality will not work correctly.");
@@ -189,6 +190,9 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
           });
           
           console.log('✅ Subscription updated successfully:', updatedSubscription);
+          
+          // Log subscription upgrade event
+          logEvent('subscription_upgrade', userId, email, { tier: actualTier, priceId });
           
           // Store subscription ID with user
           if (session.subscription) {
