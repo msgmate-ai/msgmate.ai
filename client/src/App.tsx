@@ -29,7 +29,8 @@ function Router() {
     <Switch>
       <Route path="/" component={LandingPage} />
       <Route path="/app" component={AppPage} />
-      <ProtectedRoute path="/dashboard" component={HomePage} />
+      <ProtectedRoute path="/home" component={HomePage} />
+      <Route path="/dashboard" component={DevDashboardPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/verify-email" component={VerifyEmailPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
@@ -42,7 +43,6 @@ function Router() {
       <Route path="/terms" component={TermsPage} />
       <Route path="/account" component={AccountPage} />
       <Route path="/subscription-success" component={SubscriptionSuccessPage} />
-      <Route path="/dashboard" component={DevDashboardPage} />
       <Route component={NotFound} />
     </Switch>
   );

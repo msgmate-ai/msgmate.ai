@@ -89,6 +89,7 @@ export default function DevDashboardPage() {
         <Alert variant="destructive">
           <AlertDescription>
             Access denied. This dashboard is only available to developers in development mode.
+            Current user access: {error.message}
           </AlertDescription>
         </Alert>
       </div>
