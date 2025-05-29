@@ -5,7 +5,7 @@ import { setupAuth } from "./auth";
 import { z } from "zod";
 import { generateMessageReplies, generateConversationStarters, analyzeMessage, decodeMessage } from "./openai";
 import { setupStripe, createCheckoutSession, handleStripeWebhook } from "./stripe";
-import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./sendgrid";
+import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
 import { sendVerificationSMS, generateVerificationCode, isTwilioConfigured } from "./twilio";
 import { randomBytes } from "crypto";
 

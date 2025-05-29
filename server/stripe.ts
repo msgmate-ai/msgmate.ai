@@ -204,7 +204,7 @@ export async function handleStripeWebhook(req: express.Request, res: express.Res
           // Send confirmation email
           if (email) {
             console.log('📧 Sending confirmation email to:', email);
-            const { sendSubscriptionConfirmationEmail } = await import('./sendgrid');
+            const { sendSubscriptionConfirmationEmail } = await import('./resend');
             await sendSubscriptionConfirmationEmail(email, actualTier);
             console.log('✅ Confirmation email sent successfully');
           }
