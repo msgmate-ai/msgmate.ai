@@ -14,6 +14,12 @@ declare global {
   }
 }
 
+declare module 'express-session' {
+  interface SessionData {
+    user?: SelectUser;
+  }
+}
+
 const scryptAsync = promisify(scrypt);
 
 async function hashPassword(password: string) {
@@ -36,7 +42,7 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       httpOnly: true,
       secure: false, // Set to true in production with HTTPS
       sameSite: 'lax' // Better cross-site compatibility
@@ -113,18 +119,35 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
+    // Store user in session for additional backup
+    if (req.user) {
+      req.session.user = req.user;
+      console.log('User logged in successfully:', req.user.username, 'Session ID:', req.sessionID);
+    }
     res.status(200).json(req.user);
   });
 
   app.post("/api/logout", (req, res, next) => {
     req.logout((err) => {
       if (err) return next(err);
+      // Clear session user as well
+      if (req.session) {
+        req.session.user = null;
+      }
       res.sendStatus(200);
     });
   });
 
   app.get("/api/user", (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
+    res.json(req.user);
+  });
+
+  // New /api/me endpoint for consistent session checking
+  app.get("/api/me", (req, res) => {
+    if (!req.isAuthenticated() || !req.user) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
     res.json(req.user);
   });
 
