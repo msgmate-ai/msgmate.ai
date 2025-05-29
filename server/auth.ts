@@ -15,6 +15,16 @@ declare global {
   }
 }
 
+declare module 'express-session' {
+  interface SessionData {
+    user?: {
+      id: number;
+      email: string;
+      username: string;
+    };
+  }
+}
+
 const scryptAsync = promisify(scrypt);
 
 async function hashPassword(password: string) {
@@ -127,11 +137,19 @@ export function setupAuth(app: Express) {
           console.error('Session creation error:', err);
           return next(err);
         }
+        
+        // Manually set session data to ensure persistence
+        (req.session as any).user = {
+          id: user.id,
+          email: user.email,
+          username: user.username
+        };
+        
         console.log('Login successful for:', user.username);
-        console.log('Session after login:', req.sessionID, req.session);
+        console.log('Session after login:', req.session);
         console.log('req.user:', req.user);
         console.log('req.isAuthenticated():', req.isAuthenticated());
-        res.status(200).json(user);
+        res.status(200).json({ success: true, user });
       });
     })(req, res, next);
   });
@@ -147,9 +165,17 @@ export function setupAuth(app: Express) {
     console.log('User check - Session ID:', req.sessionID);
     console.log('Session data:', req.session);
     console.log('Authenticated:', req.isAuthenticated());
-    console.log('User:', req.user?.username);
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    res.json(req.user);
+    console.log('req.user:', req.user?.username);
+    console.log('session.user:', (req.session as any).user);
+    
+    // Check session user data first, then fallback to passport user
+    if ((req.session as any).user) {
+      res.json((req.session as any).user);
+    } else if (req.isAuthenticated() && req.user) {
+      res.json(req.user);
+    } else {
+      res.status(401).json({ error: 'Unauthorized' });
+    }
   });
 
 
