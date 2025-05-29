@@ -7,7 +7,6 @@ import { generateMessageReplies, generateConversationStarters, analyzeMessage, d
 import { setupStripe, createCheckoutSession, handleStripeWebhook } from "./stripe";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
 import { sendVerificationSMS, generateVerificationCode, isTwilioConfigured } from "./twilio";
-import { logEvent, getEvents, getEventStats, clearEvents } from "./utils/analytics";
 import { randomBytes } from "crypto";
 
 // Feature flag to disable SMS verification
@@ -101,16 +100,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update usage count for authenticated users only
       if (isAuthenticated && req.user) {
         await storage.incrementUsage(req.user.id);
-        
-        // Log message generation event
-        logEvent('message_generated', req.user.id, req.user.username, {
-          tone,
-          messageLength: message.length,
-          intent
-        });
-        
-        // Log tone selection
-        logEvent('tone_selection', req.user.id, req.user.username, { tone });
       }
       
       res.json({ replies: replies.map((reply, index) => ({ id: index + 1, text: reply.text })) });
@@ -149,12 +138,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update usage count
       await storage.incrementUsage(req.user.id);
       
-      // Log conversation starter generation
-      logEvent('conversation_starter', req.user.id, req.user.username, {
-        profileContext: profileContext.substring(0, 50) + '...',
-        interests
-      });
-      
       res.json({ starters: starters.map((starter, index) => ({ id: index + 1, text: starter.text })) });
     } catch (error: any) {
       next(error);
@@ -190,11 +173,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update usage count
       await storage.incrementUsage(req.user.id);
       
-      // Log message coach usage
-      logEvent('message_coach', req.user.id, req.user.username, {
-        messageLength: message.length
-      });
-      
       res.json(analysis);
     } catch (error: any) {
       next(error);
@@ -229,11 +207,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update usage count
       await storage.incrementUsage(req.user.id);
-      
-      // Log message decoder usage
-      logEvent('message_decoder', req.user.id, req.user.username, {
-        messageLength: message.length
-      });
       
       res.json(decoded);
     } catch (error: any) {
@@ -346,9 +319,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       console.log('User email verified successfully:', user.username);
-      
-      // Log email verification event
-      logEvent('email_verification', user.id, user.username);
       
       // Send welcome email after successful verification
       try {
@@ -538,45 +508,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.updatePassword(user.id, password);
       
       res.json({ success: true, message: 'Password has been reset successfully' });
-    } catch (error: any) {
-      next(error);
-    }
-  });
-
-  // Developer dashboard routes (development only)
-  const DEV_ADMIN_EMAILS = ['developer@msgmate.ai', 'admin@msgmate.ai', 'msgmate.ai@gmail.com'];
-  
-  // Check if user is developer/admin
-  const isDeveloper = (user: any) => {
-    return process.env.NODE_ENV === 'development' && user && DEV_ADMIN_EMAILS.includes(user.username);
-  };
-  
-  // Get analytics data (developers only)
-  app.get('/api/dev/analytics', async (req, res, next) => {
-    try {
-      if (!req.isAuthenticated() || !isDeveloper(req.user)) {
-        return res.status(403).json({ message: 'Access denied' });
-      }
-      
-      const limit = parseInt(req.query.limit as string) || 50;
-      const events = getEvents(limit);
-      const stats = getEventStats();
-      
-      res.json({ events, stats });
-    } catch (error: any) {
-      next(error);
-    }
-  });
-  
-  // Clear analytics data (developers only)
-  app.post('/api/dev/analytics/clear', async (req, res, next) => {
-    try {
-      if (!req.isAuthenticated() || !isDeveloper(req.user)) {
-        return res.status(403).json({ message: 'Access denied' });
-      }
-      
-      clearEvents();
-      res.json({ message: 'Analytics data cleared' });
     } catch (error: any) {
       next(error);
     }

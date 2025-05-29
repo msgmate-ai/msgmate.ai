@@ -33,23 +33,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
-      console.log('Frontend: Starting login request with:', credentials.username);
-      try {
-        const res = await apiRequest("POST", "/api/login", credentials);
-        console.log('Frontend: Login response status:', res.status);
-        const data = await res.json();
-        console.log('Frontend: Login response data:', data);
-        return data;
-      } catch (error) {
-        console.error('Frontend: Login error:', error);
-        throw error;
-      }
+      const res = await apiRequest("POST", "/api/login", credentials);
+      return await res.json();
     },
-    onSuccess: (response: any) => {
-      // Extract user from response if it's wrapped
-      const user = response.user || response;
+    onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/subscription"] });
       toast({
         title: "Login successful",

@@ -11,15 +11,9 @@ const Navbar = () => {
   const { user, logoutMutation } = useAuth();
   const { subscription } = useSubscription();
 
-  // Debug log to check user data
-  console.log('Navbar user:', user);
-
   const handleLogout = () => {
     logoutMutation.mutate();
   };
-
-  // Developer access check
-  const isDevUser = user?.username?.toLowerCase() === 'msgmate.ai@gmail.com';
 
   const getPlanLabel = () => {
     if (!subscription) return 'Free';
@@ -72,14 +66,6 @@ const Navbar = () => {
                   {getPlanLabel()}
                 </Badge>
               </div>
-              {isDevUser && (
-                <a
-                  href="/dashboard"
-                  className="ml-4 bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded font-semibold"
-                >
-                  Dashboard
-                </a>
-              )}
               <Button 
                 variant="outline" 
                 onClick={handleLogout} 

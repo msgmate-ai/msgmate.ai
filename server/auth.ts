@@ -7,21 +7,10 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
-import { logEvent } from "./utils/analytics";
 
 declare global {
   namespace Express {
     interface User extends SelectUser {}
-  }
-}
-
-declare module 'express-session' {
-  interface SessionData {
-    user?: {
-      id: number;
-      email: string;
-      username: string;
-    };
   }
 }
 
@@ -41,8 +30,21 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-  // Session is now configured in index.ts
+  const sessionSettings: session.SessionOptions = {
+    secret: process.env.SESSION_SECRET || "msgmate-ai-secret",
+    resave: false,
+    saveUninitialized: false,
+    store: storage.sessionStore,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      sameSite: 'lax' // Better cross-site compatibility
+    }
+  };
+
   app.set("trust proxy", 1);
+  app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -61,20 +63,15 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => {
-    console.log('Serializing user:', user.id);
-    done(null, user.id);
-  });
-  
+  passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id: number, done) => {
-    console.log('Deserializing user ID:', id);
     try {
       const user = await storage.getUser(id);
       if (!user) {
-        console.log('User not found during deserialization for ID:', id);
+        // User not found, clear the session
+        console.log('User not found during deserialization, clearing session for user ID:', id);
         return done(null, false);
       }
-      console.log('Deserialized user:', user.username);
       done(null, user);
     } catch (error) {
       console.error('Error deserializing user:', error);
@@ -99,9 +96,6 @@ export function setupAuth(app: Express) {
         password: await hashPassword(req.body.password),
       });
 
-      // Log signup event
-      logEvent('signup', user.id, user.username);
-
       // Generate verification token
       const verificationToken = generateToken();
       await storage.setVerificationToken(user.id, verificationToken);
@@ -118,47 +112,8 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", (req, res, next) => {
-    console.log('Login attempt for:', req.body.username);
-    console.log('Session before login:', req.sessionID, req.session);
-    
-    passport.authenticate("local", (err: any, user: any, info: any) => {
-      if (err) {
-        console.error('Login error:', err);
-        return next(err);
-      }
-      if (!user) {
-        console.log('Login failed for:', req.body.username, 'Info:', info);
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-      
-      req.logIn(user, (err: any) => {
-        if (err) {
-          console.error('Session creation error:', err);
-          return next(err);
-        }
-        
-        // Manually set session data to ensure persistence
-        (req.session as any).user = {
-          id: user.id,
-          email: user.email,
-          username: user.username
-        };
-        
-        // Force session save to ensure it persists
-        req.session.save((err) => {
-          if (err) {
-            console.error('Session save error:', err);
-            return next(err);
-          }
-          
-          console.log('✅ Session user set:', (req.session as any).user);
-          console.log('Login successful for:', user.username);
-          console.log('Session after login:', req.session);
-          res.json({ success: true, user });
-        });
-      });
-    })(req, res, next);
+  app.post("/api/login", passport.authenticate("local"), (req, res) => {
+    res.status(200).json(req.user);
   });
 
   app.post("/api/logout", (req, res, next) => {
@@ -169,20 +124,8 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
-    console.log('User check - Session ID:', req.sessionID);
-    console.log('Session data:', req.session);
-    console.log('Authenticated:', req.isAuthenticated());
-    console.log('req.user:', req.user?.username);
-    console.log('session.user:', (req.session as any).user);
-    
-    // Check session user data first, then fallback to passport user
-    if ((req.session as any).user) {
-      res.json((req.session as any).user);
-    } else if (req.isAuthenticated() && req.user) {
-      res.json(req.user);
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
-    }
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    res.json(req.user);
   });
 
 

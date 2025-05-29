@@ -19,7 +19,6 @@ import CookiesPage from "@/pages/cookies-page";
 import TermsPage from "@/pages/terms-page";
 import AccountPage from "@/pages/account-page";
 import SubscriptionSuccessPage from "@/pages/subscription-success-page";
-import DevDashboardPage from "@/pages/dev-dashboard-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 import { SubscriptionProvider } from "./hooks/use-subscription";
@@ -29,8 +28,7 @@ function Router() {
     <Switch>
       <Route path="/" component={LandingPage} />
       <Route path="/app" component={AppPage} />
-      <ProtectedRoute path="/home" component={HomePage} />
-      <Route path="/dashboard" component={DevDashboardPage} />
+      <ProtectedRoute path="/dashboard" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/verify-email" component={VerifyEmailPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
