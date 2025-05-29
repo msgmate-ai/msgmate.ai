@@ -51,15 +51,20 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => {
+    console.log('Serializing user:', user.id);
+    done(null, user.id);
+  });
+  
   passport.deserializeUser(async (id: number, done) => {
+    console.log('Deserializing user ID:', id);
     try {
       const user = await storage.getUser(id);
       if (!user) {
-        // User not found, clear the session
-        console.log('User not found during deserialization, clearing session for user ID:', id);
+        console.log('User not found during deserialization for ID:', id);
         return done(null, false);
       }
+      console.log('Deserialized user:', user.username);
       done(null, user);
     } catch (error) {
       console.error('Error deserializing user:', error);
