@@ -116,8 +116,27 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+  app.post("/api/login", (req, res, next) => {
+    console.log('Login attempt for:', req.body.username);
+    passport.authenticate("local", (err: any, user: any, info: any) => {
+      if (err) {
+        console.error('Login error:', err);
+        return next(err);
+      }
+      if (!user) {
+        console.log('Login failed for:', req.body.username, 'Info:', info);
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+      
+      req.logIn(user, (err: any) => {
+        if (err) {
+          console.error('Session creation error:', err);
+          return next(err);
+        }
+        console.log('Login successful for:', user.username, 'Session ID:', req.sessionID);
+        res.status(200).json(user);
+      });
+    })(req, res, next);
   });
 
   app.post("/api/logout", (req, res, next) => {
@@ -128,6 +147,7 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
+    console.log('User check - Session ID:', req.sessionID, 'Authenticated:', req.isAuthenticated(), 'User:', req.user?.username);
     if (!req.isAuthenticated()) return res.sendStatus(401);
     res.json(req.user);
   });
