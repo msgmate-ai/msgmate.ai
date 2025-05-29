@@ -249,14 +249,3 @@ app.use((req, res, next) => {
     }
   });
 }
-router.post('/auth/login', (req, res) => {
-  // Fake login for testing
-  req.session.user = {
-    id: 1,
-    email: 'msgmate.ai@gmail.com',
-    isVerified: true
-  };
-
-  console.log("✅ Session set:", req.session.user);
-  res.json({ message: 'Logged in' });
-});
