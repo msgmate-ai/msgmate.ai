@@ -282,22 +282,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { token } = req.params;
       
+      console.log('Email verification attempt with token:', token);
+      
       if (!token) {
         return res.status(400).json({ success: false, message: 'Verification token is required' });
+      }
+      
+      // First, check if a user exists with this token
+      const existingUser = await storage.getUserByVerificationToken(token);
+      console.log('User found with token:', existingUser ? 'Yes' : 'No');
+      
+      if (!existingUser) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'This verification link has expired or is invalid. Please register again or request a new verification email.' 
+        });
+      }
+      
+      if (existingUser.isVerified) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'This email address has already been verified. You can proceed to login.' 
+        });
       }
       
       const user = await storage.verifyUserEmail(token);
       
       if (!user) {
-        return res.status(400).json({ success: false, message: 'Invalid or expired verification token' });
+        return res.status(500).json({ 
+          success: false, 
+          message: 'An error occurred during verification. Please try again or contact support.' 
+        });
       }
       
-      // Send welcome email after successful verification
-      await sendWelcomeEmail(user.username);
+      console.log('User email verified successfully:', user.username);
       
-      res.json({ success: true, message: 'Email verification successful' });
+      // Send welcome email after successful verification
+      try {
+        await sendWelcomeEmail(user.username);
+        console.log('Welcome email sent to:', user.username);
+      } catch (emailError) {
+        console.error('Error sending welcome email:', emailError);
+        // Don't fail the verification if welcome email fails
+      }
+      
+      res.json({ success: true, message: 'Email verification successful. Welcome to MsgMate.AI!' });
     } catch (error: any) {
-      next(error);
+      console.error('Email verification error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'An unexpected error occurred during verification. Please try again.' 
+      });
     }
   });
   
