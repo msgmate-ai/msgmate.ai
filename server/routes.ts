@@ -544,7 +544,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Developer dashboard routes (development only)
-  const DEV_ADMIN_EMAILS = ['developer@msgmate.ai', 'admin@msgmate.ai'];
+  const DEV_ADMIN_EMAILS = ['developer@msgmate.ai', 'admin@msgmate.ai', 'msgmate.ai@gmail.com'];
   
   // Check if user is developer/admin
   const isDeveloper = (user: any) => {
