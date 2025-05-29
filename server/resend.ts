@@ -28,7 +28,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
       html: params.html
     }, {
       headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        Authorization: `Bearer ${RESEND_API_KEY}`,
         'Content-Type': 'application/json'
       }
     });
