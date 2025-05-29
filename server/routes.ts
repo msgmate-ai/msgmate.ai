@@ -7,6 +7,7 @@ import { generateMessageReplies, generateConversationStarters, analyzeMessage, d
 import { setupStripe, createCheckoutSession, handleStripeWebhook } from "./stripe";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
 import { sendVerificationSMS, generateVerificationCode, isTwilioConfigured } from "./twilio";
+import { logEvent, getEvents, getEventStats, clearEvents } from "./utils/analytics";
 import { randomBytes } from "crypto";
 
 // Feature flag to disable SMS verification
@@ -100,6 +101,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update usage count for authenticated users only
       if (isAuthenticated && req.user) {
         await storage.incrementUsage(req.user.id);
+        
+        // Log message generation event
+        logEvent('message_generated', req.user.id, req.user.username, {
+          tone,
+          messageLength: message.length,
+          intent
+        });
+        
+        // Log tone selection
+        logEvent('tone_selection', req.user.id, req.user.username, { tone });
       }
       
       res.json({ replies: replies.map((reply, index) => ({ id: index + 1, text: reply.text })) });
@@ -137,6 +148,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update usage count
       await storage.incrementUsage(req.user.id);
+      
+      // Log conversation starter generation
+      logEvent('conversation_starter', req.user.id, req.user.username, {
+        profileContext: profileContext.substring(0, 50) + '...',
+        interests
+      });
       
       res.json({ starters: starters.map((starter, index) => ({ id: index + 1, text: starter.text })) });
     } catch (error: any) {
@@ -319,6 +336,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       console.log('User email verified successfully:', user.username);
+      
+      // Log email verification event
+      logEvent('email_verification', user.id, user.username);
       
       // Send welcome email after successful verification
       try {
