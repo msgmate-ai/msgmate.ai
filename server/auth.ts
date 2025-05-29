@@ -7,15 +7,10 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
+
 declare global {
   namespace Express {
     interface User extends SelectUser {}
-  }
-}
-
-declare module 'express-session' {
-  interface SessionData {
-    user?: SelectUser;
   }
 }
 
@@ -35,26 +30,13 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-console.log("🔐 setupAuth running");
-
-// Debug session and passport middleware setup
-app.use((req, res, next) => {
-  console.log("MIDDLEWARE: Incoming request", {
-    method: req.method,
-    url: req.url,
-    session: req.session,
-    user: req.user
-  });
-  next();
-});
- 
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "msgmate-ai-secret",
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
       secure: false, // Set to true in production with HTTPS
       sameSite: 'lax' // Better cross-site compatibility
@@ -81,27 +63,18 @@ app.use((req, res, next) => {
     }),
   );
 
-  passport.serializeUser((user, done) => {
-    console.log('SERIALIZE: Storing user ID in session:', user.id);
-    done(null, user.id);
-  });
-  
+  passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id: number, done) => {
-    console.log('DESERIALIZE: Attempting to load user with ID:', id);
     try {
-      if (!storage) {
-        console.error('DESERIALIZE: Storage not initialized');
-        return done(null, false);
-      }
       const user = await storage.getUser(id);
       if (!user) {
-        console.log('DESERIALIZE: User not found for ID:', id);
+        // User not found, clear the session
+        console.log('User not found during deserialization, clearing session for user ID:', id);
         return done(null, false);
       }
-      console.log('DESERIALIZE: Successfully loaded user:', user.username);
       done(null, user);
     } catch (error) {
-      console.error('DESERIALIZE: Error loading user:', error);
+      console.error('Error deserializing user:', error);
       done(null, false);
     }
   });
@@ -140,58 +113,18 @@ app.use((req, res, next) => {
   });
 
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    // Store user in session for additional backup
-    if (req.user) {
-      (req.session as any).user = req.user;
-      console.log('LOGIN: User authenticated:', req.user.username);
-      console.log('LOGIN: Session ID:', req.sessionID);
-      console.log('LOGIN: Session data:', JSON.stringify(req.session, null, 2));
-      
-      // Force session save before responding
-      req.session.save((err) => {
-        if (err) {
-          console.error('LOGIN: Error saving session:', err);
-          return res.status(500).json({ message: 'Session save failed' });
-        }
-        console.log('LOGIN: Session saved successfully');
-        res.status(200).json(req.user);
-      });
-    } else {
-      res.status(200).json(req.user);
-    }
+    res.status(200).json(req.user);
   });
 
   app.post("/api/logout", (req, res, next) => {
     req.logout((err) => {
       if (err) return next(err);
-      // Clear session user as well
-      if (req.session) {
-        delete (req.session as any).user;
-      }
       res.sendStatus(200);
     });
   });
 
   app.get("/api/user", (req, res) => {
-    console.log('USER_CHECK: Session ID:', req.sessionID);
-    console.log('USER_CHECK: isAuthenticated():', req.isAuthenticated());
-    console.log('USER_CHECK: req.user:', req.user ? req.user.username : 'undefined');
-    console.log('USER_CHECK: session data:', JSON.stringify(req.session, null, 2));
-    
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    res.json(req.user);
-  });
-
-  // New /api/me endpoint for consistent session checking
-  app.get("/api/me", (req, res) => {
-    console.log('ME_CHECK: Session ID:', req.sessionID);
-    console.log('ME_CHECK: isAuthenticated():', req.isAuthenticated());
-    console.log('ME_CHECK: req.user:', req.user ? req.user.username : 'undefined');
-    console.log('ME_CHECK: session data:', JSON.stringify(req.session, null, 2));
-    
-    if (!req.isAuthenticated() || !req.user) {
-      return res.status(401).json({ message: 'Not authenticated' });
-    }
     res.json(req.user);
   });
 

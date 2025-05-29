@@ -1,5 +1,4 @@
 import express, { type Request, Response, NextFunction } from "express";
-import cookieParser from "cookie-parser";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -18,9 +17,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-
-// Add cookie parser for session handling
-app.use(cookieParser());
 
 // For Stripe webhooks, we need raw body data
 app.use('/api/webhook', express.raw({ type: 'application/json' }));

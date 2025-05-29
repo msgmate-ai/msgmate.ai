@@ -1,6 +1,4 @@
 import type { Express } from "express";
-import express from 'express';
-const router = express.Router();
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
@@ -15,7 +13,7 @@ import { randomBytes } from "crypto";
 const SMS_ENABLED = false;
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Set up authentication routes - moved back here to ensure storage is initialized
+  // Set up authentication routes
   setupAuth(app);
   
   // Middleware to handle session deserialization failures gracefully
@@ -219,12 +217,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user subscription
   app.get('/api/subscription', async (req, res, next) => {
     try {
-      console.log("🔍 SUBSCRIPTION CHECK:", {
-  isAuthenticated: req.isAuthenticated?.(),
-  user: req.user,
-  session: req.session
-});
-
       if (!req.isAuthenticated()) {
         return res.status(401).json({ message: 'Authentication required' });
       }
@@ -525,12 +517,3 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   return httpServer;
 }
-router.get('/api/me', (req, res) => {
-  if (req.session?.user) {
-    console.log("✅ Session active:", req.session.user);
-    res.json(req.session.user);
-  } else {
-    console.log("❌ No session user");
-    res.status(401).json({ error: 'Not logged in' });
-  }
-});
