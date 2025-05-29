@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Resend API configuration
 const RESEND_API_KEY = 're_2hPjYiX9_K2pznnYgKnecT8fWNUmAkGYC';
-const FROM_EMAIL = 'MsgMate <onboarding@resend.dev>';
+const FROM_EMAIL = 'MsgMate <hello@msgmate.ai>';
 
 interface EmailParams {
   to: string;
@@ -44,7 +44,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<boolean> {
-  const verificationLink = `${process.env.BASE_URL || 'http://localhost:5000'}/verify-email?token=${token}`;
+  const verificationLink = `https://msgmate.replit.app/verify-email?token=${token}`;
   
   return await sendEmail({
     to: email,
@@ -123,7 +123,7 @@ export async function sendWelcomeEmail(email: string): Promise<boolean> {
 }
 
 export async function sendPasswordResetEmail(email: string, token: string): Promise<boolean> {
-  const resetLink = `${process.env.BASE_URL || 'http://localhost:5000'}/reset-password?token=${token}`;
+  const resetLink = `https://msgmate.replit.app/reset-password?token=${token}`;
   
   return await sendEmail({
     to: email,
