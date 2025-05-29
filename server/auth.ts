@@ -145,11 +145,18 @@ export function setupAuth(app: Express) {
           username: user.username
         };
         
-        console.log('Login successful for:', user.username);
-        console.log('Session after login:', req.session);
-        console.log('req.user:', req.user);
-        console.log('req.isAuthenticated():', req.isAuthenticated());
-        res.status(200).json({ success: true, user });
+        // Force session save to ensure it persists
+        req.session.save((err) => {
+          if (err) {
+            console.error('Session save error:', err);
+            return next(err);
+          }
+          
+          console.log('✅ Session user set:', (req.session as any).user);
+          console.log('Login successful for:', user.username);
+          console.log('Session after login:', req.session);
+          res.json({ success: true, user });
+        });
       });
     })(req, res, next);
   });
