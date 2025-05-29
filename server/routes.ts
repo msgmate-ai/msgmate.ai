@@ -9,6 +9,9 @@ import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from 
 import { sendVerificationSMS, generateVerificationCode, isTwilioConfigured } from "./twilio";
 import { randomBytes } from "crypto";
 
+// Feature flag to disable SMS verification
+const SMS_ENABLED = false;
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
@@ -400,7 +403,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // SMS Verification routes
-  
+  if (SMS_ENABLED) {
   // Send SMS verification code
   app.post('/api/send-sms-verification', async (req, res, next) => {
     try {
@@ -477,6 +480,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       next(error);
     }
   });
+  } // End SMS_ENABLED feature flag
   
   // Reset password route
   app.post('/api/reset-password', async (req, res, next) => {

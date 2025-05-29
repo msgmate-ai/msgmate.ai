@@ -5,10 +5,13 @@ import ReplyGenerator from '@/components/reply-generator';
 import AdditionalTools from '@/components/additional-tools';
 import Footer from '@/components/footer';
 import UsageStatus from '@/components/usage-status';
-import { SMSVerificationModal } from '@/components/sms-verification-modal';
+// import { SMSVerificationModal } from '@/components/sms-verification-modal';
 import { useAuth } from '@/hooks/use-auth';
 import { SubscriptionProvider } from '@/hooks/use-subscription';
 import { useToast } from '@/hooks/use-toast';
+
+// Feature flag to disable SMS verification
+const SMS_ENABLED = false;
 
 const AppPage = () => {
   const { user } = useAuth();
@@ -82,13 +85,17 @@ const AppPage = () => {
                           >
                             Resend verification email
                           </button>
-                          <span className="text-sm text-yellow-700 hidden sm:inline">or</span>
-                          <button 
-                            onClick={() => setIsSMSModalOpen(true)}
-                            className="text-sm text-green-600 hover:text-green-800 font-medium underline"
-                          >
-                            Verify by phone instead
-                          </button>
+                          {SMS_ENABLED && (
+                            <>
+                              <span className="text-sm text-yellow-700 hidden sm:inline">or</span>
+                              <button 
+                                onClick={() => setIsSMSModalOpen(true)}
+                                className="text-sm text-green-600 hover:text-green-800 font-medium underline"
+                              >
+                                Verify by phone instead
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -124,14 +131,16 @@ const AppPage = () => {
         <Footer />
         
         {/* SMS Verification Modal */}
-        <SMSVerificationModal
-          isOpen={isSMSModalOpen}
-          onClose={() => setIsSMSModalOpen(false)}
-          onSuccess={() => {
-            // Refresh the page to update user verification status
-            window.location.reload();
-          }}
-        />
+        {SMS_ENABLED && (
+          <SMSVerificationModal
+            isOpen={isSMSModalOpen}
+            onClose={() => setIsSMSModalOpen(false)}
+            onSuccess={() => {
+              // Refresh the page to update user verification status
+              window.location.reload();
+            }}
+          />
+        )}
       </div>
     </SubscriptionProvider>
   );
