@@ -69,18 +69,23 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => {
+    console.log('SERIALIZE: Storing user ID in session:', user.id);
+    done(null, user.id);
+  });
+  
   passport.deserializeUser(async (id: number, done) => {
+    console.log('DESERIALIZE: Attempting to load user with ID:', id);
     try {
       const user = await storage.getUser(id);
       if (!user) {
-        // User not found, clear the session
-        console.log('User not found during deserialization, clearing session for user ID:', id);
+        console.log('DESERIALIZE: User not found for ID:', id);
         return done(null, false);
       }
+      console.log('DESERIALIZE: Successfully loaded user:', user.username);
       done(null, user);
     } catch (error) {
-      console.error('Error deserializing user:', error);
+      console.error('DESERIALIZE: Error loading user:', error);
       done(null, false);
     }
   });
@@ -122,9 +127,22 @@ export function setupAuth(app: Express) {
     // Store user in session for additional backup
     if (req.user) {
       (req.session as any).user = req.user;
-      console.log('User logged in successfully:', req.user.username, 'Session ID:', req.sessionID);
+      console.log('LOGIN: User authenticated:', req.user.username);
+      console.log('LOGIN: Session ID:', req.sessionID);
+      console.log('LOGIN: Session data:', JSON.stringify(req.session, null, 2));
+      
+      // Force session save before responding
+      req.session.save((err) => {
+        if (err) {
+          console.error('LOGIN: Error saving session:', err);
+          return res.status(500).json({ message: 'Session save failed' });
+        }
+        console.log('LOGIN: Session saved successfully');
+        res.status(200).json(req.user);
+      });
+    } else {
+      res.status(200).json(req.user);
     }
-    res.status(200).json(req.user);
   });
 
   app.post("/api/logout", (req, res, next) => {
@@ -139,12 +157,22 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
+    console.log('USER_CHECK: Session ID:', req.sessionID);
+    console.log('USER_CHECK: isAuthenticated():', req.isAuthenticated());
+    console.log('USER_CHECK: req.user:', req.user ? req.user.username : 'undefined');
+    console.log('USER_CHECK: session data:', JSON.stringify(req.session, null, 2));
+    
     if (!req.isAuthenticated()) return res.sendStatus(401);
     res.json(req.user);
   });
 
   // New /api/me endpoint for consistent session checking
   app.get("/api/me", (req, res) => {
+    console.log('ME_CHECK: Session ID:', req.sessionID);
+    console.log('ME_CHECK: isAuthenticated():', req.isAuthenticated());
+    console.log('ME_CHECK: req.user:', req.user ? req.user.username : 'undefined');
+    console.log('ME_CHECK: session data:', JSON.stringify(req.session, null, 2));
+    
     if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: 'Not authenticated' });
     }

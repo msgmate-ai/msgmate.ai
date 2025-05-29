@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import { registerRoutes } from "./routes";
+import { setupAuth } from "./auth";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
@@ -27,6 +28,9 @@ app.use('/api/webhook', express.raw({ type: 'application/json' }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Set up authentication BEFORE any routes
+setupAuth(app);
 
 app.use((req, res, next) => {
   const start = Date.now();
