@@ -63,19 +63,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       const logsDir = path.join(process.cwd(), 'logs');
-      console.log('Analytics - Creating logs directory:', logsDir);
       
       if (!fs.existsSync(logsDir)) {
         fs.mkdirSync(logsDir, { recursive: true });
-        console.log('Analytics - Logs directory created');
       }
       
       const filePath = path.join(logsDir, 'analytics.jsonl');
-      console.log('Analytics - Writing to file:', filePath);
-      console.log('Analytics - Event data:', log);
-      
       fs.appendFileSync(filePath, JSON.stringify(log) + '\n');
-      console.log('Analytics - Event logged successfully');
       
       res.status(200).json({ success: true });
     } catch (error: any) {
