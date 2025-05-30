@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useAuth } from '@/hooks/use-auth';
 import { insertUserSchema } from '@shared/schema';
 import Logo from '@/components/ui/logo';
+import { logEvent, AnalyticsEvents } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
