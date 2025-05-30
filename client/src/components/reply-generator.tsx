@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useSubscription } from '@/hooks/use-subscription';
 import { Loader2 } from 'lucide-react';
 import { getTones } from '@/lib/tones';
+import { logEvent, AnalyticsEvents } from '@/lib/analytics';
 
 type Reply = {
   id: number;
@@ -52,6 +53,14 @@ const ReplyGenerator = () => {
     },
     onSuccess: (data) => {
       setReplies(data.replies);
+      
+      // Track analytics event
+      logEvent(AnalyticsEvents.MESSAGE_SENT, { 
+        tone: selectedTone,
+        intent: replyIntent || 'none',
+        userType: user ? 'authenticated' : 'anonymous',
+        tier: subscription?.tier || 'free'
+      });
       
       // Update usage tracking
       if (user) {

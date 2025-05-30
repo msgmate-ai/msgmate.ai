@@ -7,6 +7,7 @@ import {
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { logEvent, AnalyticsEvents } from "@/lib/analytics";
 
 type AuthContextType = {
   user: SelectUser | null;

@@ -1,0 +1,82 @@
+// === SIMPLE ANALYTICS SYSTEM FOR MSGMATE ===
+
+// FRONTEND HELPER (utils/logEvent.js)
+export async function logEvent(event, props = {}) {
+  await fetch('/api/log-event', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event, props }),
+  });
+}
+
+// EXAMPLE USAGE
+logEvent('User_Signed_Up', { email: user.email });
+logEvent('User_Subscribed', { plan: 'Pro', email: user.email });
+logEvent('Message_Sent', { tone: 'Cheeky' });
+logEvent('Conversation_Started', { tone: 'Supportive' });
+logEvent('Message_Coach_Used', { accepted: true });
+logEvent('Message_Decoded', { result: 'Genuine Interest' });
+
+
+// BACKEND LOGGING ROUTE (api/log-event.js)
+import fs from 'fs';
+import path from 'path';
+
+export default async function handler(req, res) {
+  const { event, props } = req.body;
+
+  const log = {
+    timestamp: new Date().toISOString(),
+    event,
+    ...props,
+  };
+
+  const filePath = path.resolve('logs.json');
+  fs.appendFileSync(filePath, JSON.stringify(log) + '\n');
+
+  res.status(200).json({ success: true });
+}
+
+
+// CLI USAGE SUMMARY REPORT (tools/readLogs.js)
+import fs from 'fs';
+
+const raw = fs.readFileSync('logs.json', 'utf-8').split('\n').filter(Boolean);
+const logs = raw.map(line => JSON.parse(line));
+
+const eventCounts = {};
+const toneCounts = {};
+const signupEmails = new Set();
+const planCounts = {};
+
+logs.forEach(log => {
+  eventCounts[log.event] = (eventCounts[log.event] || 0) + 1;
+
+  if (log.tone) {
+    toneCounts[log.tone] = (toneCounts[log.tone] || 0) + 1;
+  }
+
+  if (log.event === 'User_Signed_Up' && log.email) {
+    signupEmails.add(log.email);
+  }
+
+  if (log.event === 'User_Subscribed' && log.plan) {
+    planCounts[log.plan] = (planCounts[log.plan] || 0) + 1;
+  }
+});
+
+const mostPopularTone = Object.entries(toneCounts)
+  .sort((a, b) => b[1] - a[1])[0]?.[0] || 'None';
+
+console.log('\n--- MsgMate Usage Summary ---');
+console.log(`Messages Sent: ${eventCounts['Message_Sent'] || 0}`);
+console.log(`Conversation Starters: ${eventCounts['Conversation_Started'] || 0}`);
+console.log(`Message Coach Used: ${eventCounts['Message_Coach_Used'] || 0}`);
+console.log(`Message Decoded: ${eventCounts['Message_Decoded'] || 0}`);
+console.log(`New Sign-ups: ${signupEmails.size}`);
+console.log('Subscriptions:');
+Object.entries(planCounts).forEach(([plan, count]) => {
+  console.log(`  ${plan}: ${count}`);
+});
+console.log(`Most Popular Tone: ${mostPopularTone}`);
+console.log('--------------------------------\n');

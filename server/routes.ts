@@ -8,6 +8,8 @@ import { setupStripe, createCheckoutSession, handleStripeWebhook } from "./strip
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
 import { sendVerificationSMS, generateVerificationCode, isTwilioConfigured } from "./twilio";
 import { randomBytes } from "crypto";
+import fs from "fs";
+import path from "path";
 
 // Feature flag to disable SMS verification
 const SMS_ENABLED = false;
@@ -44,6 +46,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Set up Stripe webhook handler
   app.post('/api/webhook', handleStripeWebhook);
+  
+  // Analytics logging endpoint
+  app.post('/api/log-event', async (req, res, next) => {
+    try {
+      const { event, props } = req.body;
+      
+      if (!event) {
+        return res.status(400).json({ success: false, message: 'Event name is required' });
+      }
+      
+      const log = {
+        timestamp: new Date().toISOString(),
+        event,
+        ...props,
+      };
+      
+      const logsDir = path.join(process.cwd(), 'logs');
+      if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true });
+      }
+      
+      const filePath = path.join(logsDir, 'analytics.jsonl');
+      fs.appendFileSync(filePath, JSON.stringify(log) + '\n');
+      
+      res.status(200).json({ success: true });
+    } catch (error: any) {
+      console.error('Analytics logging error:', error);
+      res.status(500).json({ success: false, message: 'Failed to log event' });
+    }
+  });
   
   // Generate message replies
   app.post('/api/generate-replies', async (req, res, next) => {
