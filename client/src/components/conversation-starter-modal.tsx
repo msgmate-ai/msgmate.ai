@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, X, Copy } from 'lucide-react';
+import { logEvent, AnalyticsEvents } from '@/lib/analytics';
 
 type ConversationStarter = {
   id: number;
@@ -31,6 +32,12 @@ const ConversationStarterModal = ({ isOpen, onClose }: ConversationStarterModalP
     },
     onSuccess: (data) => {
       setStarters(data.starters);
+      
+      // Track analytics event
+      logEvent(AnalyticsEvents.CONVERSATION_STARTED, { 
+        hasInterests: !!interests,
+        contextLength: profileContext.length
+      });
     },
     onError: (error: Error) => {
       toast({

@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, X } from 'lucide-react';
+import { logEvent, AnalyticsEvents } from '@/lib/analytics';
 
 type MessageDecoderResult = {
   interpretation: string;
@@ -33,6 +34,13 @@ const MessageDecoderModal = ({ isOpen, onClose }: MessageDecoderModalProps) => {
     },
     onSuccess: (data) => {
       setAnalysis(data);
+      
+      // Track analytics event
+      logEvent(AnalyticsEvents.MESSAGE_DECODED, { 
+        messageLength: receivedMessage.length,
+        intent: data.intent || 'unknown',
+        toneCount: data.tone?.length || 0
+      });
     },
     onError: (error: Error) => {
       toast({

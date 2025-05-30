@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, X, Copy } from 'lucide-react';
+import { logEvent, AnalyticsEvents } from '@/lib/analytics';
 
 type MessageCoachResult = {
   toneAnalysis: {
@@ -42,6 +43,12 @@ const MessageCoachModal = ({ isOpen, onClose }: MessageCoachModalProps) => {
     },
     onSuccess: (data) => {
       setAnalysis(data);
+      
+      // Track analytics event
+      logEvent(AnalyticsEvents.MESSAGE_COACH_USED, { 
+        messageLength: draftMessage.length,
+        clarityScore: data.clarity?.score || 0
+      });
     },
     onError: (error: Error) => {
       toast({
