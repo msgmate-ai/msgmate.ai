@@ -21,12 +21,21 @@ const PRODUCTS = {
   pro: 'prod_SJPmqxh8m9Neim'    // Pro Plan
 };
 
-// Price IDs - these need to be retrieved from your Stripe test dashboard
-// You'll need to provide the actual price_xxx IDs associated with these products
+// Price IDs - automatically select based on environment (test vs live)
 const PRICE_IDS = {
-  basic: process.env.STRIPE_BASIC_PRICE_ID || 'price_basic_placeholder',
-  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_pro_placeholder'
+  basic: isTestMode 
+    ? (process.env.STRIPE_BASIC_PRICE_ID_TEST || 'price_basic_placeholder')
+    : (process.env.STRIPE_BASIC_PRICE_ID_LIVE || 'price_basic_placeholder'),
+  pro: isTestMode 
+    ? (process.env.STRIPE_PRO_PRICE_ID_TEST || 'price_pro_placeholder')
+    : (process.env.STRIPE_PRO_PRICE_ID_LIVE || 'price_pro_placeholder')
 };
+
+console.log('Price IDs loaded:', {
+  mode: isTestMode ? 'TEST' : 'LIVE',
+  basic: PRICE_IDS.basic,
+  pro: PRICE_IDS.pro
+});
 
 export function setupStripe() {
   // Any setup required
