@@ -3,15 +3,19 @@ import { storage } from "./storage";
 import { User } from "@shared/schema";
 import express from "express";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn("STRIPE_SECRET_KEY is not set. Stripe functionality will not work correctly.");
+// Determine environment and select appropriate keys
+const isTestMode = process.env.NODE_ENV !== 'production';
+const stripeSecretKey = isTestMode 
+  ? process.env.STRIPE_SECRET_KEY_TEST
+  : process.env.STRIPE_SECRET_KEY_LIVE;
+
+if (!stripeSecretKey) {
+  console.warn(`STRIPE_SECRET_KEY_${isTestMode ? 'TEST' : 'LIVE'} is not set. Stripe functionality will not work correctly.`);
 }
 
-// Determine if we're in test mode based on the secret key
-const isTestMode = !process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
 console.log('Stripe mode:', isTestMode ? 'TEST' : 'LIVE');
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+const stripe = new Stripe(stripeSecretKey || 'sk_test_placeholder', {
   apiVersion: "2023-10-16" as any,
 });
 
@@ -31,10 +35,14 @@ const PRICE_IDS = {
     : (process.env.STRIPE_PRO_PRICE_ID_LIVE || 'price_pro_placeholder')
 };
 
-console.log('Price IDs loaded:', {
+console.log('Stripe configuration loaded:', {
   mode: isTestMode ? 'TEST' : 'LIVE',
-  basic: PRICE_IDS.basic,
-  pro: PRICE_IDS.pro
+  secretKeyPresent: !!stripeSecretKey,
+  secretKeyPrefix: stripeSecretKey?.substring(0, 8) + '...',
+  priceIds: {
+    basic: PRICE_IDS.basic,
+    pro: PRICE_IDS.pro
+  }
 });
 
 export function setupStripe() {
