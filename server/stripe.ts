@@ -4,7 +4,8 @@ import { User } from "@shared/schema";
 import express from "express";
 
 // Determine environment and select appropriate keys
-const isTestMode = process.env.NODE_ENV !== 'production';
+// You can override this by setting STRIPE_LIVE_MODE=true to force live mode
+const isTestMode = process.env.STRIPE_LIVE_MODE !== 'true' && process.env.NODE_ENV !== 'production';
 const stripeSecretKey = isTestMode 
   ? process.env.STRIPE_SECRET_KEY_TEST
   : process.env.STRIPE_SECRET_KEY_LIVE;
