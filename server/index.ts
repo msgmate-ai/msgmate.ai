@@ -18,10 +18,9 @@ app.use((req, res, next) => {
   }
 });
 
-// For Stripe webhooks, we need raw body data - this must come first
+// For Stripe webhooks, we need raw body data
 app.use('/api/webhook', express.raw({ type: 'application/json' }));
 
-// Apply JSON middleware to all other routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
