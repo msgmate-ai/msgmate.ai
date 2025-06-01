@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import {
   useQuery,
   useMutation,
@@ -13,7 +13,7 @@ type AuthContextType = {
   user: SelectUser | null;
   isLoading: boolean;
   error: Error | null;
-  loginMutation: UseMutationResult<{ user: SelectUser; token: string }, Error, LoginData>;
+  loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
 };
@@ -23,15 +23,6 @@ type LoginData = Pick<InsertUser, "username" | "password">;
 export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
-  
-  // Check for stored JWT token on mount and invalidate user query to refetch
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-    }
-  }, []);
-
   const {
     data: user,
     error,
@@ -46,14 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/login", credentials);
       return await res.json();
     },
-    onSuccess: (data: { user: SelectUser; token: string }) => {
-      // Store JWT token
-      localStorage.setItem('auth_token', data.token);
-      queryClient.setQueryData(["/api/user"], data.user);
+    onSuccess: (user: SelectUser) => {
+      queryClient.setQueryData(["/api/user"], user);
       queryClient.invalidateQueries({ queryKey: ["/api/subscription"] });
       toast({
         title: "Login successful",
-        description: `Welcome back, ${data.user.username}!`,
+        description: `Welcome back, ${user.username}!`,
       });
     },
     onError: (error: Error) => {
@@ -90,8 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      // Clear JWT token from localStorage
-      localStorage.removeItem('auth_token');
+      await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
