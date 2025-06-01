@@ -118,7 +118,10 @@ export function setupAuth(app: Express) {
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
     // Store authenticated user in session
     (req.session as any).user = req.user;
-    res.status(200).json(req.user);
+    res.status(200).json({
+      ...req.user,
+      debug: "✅ This login route was updated"
+    });
   });
 
   app.post("/api/logout", (req, res, next) => {
