@@ -144,10 +144,7 @@ export function setupAuth(app: Express) {
       }
 
       // Verify password
-      console.log('Login attempt for user:', username);
-      console.log('Stored password hash:', user.password);
       const isValidPassword = await comparePasswords(password, user.password);
-      console.log('Password validation result:', isValidPassword);
       if (!isValidPassword) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
