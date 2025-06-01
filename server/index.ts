@@ -61,9 +61,11 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  // Step 2: Session middleware debugging
+  // Step 2: Session middleware debugging (focused on login routes)
   app.use((req, res, next) => {
-    console.log("Session middleware check – session:", req.session);
+    if (req.path.includes('/login') || req.path.includes('/api/user')) {
+      console.log(`${req.method} ${req.path} - Session user:`, req.session?.user);
+    }
     next();
   });
 
