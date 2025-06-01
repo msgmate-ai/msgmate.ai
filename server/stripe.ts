@@ -145,10 +145,12 @@ export async function createCheckoutSession(user: User, tier: 'basic' | 'pro', r
 export async function handleStripeWebhook(req: express.Request, res: express.Response) {
   console.log('🔗 Stripe webhook received');
   const sig = req.headers['stripe-signature'] as string;
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const endpointSecret = isTestMode 
+    ? process.env.STRIPE_WEBHOOK_SECRET
+    : process.env.STRIPE_WEBHOOK_SECRET_LIVE;
   
   if (!endpointSecret) {
-    console.error('❌ STRIPE_WEBHOOK_SECRET not configured');
+    console.error(`❌ STRIPE_WEBHOOK_SECRET${isTestMode ? '' : '_LIVE'} not configured`);
     return res.status(400).send('Webhook secret not configured');
   }
   
