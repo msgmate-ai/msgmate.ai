@@ -2,30 +2,12 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
-console.log("🧠 Live server reload test at", new Date().toISOString());
-
 const app = express();
-
-// Step 1: Log environment settings
-console.log("STRIPE_LIVE_MODE:", process.env.STRIPE_LIVE_MODE);
-console.log("NODE_ENV:", process.env.NODE_ENV);
 
 // Add CORS headers for proper cookie handling
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Allow specific origins based on environment
-  const allowedOrigins = [
-    'http://localhost:5000',
-    'https://msgmate.ai',
-    'https://www.msgmate.ai'
-  ];
-  
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  
+  res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:5000');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
   
@@ -74,14 +56,6 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
-
-  // Step 2: Session middleware debugging (focused on login routes)
-  app.use((req, res, next) => {
-    if (req.path.includes('/login') || req.path.includes('/api/user')) {
-      console.log(`${req.method} ${req.path} - Session user:`, (req.session as any)?.user);
-    }
-    next();
-  });
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
