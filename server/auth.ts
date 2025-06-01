@@ -4,7 +4,6 @@ import { Express } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import bcrypt from "bcrypt";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
@@ -25,25 +24,10 @@ async function hashPassword(password: string) {
 }
 
 async function comparePasswords(supplied: string, stored: string) {
-  try {
-    // Check if it's a bcrypt hash (starts with $2b$)
-    if (stored.startsWith('$2b$')) {
-      return await bcrypt.compare(supplied, stored);
-    }
-    
-    // Fallback for old scrypt hashes
-    if (stored.includes('.')) {
-      const [hashed, salt] = stored.split(".");
-      const hashedBuf = Buffer.from(hashed, "hex");
-      const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-      return timingSafeEqual(hashedBuf, suppliedBuf);
-    }
-    
-    return false;
-  } catch (error) {
-    console.error('Password comparison error:', error);
-    return false;
-  }
+  const [hashed, salt] = stored.split(".");
+  const hashedBuf = Buffer.from(hashed, "hex");
+  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+  return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
 export function setupAuth(app: Express) {
@@ -129,30 +113,11 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", async (req, res) => {
+  app.post("/api/login", passport.authenticate("local"), async (req, res) => {
     try {
-      const { username, password } = req.body;
-      
-      if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password are required' });
-      }
-
-      // Get user from database
-      const user = await storage.getUserByUsername(username);
-      if (!user) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-
-      // Verify password
-      const isValidPassword = await comparePasswords(password, user.password);
-      if (!isValidPassword) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-
-      // Get user subscription
+      const user = req.user as SelectUser;
       const subscription = await storage.getUserSubscription(user.id);
       
-      // Generate JWT token
       const token = signToken({
         id: user.id,
         username: user.username,
@@ -162,8 +127,8 @@ export function setupAuth(app: Express) {
 
       res.status(200).json({ user, token });
     } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error('Error generating JWT token:', error);
+      res.status(500).json({ error: 'Failed to generate token' });
     }
   });
 
