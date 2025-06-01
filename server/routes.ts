@@ -546,6 +546,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Health check endpoint
+  app.get("/ping", (req, res) => {
+    console.log("🔥 Ping received at", new Date().toISOString());
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
