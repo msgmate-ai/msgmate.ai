@@ -113,11 +113,33 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", passport.authenticate("local"), async (req, res) => {
+  app.post("/api/login", async (req, res) => {
     try {
-      const user = req.user as SelectUser;
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+      }
+
+      // Get user from database
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+
+      // Verify password
+      console.log('Login attempt for user:', username);
+      console.log('Stored password hash:', user.password);
+      const isValidPassword = await comparePasswords(password, user.password);
+      console.log('Password validation result:', isValidPassword);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+
+      // Get user subscription
       const subscription = await storage.getUserSubscription(user.id);
       
+      // Generate JWT token
       const token = signToken({
         id: user.id,
         username: user.username,
@@ -127,8 +149,8 @@ export function setupAuth(app: Express) {
 
       res.status(200).json({ user, token });
     } catch (error) {
-      console.error('Error generating JWT token:', error);
-      res.status(500).json({ error: 'Failed to generate token' });
+      console.error('Error during login:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   });
 
