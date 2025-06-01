@@ -4,6 +4,10 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
+// Step 1: Log environment settings
+console.log("STRIPE_LIVE_MODE:", process.env.STRIPE_LIVE_MODE);
+console.log("NODE_ENV:", process.env.NODE_ENV);
+
 // Add CORS headers for proper cookie handling
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -56,6 +60,12 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+
+  // Step 2: Session middleware debugging
+  app.use((req, res, next) => {
+    console.log("Session middleware check – session:", req.session);
+    next();
+  });
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
