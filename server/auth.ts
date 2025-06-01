@@ -7,6 +7,7 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./resend";
+import { signToken } from "./utils/jwt";
 
 declare global {
   namespace Express {
@@ -112,8 +113,23 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+  app.post("/api/login", passport.authenticate("local"), async (req, res) => {
+    try {
+      const user = req.user as SelectUser;
+      const subscription = await storage.getUserSubscription(user.id);
+      
+      const token = signToken({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        tier: subscription?.tier || 'free'
+      });
+
+      res.status(200).json({ user, token });
+    } catch (error) {
+      console.error('Error generating JWT token:', error);
+      res.status(500).json({ error: 'Failed to generate token' });
+    }
   });
 
   app.post("/api/logout", (req, res, next) => {
@@ -123,9 +139,28 @@ export function setupAuth(app: Express) {
     });
   });
 
-  app.get("/api/user", (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    res.json(req.user);
+  app.get("/api/user", async (req, res) => {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+      const { verifyToken } = await import("./utils/jwt");
+      const token = authHeader.split(" ")[1];
+      const decoded = verifyToken(token) as any;
+      
+      // Get fresh user data from database
+      const user = await storage.getUser(decoded.id);
+      if (!user) {
+        return res.status(401).json({ error: "User not found" });
+      }
+      
+      res.json(user);
+    } catch (err) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
   });
 
 
