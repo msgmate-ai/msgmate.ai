@@ -5,6 +5,7 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
+import { queryClient } from "@/lib/queryClient";
 
 export default function SubscriptionSuccessPage() {
   const [location, navigate] = useLocation();
@@ -14,31 +15,23 @@ export default function SubscriptionSuccessPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Invalidate queries to refetch user and subscription data after Stripe redirect
+    queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/subscription"] });
+    
     // Show welcome toast immediately
     toast({
       title: "Payment Successful!",
       description: "Thank you for subscribing to MsgMate.AI!",
     });
 
-    // Set loading to false after a short delay to show the page
+    // Set loading to false after a short delay to allow data to load
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
-
-    // Refresh subscription data if user is available
-    if (user) {
-      const fetchData = async () => {
-        try {
-          await refetchSubscription();
-        } catch (error) {
-          console.error("Error fetching subscription data:", error);
-        }
-      };
-      fetchData();
-    }
+    }, 2000);
 
     return () => clearTimeout(timer);
-  }, [user, refetchSubscription, toast]);
+  }, [toast]);
 
   const getSubscriptionDetails = () => {
     if (!subscription) return { name: "Free Plan", messages: 10, features: ["5 basic tones", "Message replies"] };
