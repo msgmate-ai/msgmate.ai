@@ -11,7 +11,19 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 // Add CORS headers for proper cookie handling
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:5000');
+  
+  // Allow specific origins based on environment
+  const allowedOrigins = [
+    'http://localhost:5000',
+    'https://msgmate.ai',
+    'https://www.msgmate.ai'
+  ];
+  
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
   
@@ -64,7 +76,7 @@ app.use((req, res, next) => {
   // Step 2: Session middleware debugging (focused on login routes)
   app.use((req, res, next) => {
     if (req.path.includes('/login') || req.path.includes('/api/user')) {
-      console.log(`${req.method} ${req.path} - Session user:`, req.session?.user);
+      console.log(`${req.method} ${req.path} - Session user:`, (req.session as any)?.user);
     }
     next();
   });

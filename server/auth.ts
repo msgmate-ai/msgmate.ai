@@ -11,6 +11,9 @@ import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from 
 declare global {
   namespace Express {
     interface User extends SelectUser {}
+    interface Session {
+      user?: SelectUser;
+    }
   }
 }
 
@@ -113,7 +116,8 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    req.session.user = req.user; // Store authenticated user in session
+    // Store authenticated user in session
+    (req.session as any).user = req.user;
     res.status(200).json(req.user);
   });
 
