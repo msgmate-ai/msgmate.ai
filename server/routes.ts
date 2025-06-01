@@ -10,6 +10,7 @@ import { sendVerificationSMS, generateVerificationCode, isTwilioConfigured } fro
 import { randomBytes } from "crypto";
 import fs from "fs";
 import path from "path";
+import { authenticateJWT, AuthenticatedRequest } from "./middleware/auth";
 
 // Feature flag to disable SMS verification
 const SMS_ENABLED = false;
@@ -248,12 +249,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Get user subscription
-  app.get('/api/subscription', async (req, res, next) => {
+  app.get('/api/subscription', authenticateJWT, async (req: AuthenticatedRequest, res, next) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
-      
       const subscription = await storage.getUserSubscription(req.user.id);
       res.json(subscription || { tier: 'free', usage: 0 });
     } catch (error: any) {

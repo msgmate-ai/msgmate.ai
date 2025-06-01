@@ -37,12 +37,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/login", credentials);
       return await res.json();
     },
-    onSuccess: (user: SelectUser) => {
-      queryClient.setQueryData(["/api/user"], user);
+    onSuccess: (data: { user: SelectUser; token: string }) => {
+      // Store JWT token
+      localStorage.setItem('auth_token', data.token);
+      queryClient.setQueryData(["/api/user"], data.user);
       queryClient.invalidateQueries({ queryKey: ["/api/subscription"] });
       toast({
         title: "Login successful",
-        description: `Welcome back, ${user.username}!`,
+        description: `Welcome back, ${data.user.username}!`,
       });
     },
     onError: (error: Error) => {
@@ -79,7 +81,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("POST", "/api/logout");
+      // Clear JWT token from localStorage
+      localStorage.removeItem('auth_token');
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
