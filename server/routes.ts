@@ -259,17 +259,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Create subscription checkout session
-  app.post('/api/create-subscription', async (req, res, next) => {
+  app.post('/api/create-subscription', authenticateJWT, async (req: AuthenticatedRequest, res, next) => {
     try {
-      console.log('Create subscription request - isAuthenticated:', req.isAuthenticated());
-      console.log('Session ID:', req.sessionID);
-      console.log('User in session:', req.user);
-      
-      if (!req.isAuthenticated()) {
-        console.log('Authentication failed - redirecting to login');
-        return res.status(401).json({ message: 'Authentication required' });
-      }
-      
       const schema = z.object({
         tier: z.enum(['basic', 'pro'])
       });
@@ -290,12 +281,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Cancel subscription
-  app.post('/api/cancel-subscription', async (req, res, next) => {
+  app.post('/api/cancel-subscription', authenticateJWT, async (req: AuthenticatedRequest, res, next) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
-      
       const subscription = await storage.getUserSubscription(req.user.id);
       if (!subscription || subscription.tier === 'free') {
         return res.status(400).json({ message: 'No active subscription to cancel' });
