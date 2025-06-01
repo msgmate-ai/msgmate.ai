@@ -176,9 +176,11 @@ const ReplyGenerator = () => {
                 <SelectLabel>Free Tones</SelectLabel>
                 {freeTones.map(tone => (
                   <SelectItem key={tone.value} value={tone.value} title={tone.description}>
-                    <div className="flex items-center">
-                      <span>{tone.emoji} {tone.label}</span>
-                      <span className="ml-2 text-xs text-gray-500 hidden md:inline-block">{tone.description}</span>
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <span>{tone.emoji} {tone.label}</span>
+                      </div>
+                      <span className="text-xs text-gray-500 mt-1">{tone.description}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -192,9 +194,11 @@ const ReplyGenerator = () => {
                     disabled={!subscription || subscription.tier === 'free'}
                     title={tone.description}
                   >
-                    <div className="flex items-center">
-                      <span>{tone.emoji} {tone.label} {(!subscription || subscription.tier === 'free') ? '🔒' : ''}</span>
-                      <span className="ml-2 text-xs text-gray-500 hidden md:inline-block">{tone.description}</span>
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <span>{tone.emoji} {tone.label} {(!subscription || subscription.tier === 'free') ? '🔒' : ''}</span>
+                      </div>
+                      <span className="text-xs text-gray-500 mt-1">{tone.description}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -208,9 +212,11 @@ const ReplyGenerator = () => {
                     disabled={!subscription || ['free', 'basic'].includes(subscription.tier)}
                     title={tone.description}
                   >
-                    <div className="flex items-center">
-                      <span>{tone.emoji} {tone.label} {(!subscription || ['free', 'basic'].includes(subscription.tier)) ? '🔒' : ''}</span>
-                      <span className="ml-2 text-xs text-gray-500 hidden md:inline-block">{tone.description}</span>
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <span>{tone.emoji} {tone.label} {(!subscription || ['free', 'basic'].includes(subscription.tier)) ? '🔒' : ''}</span>
+                      </div>
+                      <span className="text-xs text-gray-500 mt-1">{tone.description}</span>
                     </div>
                   </SelectItem>
                 ))}
