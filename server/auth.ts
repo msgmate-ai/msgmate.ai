@@ -36,10 +36,10 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production' || process.env.STRIPE_LIVE_MODE === 'true',
-      sameSite: 'lax'
+      secure: process.env.STRIPE_LIVE_MODE === "true",
+      sameSite: process.env.STRIPE_LIVE_MODE === "true" ? "none" : "lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     }
   };
 
