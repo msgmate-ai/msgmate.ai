@@ -36,7 +36,15 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Trust proxy to support secure cookies over HTTPS
+  app.set("trust proxy", 1);
+
+  // Log to verify SESSION_SECRET is loaded
+  console.log("🔐 SESSION_SECRET starts with:", process.env.SESSION_SECRET?.slice(0, 5));
+
+  // Configure session middleware
   const sessionSettings: session.SessionOptions = {
+    name: "connect.sid",
     secret: process.env.SESSION_SECRET || "msgmate-ai-secret",
     resave: false,
     saveUninitialized: false,
@@ -45,11 +53,10 @@ export function setupAuth(app: Express) {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      maxAge: 1000 * 60 * 60 * 24 * 30 // 30 days
     }
   };
 
-  app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
