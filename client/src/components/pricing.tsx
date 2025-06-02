@@ -14,6 +14,13 @@ const Pricing = () => {
   const subscriptionMutation = useMutation({
     mutationFn: async (tier: string) => {
       const res = await apiRequest('POST', '/api/create-subscription', { tier });
+      
+      if (!res.ok) {
+        const cloned = res.clone();
+        const error = await cloned.json();
+        throw new Error(error.message || 'Subscription failed');
+      }
+      
       return res.json();
     },
     onSuccess: (data) => {
