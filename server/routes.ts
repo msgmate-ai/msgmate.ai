@@ -100,27 +100,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const payload = result.data;
-      console.log("Mode:", payload.mode);
+      const { mode, userInput, messageToReplyTo, selectedTone } = payload;
+      console.log("Mode:", mode);
       
-      let message: string;
+      let prompt: string;
       let tone: string;
       
-      if (payload.mode === "say_it_better") {
-        if (!payload.userInput) {
+      if (mode === "say_it_better") {
+        if (!userInput) {
           return res.status(400).json({ message: "User input is required for Say It Better mode" });
         }
-        message = payload.userInput;
-        tone = "supportive"; // Fixed tone for enhancement mode
-      } else {
-        // Default to tone_reply mode for backward compatibility
-        if (!payload.messageToReplyTo && !payload.message) {
+        prompt = userInput;
+        tone = "Supportive";
+        console.log("Prompt used:", prompt);
+      } else if (mode === "tone_reply") {
+        if (!messageToReplyTo) {
           return res.status(400).json({ message: "Message to reply to is required" });
         }
-        if (!payload.selectedTone && !payload.tone) {
+        if (!selectedTone) {
           return res.status(400).json({ message: "Tone selection is required" });
         }
-        message = payload.messageToReplyTo || payload.message!;
-        tone = payload.selectedTone || payload.tone!;
+        prompt = messageToReplyTo;
+        tone = selectedTone;
+        console.log("Prompt used:", prompt);
+      } else {
+        // Backward compatibility fallback
+        const { message, tone: legacyTone } = payload;
+        if (!message) {
+          return res.status(400).json({ message: "Message is required" });
+        }
+        if (!legacyTone) {
+          return res.status(400).json({ message: "Tone is required" });
+        }
+        prompt = message;
+        tone = legacyTone;
+        console.log("Prompt used (legacy):", prompt);
       }
       
       // Check if user is authenticated
@@ -155,7 +169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Generate replies
-      const replies = await generateMessageReplies(message, tone, payload.intent);
+      const replies = await generateMessageReplies(prompt, tone, payload.intent);
       
       // Update usage count for authenticated users only
       if (isAuthenticated && req.user) {
