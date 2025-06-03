@@ -123,7 +123,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      if (!availableTones.includes(tone)) {
+      // Skip tone restrictions for "Say It Better" mode (enhance tone)
+      if (tone !== 'enhance' && !availableTones.includes(tone)) {
         return res.status(403).json({ message: 'This tone requires a higher subscription tier' });
       }
       

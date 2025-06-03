@@ -105,8 +105,22 @@ const ReplyGenerator = () => {
 
   const mutation = useMutation({
     mutationFn: async (data: { message: string; tone: string; intent?: string }) => {
-      const res = await apiRequest('POST', '/api/generate-replies', data);
-      return res.json();
+      try {
+        const res = await apiRequest('POST', '/api/generate-replies', data);
+        
+        if (!res.ok) {
+          const cloned = res.clone();
+          const error = await cloned.json();
+          throw new Error(error.message || 'Failed to generate replies');
+        }
+        
+        return res.json();
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error('Sorry, we couldn\'t rework your message. Please try again.');
+      }
     },
     onSuccess: (data) => {
       setReplies(data.replies);
@@ -127,9 +141,13 @@ const ReplyGenerator = () => {
       }
     },
     onError: (error: Error) => {
+      const errorMessage = mode === 'say-it-better' 
+        ? 'Sorry, we couldn\'t rework your message. Please try again.'
+        : error.message;
+        
       toast({
         title: 'Error generating replies',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     },
