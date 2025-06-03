@@ -1,0 +1,103 @@
+✅ MsgMate Reply Generator: Dual-Path Input UI + Subscription Tone Update
+
+PART 1: REPLY GENERATOR UI CHANGES
+
+OBJECTIVE:
+Update the reply generator UI to support two input modes — "Say It Better" and "Help Me Craft a Message" — with grouped tone selection by dating stage and subscription tier.
+
+FILES TO EDIT:
+client/src/components/ReplyGenerator.tsx
+
+STEP-BY-STEP:
+
+1. Add Mode Selector
+Above the message input, add:
+• Say It Better – "You’ve got the idea, we’ll help you express it."
+• Help Me Craft a Message – "Not sure what to say? Let’s write it together."
+
+2. Conditional Input Display
+If mode is "say-it-better":
+• Show: “What would you like to say?” (free-text input)
+• Hide: tone selector (greyed out with tooltip: “Not used in this mode”)
+
+If mode is "help-me-craft":
+• Show: tone selector grouped by dating stage
+• Hide: free-text input
+
+3. Replace Tone Dropdown with Grouped Selector
+Use this structure:
+
+const toneGroups = [
+  {
+    label: "💌 First Message",
+    tier: "free",
+    tones: [
+      { name: "Playful", emoji: "😊", intent: "Break the ice with charm and fun." },
+      { name: "Curious", emoji: "🤔", intent: "Spark interest with a thoughtful tone." },
+      { name: "Confident", emoji: "💪", intent: "Start strong and self-assured." },
+      { name: "Charming", emoji: "✨", intent: "Leave a memorable first impression." },
+    ],
+  },
+  {
+    label: "💬 Getting to Know Each Other",
+    tier: "basic",
+    tones: [
+      { name: "Flirty", emoji: "😘", intent: "Keep things cheeky and light-hearted." },
+      { name: "Authentic", emoji: "💯", intent: "Show your true self, no filters." },
+      { name: "Witty", emoji: "😏", intent: "Make them laugh and think." },
+      { name: "Supportive", emoji: "🤗", intent: "Offer kindness and care." },
+    ],
+  },
+  {
+    label: "💞 Going Deeper",
+    tier: "pro",
+    tones: [
+      { name: "Romantic", emoji: "❤️", intent: "Let your feelings show." },
+      { name: "Sincere", emoji: "🙏", intent: "Be honest and open." },
+      { name: "Assertive", emoji: "👊", intent: "Speak your truth boldly." },
+      { name: "Mysterious", emoji: "🔮", intent: "Keep them intrigued." },
+    ],
+  },
+  {
+    label: "🧘 Keeping It Light",
+    tier: "elite",
+    comingSoon: true,
+    tones: [
+      { name: "Casual", emoji: "✌️", intent: "Keep it breezy and easy-going." },
+      { name: "Supportive", emoji: "🤗", intent: "Show up as their cheerleader." },
+      { name: "Authentic", emoji: "💯", intent: "Keep things real and relaxed." },
+    ],
+  },
+];
+
+4. Lock Inaccessible Tone Groups
+• Use lock icons and tooltips if user’s tier is below the group’s level.
+• Show “Coming Soon” on Elite tone group (greyed out).
+
+5. Button Logic (No Change in Label)
+[ Generate Replies → ]
+• Say It Better = enhances user’s input message
+• Help Me Craft = uses tone + message received to return 2–3 replies
+
+6. Update Tool Header:
+Replace old title with:
+🧠 **Find the Right Words**
+
+---
+
+PART 2: UPDATE PLAN TONE COUNTS AND FEATURES
+
+FILES TO EDIT:
+client/src/components/Pricing.tsx  
+client/src/pages/AccountPage.tsx  
+any plan comparison logic used in UI
+
+UPDATES TO MAKE:
+
+🔓 Free Plan:
+• Access to 4 tones in the “First Message” group only
+• Description: “Start the conversation confidently with a tone that fits the moment.”
+
+🔓 Basic+ Plan:
+• Unlocks “Getting to Know Each Other” tone group (8 total tones)
+• Description: “Explore flirty, authentic, a

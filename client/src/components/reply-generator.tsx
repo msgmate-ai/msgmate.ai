@@ -3,12 +3,10 @@ import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { useSubscription } from '@/hooks/use-subscription';
-import { Loader2 } from 'lucide-react';
-import { getTones } from '@/lib/tones';
+import { Loader2, Lock } from 'lucide-react';
 import { logEvent, AnalyticsEvents } from '@/lib/analytics';
 
 type Reply = {
@@ -16,12 +14,71 @@ type Reply = {
   text: string;
 };
 
+type Mode = 'say-it-better' | 'help-me-craft';
+
+type ToneData = {
+  name: string;
+  emoji: string;
+  intent: string;
+};
+
+type ToneGroup = {
+  label: string;
+  tier: 'free' | 'basic' | 'pro' | 'elite';
+  tones: ToneData[];
+  comingSoon?: boolean;
+};
+
+const toneGroups: ToneGroup[] = [
+  {
+    label: "💌 First Message",
+    tier: "free",
+    tones: [
+      { name: "Playful", emoji: "😊", intent: "Break the ice with charm and fun." },
+      { name: "Curious", emoji: "🤔", intent: "Spark interest with a thoughtful tone." },
+      { name: "Confident", emoji: "💪", intent: "Start strong and self-assured." },
+      { name: "Charming", emoji: "✨", intent: "Leave a memorable first impression." },
+    ],
+  },
+  {
+    label: "💬 Getting to Know Each Other",
+    tier: "basic",
+    tones: [
+      { name: "Flirty", emoji: "😘", intent: "Keep things cheeky and light-hearted." },
+      { name: "Authentic", emoji: "💯", intent: "Show your true self, no filters." },
+      { name: "Witty", emoji: "😏", intent: "Make them laugh and think." },
+      { name: "Supportive", emoji: "🤗", intent: "Offer kindness and care." },
+    ],
+  },
+  {
+    label: "💞 Going Deeper",
+    tier: "pro",
+    tones: [
+      { name: "Romantic", emoji: "❤️", intent: "Let your feelings show." },
+      { name: "Sincere", emoji: "🙏", intent: "Be honest and open." },
+      { name: "Assertive", emoji: "👊", intent: "Speak your truth boldly." },
+      { name: "Mysterious", emoji: "🔮", intent: "Keep them intrigued." },
+    ],
+  },
+  {
+    label: "🧘 Keeping It Light",
+    tier: "elite",
+    comingSoon: true,
+    tones: [
+      { name: "Casual", emoji: "✌️", intent: "Keep it breezy and easy-going." },
+      { name: "Supportive", emoji: "🤗", intent: "Show up as their cheerleader." },
+      { name: "Authentic", emoji: "💯", intent: "Keep things real and relaxed." },
+    ],
+  },
+];
+
 const ReplyGenerator = () => {
+  const [mode, setMode] = useState<Mode>('say-it-better');
   const [receivedMessage, setReceivedMessage] = useState('');
-  const [selectedTone, setSelectedTone] = useState('friendly');
-  const [replyIntent, setReplyIntent] = useState('');
+  const [userMessage, setUserMessage] = useState('');
+  const [selectedTone, setSelectedTone] = useState<string>('');
+  const [selectedToneGroup, setSelectedToneGroup] = useState<string>('');
   const [replies, setReplies] = useState<Reply[]>([]);
-  const [showLockedToneMessage, setShowLockedToneMessage] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const { subscription, refetchSubscription } = useSubscription();
@@ -57,17 +114,15 @@ const ReplyGenerator = () => {
       // Track analytics event
       logEvent(AnalyticsEvents.MESSAGE_SENT, { 
         tone: selectedTone,
-        intent: replyIntent || 'none',
+        mode: mode,
         userType: user ? 'authenticated' : 'anonymous',
         tier: subscription?.tier || 'free'
       });
       
       // Update usage tracking
       if (user) {
-        // For authenticated users, refresh subscription data to update usage count
         refetchSubscription();
       } else {
-        // For non-authenticated users, update local storage
         updateLocalUsage();
       }
     },
@@ -80,57 +135,71 @@ const ReplyGenerator = () => {
     },
   });
 
+  const getUserTier = (): 'free' | 'basic' | 'pro' => {
+    if (!subscription) return 'free';
+    return subscription.tier as 'free' | 'basic' | 'pro';
+  };
+
+  const isGroupAccessible = (tier: string): boolean => {
+    const userTier = getUserTier();
+    if (tier === 'free') return true;
+    if (tier === 'basic') return ['basic', 'pro'].includes(userTier);
+    if (tier === 'pro') return userTier === 'pro';
+    return false; // elite is coming soon
+  };
+
+  const handleToneSelect = (groupIndex: number, toneIndex: number) => {
+    const group = toneGroups[groupIndex];
+    if (!isGroupAccessible(group.tier) || group.comingSoon) return;
+    
+    setSelectedToneGroup(`${groupIndex}`);
+    setSelectedTone(`${groupIndex}-${toneIndex}`);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!receivedMessage) {
-      toast({
-        title: 'Missing message',
-        description: 'Please enter the message you received',
-        variant: 'destructive',
+    if (mode === 'say-it-better') {
+      if (!userMessage) {
+        toast({
+          title: 'Missing message',
+          description: 'Please enter what you would like to say',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      mutation.mutate({
+        message: userMessage,
+        tone: 'enhance', // Special tone for enhancement mode
       });
-      return;
-    }
-    
-    if (!selectedTone) {
-      toast({
-        title: 'Missing tone',
-        description: 'Please select a tone for your reply',
-        variant: 'destructive',
+    } else {
+      if (!receivedMessage) {
+        toast({
+          title: 'Missing message',
+          description: 'Please enter the message you received',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      if (!selectedTone) {
+        toast({
+          title: 'Missing tone',
+          description: 'Please select a tone for your reply',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      const [groupIndex, toneIndex] = selectedTone.split('-').map(Number);
+      const toneName = toneGroups[groupIndex]?.tones[toneIndex]?.name?.toLowerCase();
+      
+      mutation.mutate({
+        message: receivedMessage,
+        tone: toneName || 'friendly',
       });
-      return;
     }
-    
-    mutation.mutate({
-      message: receivedMessage,
-      tone: selectedTone,
-      intent: replyIntent || undefined,
-    });
-  };
-
-  const handleToneChange = (value: string) => {
-    const { freeTones, basicTones, proTones } = getTones();
-    const allTones = [...freeTones, ...basicTones, ...proTones];
-    const selectedToneObj = allTones.find(tone => tone.value === value);
-    
-    if (!selectedToneObj) return;
-    
-    // Check if tone is locked based on subscription
-    let toneLocked = false;
-    
-    if (selectedToneObj.tier === 'basic' && (!subscription || subscription.tier === 'free')) {
-      toneLocked = true;
-    } else if (selectedToneObj.tier === 'pro' && (!subscription || ['free', 'basic'].includes(subscription.tier))) {
-      toneLocked = true;
-    }
-    
-    if (toneLocked) {
-      setShowLockedToneMessage(true);
-      return;
-    }
-    
-    setShowLockedToneMessage(false);
-    setSelectedTone(value);
   };
 
   const copyToClipboard = (text: string) => {
@@ -141,108 +210,141 @@ const ReplyGenerator = () => {
     });
   };
 
-  const { freeTones, basicTones, proTones } = getTones();
-
   return (
     <section className="bg-white rounded-xl shadow-md p-6 mb-10">
-      <h2 className="text-2xl font-semibold text-primary mb-6">Reply Generator: Get help with your reply</h2>
+      <h2 className="text-2xl font-semibold text-primary mb-6 flex items-center">
+        🧠 <span className="ml-2">Find the Right Words</span>
+      </h2>
+      
+      {/* Mode Selector */}
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
+            type="button"
+            onClick={() => setMode('say-it-better')}
+            className={`flex-1 p-4 rounded-lg border-2 transition-all ${
+              mode === 'say-it-better' 
+                ? 'border-primary bg-primary/5 text-primary' 
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="text-left">
+              <h3 className="font-medium mb-1">Say It Better</h3>
+              <p className="text-sm text-gray-600">You've got the idea, we'll help you express it.</p>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('help-me-craft')}
+            className={`flex-1 p-4 rounded-lg border-2 transition-all ${
+              mode === 'help-me-craft' 
+                ? 'border-primary bg-primary/5 text-primary' 
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="text-left">
+              <h3 className="font-medium mb-1">Help Me Craft a Message</h3>
+              <p className="text-sm text-gray-600">Not sure what to say? Let's write it together.</p>
+            </div>
+          </button>
+        </div>
+      </div>
       
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="received-message" className="block text-sm font-medium text-secondary-dark mb-1">
-            Message you received
-          </label>
-          <Textarea 
-            id="received-message" 
-            rows={3} 
-            value={receivedMessage}
-            onChange={(e) => setReceivedMessage(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-            placeholder="Paste the message you received here..."
-            required
-          />
-        </div>
+        {/* Conditional Input Display */}
+        {mode === 'say-it-better' ? (
+          <div className="mb-6">
+            <label htmlFor="user-message" className="block text-sm font-medium text-secondary-dark mb-1">
+              What would you like to say?
+            </label>
+            <Textarea 
+              id="user-message" 
+              rows={4} 
+              value={userMessage}
+              onChange={(e) => setUserMessage(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+              placeholder="Type your message idea here and we'll help you express it better..."
+              required
+            />
+          </div>
+        ) : (
+          <>
+            <div className="mb-4">
+              <label htmlFor="received-message" className="block text-sm font-medium text-secondary-dark mb-1">
+                Message you received
+              </label>
+              <Textarea 
+                id="received-message" 
+                rows={3} 
+                value={receivedMessage}
+                onChange={(e) => setReceivedMessage(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                placeholder="Paste the message you received here..."
+                required
+              />
+            </div>
+            
+            {/* Grouped Tone Selector */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-secondary-dark mb-3">
+                Choose your reply tone
+              </label>
+              <div className="space-y-4">
+                {toneGroups.map((group, groupIndex) => (
+                  <div key={groupIndex} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-medium text-gray-900">{group.label}</h4>
+                      {!isGroupAccessible(group.tier) && (
+                        <div className="flex items-center text-gray-400 text-sm">
+                          <Lock className="h-4 w-4 mr-1" />
+                          <span className="capitalize">{group.tier}+ Plan</span>
+                        </div>
+                      )}
+                      {group.comingSoon && (
+                        <span className="text-gray-400 text-sm">Coming Soon</span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {group.tones.map((tone, toneIndex) => (
+                        <button
+                          key={toneIndex}
+                          type="button"
+                          onClick={() => handleToneSelect(groupIndex, toneIndex)}
+                          disabled={!isGroupAccessible(group.tier) || group.comingSoon}
+                          className={`p-3 rounded-lg border text-left transition-all ${
+                            selectedTone === `${groupIndex}-${toneIndex}`
+                              ? 'border-primary bg-primary/5 text-primary'
+                              : isGroupAccessible(group.tier) && !group.comingSoon
+                              ? 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                              : 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
+                          }`}
+                        >
+                          <div className="flex items-center mb-1">
+                            <span className="mr-2">{tone.emoji}</span>
+                            <span className="font-medium">{tone.name}</span>
+                            {(!isGroupAccessible(group.tier) || group.comingSoon) && (
+                              <Lock className="h-3 w-3 ml-auto" />
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-600">{tone.intent}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
         
-        <div className="mb-4">
-          <label htmlFor="tone-selector" className="block text-sm font-medium text-secondary-dark mb-1">
-            Choose your reply tone
-          </label>
-          <Select defaultValue={selectedTone} onValueChange={handleToneChange}>
-            <SelectTrigger className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white">
-              <SelectValue placeholder="Select tone" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Free Tones</SelectLabel>
-                {freeTones.map(tone => (
-                  <SelectItem key={tone.value} value={tone.value} title={tone.description}>
-                    <div className="flex flex-col">
-                      <div className="flex items-center">
-                        <span>{tone.emoji} {tone.label}</span>
-                      </div>
-                      <span className="text-xs text-gray-500 mt-1">{tone.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-              <SelectGroup>
-                <SelectLabel>Basic+ Tones</SelectLabel>
-                {basicTones.map(tone => (
-                  <SelectItem 
-                    key={tone.value} 
-                    value={tone.value}
-                    disabled={!subscription || subscription.tier === 'free'}
-                    title={tone.description}
-                  >
-                    <div className="flex flex-col">
-                      <div className="flex items-center">
-                        <span>{tone.emoji} {tone.label} {(!subscription || subscription.tier === 'free') ? '🔒' : ''}</span>
-                      </div>
-                      <span className="text-xs text-gray-500 mt-1">{tone.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-              <SelectGroup>
-                <SelectLabel>Pro Tones</SelectLabel>
-                {proTones.map(tone => (
-                  <SelectItem 
-                    key={tone.value} 
-                    value={tone.value}
-                    disabled={!subscription || ['free', 'basic'].includes(subscription.tier)}
-                    title={tone.description}
-                  >
-                    <div className="flex flex-col">
-                      <div className="flex items-center">
-                        <span>{tone.emoji} {tone.label} {(!subscription || ['free', 'basic'].includes(subscription.tier)) ? '🔒' : ''}</span>
-                      </div>
-                      <span className="text-xs text-gray-500 mt-1">{tone.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {showLockedToneMessage && (
-            <p className="text-xs text-secondary mt-1">
-              This tone is available on higher tiers. <a href="#pricing" className="text-primary hover:underline">Upgrade your plan</a> to unlock.
+        {/* Tone Selector Tooltip for Say It Better Mode */}
+        {mode === 'say-it-better' && (
+          <div className="mb-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600">
+              💡 In "Say It Better" mode, tone selection is not used. We'll enhance your message while preserving your intended meaning.
             </p>
-          )}
-        </div>
-        
-        <div className="mb-6">
-          <label htmlFor="reply-intent" className="block text-sm font-medium text-secondary-dark mb-1">
-            What would you like to say? <span className="text-secondary text-xs">(Optional)</span>
-          </label>
-          <Textarea 
-            id="reply-intent" 
-            rows={2} 
-            value={replyIntent}
-            onChange={(e) => setReplyIntent(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-            placeholder="e.g., I want to agree but can't meet tonight, or I want to politely decline..."
-          />
-        </div>
+          </div>
+        )}
         
         <div className="flex justify-center">
           <Button 
