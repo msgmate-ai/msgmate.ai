@@ -188,7 +188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Generate replies
-      const replies = await generateMessageReplies(prompt, tone, payload.intent);
+      const replies = await generateMessageReplies(prompt, tone, payload.intent, mode);
       
       // Update usage count for authenticated users only
       if (isAuthenticated && req.user) {

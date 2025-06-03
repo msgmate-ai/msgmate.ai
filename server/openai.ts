@@ -4,7 +4,7 @@ import OpenAI from "openai";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Generate replies based on received message, tone, and optional intent
-export async function generateMessageReplies(message: string, tone: string, intent?: string): Promise<Array<{ text: string }>> {
+export async function generateMessageReplies(message: string, tone: string, intent?: string, mode?: string): Promise<Array<{ text: string }>> {
   try {
     // Special handling for authentic tone to provide more substantive replies
     const isAuthenticTone = tone === 'authentic';
@@ -28,9 +28,33 @@ Since the 'authentic' tone was selected, create replies that:
 `;
     }
     
-    const prompt = `Generate 3 different reply options to the following message in a ${tone} tone.
+    let prompt: string;
     
-Message: "${message}"
+    if (mode === "say_it_better") {
+      prompt = `The user wrote the following message for someone they're talking to:
+
+"${message}"
+
+Please rewrite it to sound clearer, more natural, and emotionally well-tuned in the tone of: ${tone}. Return 1-3 variations. Keep it true to the original intent.
+
+${instructions}
+
+FORMAT YOUR RESPONSE AS JSON with this exact structure:
+{
+  "replies": [
+    {"text": "First improved version here"},
+    {"text": "Second improved version here"},
+    {"text": "Third improved version here"}
+  ]
+}
+`;
+    } else {
+      prompt = `Someone received this message:
+
+"${message}"
+
+Generate 1-3 possible replies in the tone of: ${tone}.
+Keep them natural, emotionally appropriate, and context-aware.
 ${intent ? `My intent for the reply is: "${intent}"` : ''}
 
 ${instructions}
@@ -44,6 +68,7 @@ FORMAT YOUR RESPONSE AS JSON with this exact structure:
   ]
 }
 `;
+    }
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
