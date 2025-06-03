@@ -111,8 +111,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "User input is required for Say It Better mode" });
         }
         prompt = userInput;
-        tone = "Supportive";
+        
+        // Rule-based tone detection
+        const input = userInput.toLowerCase();
+        if (input.includes('sorry') || input.includes('apologize') || input.includes('my fault')) {
+          tone = "sincere";
+        } else if (input.includes('thank') || input.includes('appreciate') || input.includes('grateful')) {
+          tone = "supportive";
+        } else if (input.includes('excited') || input.includes('amazing') || input.includes('awesome') || input.includes('!')) {
+          tone = "enthusiastic";
+        } else if (input.includes('love') || input.includes('miss') || input.includes('heart') || input.includes('feel')) {
+          tone = "romantic";
+        } else if (input.includes('haha') || input.includes('lol') || input.includes('funny') || input.includes('joke')) {
+          tone = "witty";
+        } else if (input.includes('?') && input.length < 50) {
+          tone = "curious";
+        } else {
+          tone = "friendly"; // Default fallback
+        }
+        
         console.log("Prompt used:", prompt);
+        console.log("Detected tone:", tone);
       } else if (mode === "tone_reply") {
         if (!messageToReplyTo) {
           return res.status(400).json({ message: "Message to reply to is required" });
@@ -163,8 +182,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Skip tone restrictions for "Say It Better" mode (enhance tone)
-      if (tone !== 'enhance' && !availableTones.includes(tone)) {
+      // Skip tone restrictions for "Say It Better" mode completely
+      if (mode !== "say_it_better" && !availableTones.includes(tone)) {
         return res.status(403).json({ message: 'This tone requires a higher subscription tier' });
       }
       
