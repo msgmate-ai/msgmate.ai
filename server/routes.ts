@@ -85,8 +85,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Authenticated users will have their usage tracked
       
       const schema = z.object({
-        message: z.string().min(1, "Message is required"),
-        tone: z.string().min(1, "Tone is required"),
+        mode: z.string().optional(),
+        message: z.string().optional(),
+        userInput: z.string().optional(),
+        messageToReplyTo: z.string().optional(),
+        tone: z.string().optional(),
+        selectedTone: z.string().optional(),
         intent: z.string().optional()
       });
       
@@ -95,7 +99,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: result.error.errors[0].message });
       }
       
-      const { message, tone, intent } = result.data;
+      const payload = result.data;
+      console.log("Mode:", payload.mode);
+      
+      let message: string;
+      let tone: string;
+      
+      if (payload.mode === "say_it_better") {
+        if (!payload.userInput) {
+          return res.status(400).json({ message: "User input is required for Say It Better mode" });
+        }
+        message = payload.userInput;
+        tone = "supportive"; // Fixed tone for enhancement mode
+      } else {
+        // Default to tone_reply mode for backward compatibility
+        if (!payload.messageToReplyTo && !payload.message) {
+          return res.status(400).json({ message: "Message to reply to is required" });
+        }
+        if (!payload.selectedTone && !payload.tone) {
+          return res.status(400).json({ message: "Tone selection is required" });
+        }
+        message = payload.messageToReplyTo || payload.message!;
+        tone = payload.selectedTone || payload.tone!;
+      }
       
       // Check if user is authenticated
       const isAuthenticated = req.isAuthenticated();
@@ -129,7 +155,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Generate replies
-      const replies = await generateMessageReplies(message, tone, intent);
+      const replies = await generateMessageReplies(message, tone, payload.intent);
       
       // Update usage count for authenticated users only
       if (isAuthenticated && req.user) {

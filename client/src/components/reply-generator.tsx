@@ -104,7 +104,7 @@ const ReplyGenerator = () => {
   };
 
   const mutation = useMutation({
-    mutationFn: async (data: { message: string; tone: string; intent?: string }) => {
+    mutationFn: async (data: any) => {
       try {
         const res = await apiRequest('POST', '/api/generate-replies', data);
         
@@ -188,8 +188,8 @@ const ReplyGenerator = () => {
       }
       
       mutation.mutate({
-        message: userMessage,
-        tone: 'enhance', // Special tone for enhancement mode
+        mode: "say_it_better",
+        userInput: userMessage,
       });
     } else {
       if (!receivedMessage) {
@@ -214,8 +214,9 @@ const ReplyGenerator = () => {
       const toneName = toneGroups[groupIndex]?.tones[toneIndex]?.name?.toLowerCase();
       
       mutation.mutate({
-        message: receivedMessage,
-        tone: toneName || 'friendly',
+        mode: "tone_reply",
+        messageToReplyTo: receivedMessage,
+        selectedTone: toneName || 'friendly',
       });
     }
   };
@@ -230,9 +231,10 @@ const ReplyGenerator = () => {
 
   return (
     <section className="bg-white rounded-xl shadow-md p-6 mb-10">
-      <h2 className="text-2xl font-semibold text-primary mb-6 flex items-center">
-        🧠 <span className="ml-2">Find the Right Words</span>
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-semibold text-primary mb-2">Message Reply Assistant</h2>
+        <p className="text-gray-600">Get help replying — in your voice, your tone, your way.</p>
+      </div>
       
       {/* Mode Selector */}
       <div className="mb-6">
