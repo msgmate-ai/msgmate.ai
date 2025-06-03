@@ -75,12 +75,20 @@ FORMAT YOUR RESPONSE AS JSON with this exact structure:
 `;
     }
 
+    let systemPrompt: string;
+    
+    if (mode === "say_it_better") {
+      systemPrompt = "You are an AI assistant that helps people improve and enhance their own messages before sending them in dating conversations. Your job is to rewrite messages to sound more natural, confident, and emotionally in tune while preserving the original meaning and intent. Use natural UK English spelling and phrasing. Focus on making small improvements to clarity, tone, and flow without being overly formal or exaggerated.";
+    } else {
+      systemPrompt = "You are an AI assistant that helps people craft perfect message replies for dating apps and WhatsApp conversations. Your suggestions should use natural UK English spelling and phrasing with subtly British communication styles. Aim for a tone that feels authentically British without stereotypes or forced slang. Focus on creating responses that would resonate with UK users while maintaining the requested tone. Avoid exaggerated Britishness or regional clichés.";
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant that helps people craft perfect message replies for dating apps and WhatsApp conversations. Your suggestions should use natural UK English spelling and phrasing with subtly British communication styles. Aim for a tone that feels authentically British without stereotypes or forced slang. Focus on creating responses that would resonate with UK users while maintaining the requested tone. Avoid exaggerated Britishness or regional clichés."
+          content: systemPrompt
         },
         {
           role: "user",
