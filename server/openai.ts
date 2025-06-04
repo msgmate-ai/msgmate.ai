@@ -31,13 +31,8 @@ Since the 'authentic' tone was selected, create replies that:
     let prompt: string;
     
     if (mode === "say_it_better") {
-      prompt = `Improve this message for a dating conversation:
-
-"${message}"
-
-Rewrite it to sound more natural, confident, and emotionally in tune while keeping the original meaning and vibe.
-
-Keep it casual and authentic, not overly formal. Make small adjustments to clarity, tone, and flow.
+      // For say_it_better mode, the message already contains the full structured prompt
+      prompt = `${message}
 
 ${instructions}
 

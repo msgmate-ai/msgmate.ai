@@ -110,9 +110,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (!userInput) {
           return res.status(400).json({ message: "User input is required for Say It Better mode" });
         }
-        prompt = userInput;
         
-        // Rule-based tone detection
+        // Build the full enhancement prompt using userInput
+        prompt = `You are helping someone improve a message they want to send in a dating conversation.
+
+Here's the original message:
+"${userInput}"
+
+Please rewrite it to sound more natural, confident, and emotionally in tune — while keeping the meaning and vibe of the original.
+
+Keep the message casual and authentic, not overly formal or exaggerated. Make small adjustments to clarity, tone, and flow.
+
+Return 2–3 improved versions only.`;
+        
+        // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();
         if (input.includes('sorry') || input.includes('apologize') || input.includes('my fault')) {
           tone = "sincere";
@@ -130,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           tone = "friendly"; // Default fallback
         }
         
-        console.log("Prompt used:", prompt);
+        console.log("AI prompt being sent:", prompt);
         console.log("Detected tone:", tone);
       } else if (mode === "tone_reply") {
         if (!messageToReplyTo) {

@@ -1,0 +1,50 @@
+// TASK: Fix Say It Better mode to properly enhance messages by using a structured AI prompt instead of passing raw user input directly.
+
+// CONTEXT:
+// In say_it_better mode, the AI should enhance the user's own message (userInput), not reply to it.
+// The current implementation is still passing raw input as the prompt, which causes the AI to treat it like a reply or echo it directly.
+
+// ✅ INSTRUCTION:
+
+// 1. In your /api/generate-replies route (or wherever the OpenAI API call is handled):
+// Check for the logic that handles mode === "say_it_better".
+
+if (mode === "say_it_better") {
+  // ✅ STEP 1: Build the full enhancement prompt using userInput
+  const aiPrompt = `
+You are helping someone improve a message they want to send in a dating conversation.
+
+Here’s the original message:
+"${userInput}"
+
+Please rewrite it to sound more natural, confident, and emotionally in tune — while keeping the meaning and vibe of the original.
+
+Keep the message casual and authentic, not overly formal or exaggerated. Make small adjustments to clarity, tone, and flow.
+
+Return 2–3 improved versions only.
+  `;
+
+  // ✅ STEP 2: Use this prompt in your OpenAI call
+  const response = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [{ role: "user", content: aiPrompt }],
+    temperature: 0.8,
+    max_tokens: 250,
+  });
+
+  // ✅ STEP 3: (Optional) Log full prompt for verification
+  console.log("AI prompt being sent:", aiPrompt);
+}
+
+// 2. For all other modes (e.g., tone_reply), keep your existing logic as-is.
+
+// 🧪 TEST CASE:
+// userInput: "really feel like I want to bust out of work and come see you"
+// Expected output: 2–3 rewritten versions like:
+//   - "I keep thinking about ditching work just to come see you."
+//   - "Wish I could sneak away from work and see you right now."
+
+// 🛑 DO NOT:
+// - Pass userInput directly to OpenAI (e.g., aiPrompt = userInput)
+// - Use the reply-style prompt for say_it_better
+// - Include messageToReplyTo or selectedTone in say_it_better logic
