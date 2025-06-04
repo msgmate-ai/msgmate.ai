@@ -1,7 +1,8 @@
 import OpenAI from "openai";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+// Using GPT-4 Turbo for improved tone handling, emotional clarity, and natural language quality
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const AI_MODEL = "gpt-4-turbo";
 
 // Generate replies based on received message, tone, and optional intent
 export async function generateMessageReplies(message: string, tone: string, intent?: string, mode?: string): Promise<Array<{ text: string }>> {
@@ -76,7 +77,7 @@ FORMAT YOUR RESPONSE AS JSON with this exact structure:
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: AI_MODEL,
       messages: [
         {
           role: "system",
@@ -143,7 +144,7 @@ Each starter should be 1-2 sentences, feel natural, and be likely to spark an en
 `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: AI_MODEL,
       messages: [
         {
           role: "system",
@@ -229,7 +230,7 @@ Provide the analysis in JSON format with the following structure:
 `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: AI_MODEL,
       messages: [
         {
           role: "system",
@@ -274,7 +275,7 @@ Provide the analysis in JSON format with the following structure:
 `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: AI_MODEL,
       messages: [
         {
           role: "system",
