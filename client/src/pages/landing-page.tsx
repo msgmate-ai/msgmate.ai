@@ -6,8 +6,10 @@ import Footer from '@/components/footer';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import msgMateLogo from '@/assets/msgmate-logo.png';
-import sayItBetterScreen from '@assets/IMG_2155_1749143410365.png';
-import helpMeCraftScreen from '@assets/IMG_2156_1749143410365.png';
+import helpMeCraftInput from '@assets/IMG_2156_1749143979578.jpeg';
+import helpMeCraftResults from '@assets/IMG_2157_1749143979578.jpeg';
+import sayItBetterInput from '@assets/IMG_2155_1749143979578.jpeg';
+import sayItBetterResults from '@assets/IMG_2154_1749143979578.png';
 
 const LandingPage = () => {
   const { user } = useAuth();
@@ -138,16 +140,28 @@ const LandingPage = () => {
                       You write the message, we'll help you say it better. Get three distinct rewrites that keep your voice but add polish, engagement, or playful charm.
                     </p>
                     
-                    {/* iPhone Mockup for Say It Better */}
-                    <div className="flex justify-center">
+                    {/* iPhone Mockups for Say It Better */}
+                    <div className="flex justify-center gap-8">
+                      {/* Input Screen */}
                       <div className="relative max-w-xs">
-                        {/* iPhone Frame */}
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
-                            {/* Screen 1: Say It Better Input */}
                             <img 
-                              src={sayItBetterScreen} 
+                              src={sayItBetterInput} 
                               alt="Say It Better Input Screen"
+                              className="w-full h-auto object-contain"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Results Screen */}
+                      <div className="relative max-w-xs">
+                        <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
+                          <div className="bg-white rounded-[2rem] overflow-hidden">
+                            <img 
+                              src={sayItBetterResults} 
+                              alt="Say It Better Results Screen"
                               className="w-full h-auto object-contain"
                             />
                           </div>
@@ -172,16 +186,28 @@ const LandingPage = () => {
                       Received a message and not sure how to respond? Choose your tone and get three perfectly crafted replies that match your vibe.
                     </p>
                     
-                    {/* iPhone Mockup for Help Me Craft */}
-                    <div className="flex justify-center">
+                    {/* iPhone Mockups for Help Me Craft */}
+                    <div className="flex justify-center gap-8">
+                      {/* Input Screen */}
                       <div className="relative max-w-xs">
-                        {/* iPhone Frame */}
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
-                            {/* Screen 1: Help Me Craft Input */}
                             <img 
-                              src={helpMeCraftScreen} 
+                              src={helpMeCraftInput} 
                               alt="Help Me Craft Input Screen"
+                              className="w-full h-auto object-contain"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Results Screen */}
+                      <div className="relative max-w-xs">
+                        <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
+                          <div className="bg-white rounded-[2rem] overflow-hidden">
+                            <img 
+                              src={helpMeCraftResults} 
+                              alt="Help Me Craft Results Screen"
                               className="w-full h-auto object-contain"
                             />
                           </div>
