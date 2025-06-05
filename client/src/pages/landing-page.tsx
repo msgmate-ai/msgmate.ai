@@ -141,9 +141,9 @@ const LandingPage = () => {
                     </p>
                     
                     {/* iPhone Mockups for Say It Better */}
-                    <div className="flex justify-center gap-8">
+                    <div className="flex flex-col items-center gap-8">
                       {/* Input Screen */}
-                      <div className="relative max-w-xs">
+                      <div className="relative max-w-sm">
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
                             <img 
@@ -153,10 +153,11 @@ const LandingPage = () => {
                             />
                           </div>
                         </div>
+                        <p className="text-center text-sm text-gray-600 mt-4">1. Enter your message</p>
                       </div>
                       
                       {/* Results Screen */}
-                      <div className="relative max-w-xs">
+                      <div className="relative max-w-sm">
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
                             <img 
@@ -166,6 +167,7 @@ const LandingPage = () => {
                             />
                           </div>
                         </div>
+                        <p className="text-center text-sm text-gray-600 mt-4">2. Get three enhanced versions</p>
                       </div>
                     </div>
                   </div>
@@ -187,9 +189,9 @@ const LandingPage = () => {
                     </p>
                     
                     {/* iPhone Mockups for Help Me Craft */}
-                    <div className="flex justify-center gap-8">
+                    <div className="flex flex-col items-center gap-8">
                       {/* Input Screen */}
-                      <div className="relative max-w-xs">
+                      <div className="relative max-w-sm">
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
                             <img 
@@ -199,10 +201,11 @@ const LandingPage = () => {
                             />
                           </div>
                         </div>
+                        <p className="text-center text-sm text-gray-600 mt-4">1. Enter received message & choose tone</p>
                       </div>
                       
                       {/* Results Screen */}
-                      <div className="relative max-w-xs">
+                      <div className="relative max-w-sm">
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
                             <img 
@@ -212,6 +215,7 @@ const LandingPage = () => {
                             />
                           </div>
                         </div>
+                        <p className="text-center text-sm text-gray-600 mt-4">2. Get three perfect replies</p>
                       </div>
                     </div>
                   </div>
