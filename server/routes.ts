@@ -118,21 +118,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "User input is required for Say It Better mode" });
         }
         
-        // Build the full enhancement prompt using userInput
-        prompt = `You are helping someone improve a message they want to send in a dating conversation.
+        // Build the enhanced coaching prompt using userInput
+        prompt = `You're a dating communication coach helping someone improve a message they want to send.
 
-Here's the original message:
+Here's their original message:
 "${userInput}"
 
-Your task is to rewrite it with more clarity, confidence, and emotional awareness — but offer some variation between the rewrites.
+Rewrite this message in 3 different styles, keeping the core meaning but shifting how it's said:
 
-🔹 Option 1: Stay close to the original. Clean it up, make it flow better, but preserve its exact vibe.
-🔹 Option 2: Slightly elevate the message — make it a little more thoughtful, confident, or emotionally expressive.
-🔹 Option 3: Offer a fresh angle. Reframe the message to show more personality, vulnerability, or playfulness — depending on the vibe of the original.
+1️⃣ Option 1: Clean up the original. Just improve clarity and flow — keep the same tone.
+2️⃣ Option 2: Add confidence or romantic flair. Say it like someone who's sure of the connection and speaks with warmth or directness.
+3️⃣ Option 3: Reimagine it with a creative or emotional twist — go playful, poetic, sincere, or a little bold. Give the user something they wouldn't have thought of themselves.
 
-Keep each version short, casual, and natural. Avoid being robotic or overly formal.
+Each version should feel *human*, emotionally aware, and easy to send in a real dating chat.
 
-Return 3 distinct improved versions of the message, each in a conversational style.`;
+Avoid anything robotic, overly formal, or cringey.
+Return only the 3 improved message options.`;
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();

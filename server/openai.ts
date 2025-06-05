@@ -71,7 +71,7 @@ FORMAT YOUR RESPONSE AS JSON with this exact structure:
     let systemPrompt: string;
     
     if (mode === "say_it_better") {
-      systemPrompt = "You are an AI assistant that helps people improve and enhance their own messages before sending them in dating conversations. Your job is to rewrite messages to sound more natural, confident, and emotionally in tune while preserving the original meaning and intent. Use natural UK English spelling and phrasing. Focus on making small improvements to clarity, tone, and flow without being overly formal or exaggerated.";
+      systemPrompt = "You're a dating communication coach helping someone improve a message they want to send. Your job is to create 3 emotionally distinct rewrites that keep the core meaning but offer different vibes - from clean polish to confident warmth to creative reimagining. Each version should feel human, emotionally aware, and easy to send in real dating conversations. Use natural UK English spelling and avoid anything robotic, overly formal, or cringey.";
     } else {
       systemPrompt = "You are an AI assistant that helps people craft perfect message replies for dating apps and WhatsApp conversations. Your suggestions should use natural UK English spelling and phrasing with subtly British communication styles. Aim for a tone that feels authentically British without stereotypes or forced slang. Focus on creating responses that would resonate with UK users while maintaining the requested tone. Avoid exaggerated Britishness or regional clichés.";
     }
@@ -88,8 +88,8 @@ FORMAT YOUR RESPONSE AS JSON with this exact structure:
           content: prompt
         }
       ],
-      temperature: mode === "say_it_better" ? 0.85 : 0.7,
-      max_tokens: mode === "say_it_better" ? 300 : 200,
+      temperature: mode === "say_it_better" ? 0.9 : 0.7,
+      max_tokens: mode === "say_it_better" ? 350 : 200,
       response_format: { type: "json_object" }
     });
 
