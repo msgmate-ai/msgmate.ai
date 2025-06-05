@@ -81,6 +81,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate message replies
   app.post('/api/generate-replies', async (req, res, next) => {
     try {
+      // Define free tones that are accessible without login or subscription
+      const freeTones = ['Playful', 'Curious', 'Confident', 'Charming'];
+      
       // Allow unauthenticated users to access the free tier features
       // Authenticated users will have their usage tracked
       
@@ -102,6 +105,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const payload = result.data;
       const { mode, userInput, messageToReplyTo, selectedTone } = payload;
       console.log("Mode:", mode);
+      
+      // Extract the selected tone cleanly
+      const selectedToneClean = selectedTone?.trim();
+      console.log("Tone requested:", selectedToneClean);
       
       let prompt: string;
       let tone: string;
@@ -182,8 +189,8 @@ Return 2–3 improved versions only.`;
         usageLimit = subscription?.tier === 'pro' ? 400 : subscription?.tier === 'basic' ? 100 : 10;
         
         // Set available tones based on subscription tier
-        const freeTones = ['playful', 'witty', 'flirty', 'authentic', 'supportive'];
-        const basicTones = [...freeTones, 'confident', 'humorous', 'curious', 'enthusiastic', 'casual'];
+        const freeTonesAuth = ['playful', 'witty', 'flirty', 'authentic', 'supportive'];
+        const basicTones = [...freeTonesAuth, 'confident', 'humorous', 'curious', 'enthusiastic', 'casual'];
         const proTones = [...basicTones, 'romantic', 'mysterious', 'assertive', 'sincere', 'charming'];
         
         if (subscription?.tier === 'basic') {
@@ -191,11 +198,16 @@ Return 2–3 improved versions only.`;
         } else if (subscription?.tier === 'pro') {
           availableTones = proTones;
         }
-      }
-      
-      // Skip tone restrictions for "Say It Better" mode completely
-      if (mode !== "say_it_better" && !availableTones.includes(tone)) {
-        return res.status(403).json({ message: 'This tone requires a higher subscription tier' });
+        
+        // Skip tone restrictions for "Say It Better" mode completely for authenticated users
+        if (mode !== "say_it_better" && !availableTones.includes(tone)) {
+          return res.status(403).json({ message: 'This tone requires a higher subscription tier' });
+        }
+      } else {
+        // For unauthenticated users, only allow free tones (except in "Say It Better" mode)
+        if (mode !== "say_it_better" && !freeTones.includes(tone)) {
+          return res.status(403).json({ message: 'This tone requires a higher tier' });
+        }
       }
       
       // Generate replies
