@@ -9,7 +9,7 @@ import msgMateLogo from '@/assets/msgmate-logo.png';
 import helpMeCraftInput from '@assets/IMG_2156_1749143979578.jpeg';
 import helpMeCraftResults from '@assets/IMG_2157_1749143979578.jpeg';
 import sayItBetterInput from '@assets/IMG_2155_1749143979578.jpeg';
-import sayItBetterResults from '@assets/IMG_2154_1749143979578.png';
+import sayItBetterResults from '@assets/IMG_2153_1749144467322.jpeg';
 
 const LandingPage = () => {
   const { user } = useAuth();
@@ -219,6 +219,50 @@ const LandingPage = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Tools Section */}
+          <div className="py-16 bg-gradient-to-br from-purple-50 to-pink-100 rounded-3xl shadow-xl mb-16">
+            <div className="max-w-6xl mx-auto px-8">
+              <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+                More Ways to Master Your Conversations
+              </h2>
+              <p className="text-lg text-gray-600 text-center mb-12">
+                Beyond our core message features, explore additional tools to elevate every aspect of your dating communication.
+              </p>
+              
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="bg-white p-6 rounded-xl shadow-md text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Conversation Starters</h3>
+                  <p className="text-gray-600">Generate engaging opening lines based on profiles and shared interests to break the ice naturally.</p>
+                </div>
+                
+                <div className="bg-white p-6 rounded-xl shadow-md text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Message Coach</h3>
+                  <p className="text-gray-600">Get detailed feedback on tone, clarity, and emotional impact to improve your messaging skills over time.</p>
+                </div>
+                
+                <div className="bg-white p-6 rounded-xl shadow-md text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Message Decoder</h3>
+                  <p className="text-gray-600">Understand hidden meanings, subtext, and intentions behind messages you receive for better responses.</p>
                 </div>
               </div>
             </div>
