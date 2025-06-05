@@ -118,8 +118,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "User input is required for Say It Better mode" });
         }
         
-        // Build the enhanced coaching prompt using userInput
-        prompt = `You're a dating conversation coach helping someone improve a message they want to send.
+        // First, analyze the message context and emotional strength
+        const contextClassifierPrompt = `
+You are a dating message analyst. Your job is to quickly classify a single message by two things:
+
+1. Message Type — what kind of message is it?
+   Choose ONE of the following:
+   - "flirty"
+   - "follow-up"
+   - "check-in"
+   - "apology"
+   - "date suggestion"
+   - "general banter"
+   - "vulnerable / emotional"
+   - "other"
+
+2. Emotional Strength — how emotionally charged is it?
+   Choose ONE of: "low", "medium", or "high"
+
+Output your answer in this exact JSON format:
+{
+  "type": "...",
+  "emotion": "..."
+}
+
+Only respond with the JSON. Do not explain your reasoning.
+`;
+        
+        try {
+          // Import OpenAI directly for classification
+          const OpenAI = require('openai');
+          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          
+          console.log("Starting message classification...");
+          
+          const analysisResponse = await openai.chat.completions.create({
+            model: "gpt-4-turbo",
+            messages: [
+              {
+                role: "system",
+                content: contextClassifierPrompt
+              },
+              {
+                role: "user",
+                content: `Here is the user's message:\n\n"${userInput}"`
+              }
+            ],
+            temperature: 0.3,
+            max_tokens: 100
+          });
+          
+          let messageType = "other";
+          let emotionLevel = "medium";
+          
+          const rawClassification = analysisResponse.choices[0].message.content;
+          console.log("Raw classification response:", rawClassification);
+          
+          try {
+            const classification = JSON.parse(rawClassification);
+            messageType = classification.type || "other";
+            emotionLevel = classification.emotion || "medium";
+            console.log("Successfully parsed classification:", { messageType, emotionLevel });
+          } catch (parseError) {
+            console.warn("Failed to parse classification:", parseError.message);
+            console.warn("Raw content was:", rawClassification);
+          }
+          
+          // Build the enhanced coaching prompt using classification
+          prompt = `You're a dating conversation coach helping someone improve a message they want to send.
+
+Here's their original message:
+"${userInput}"
+
+Message Type: ${messageType}
+Emotional Level: ${emotionLevel}
+
+Rewrite this message in 3 distinct ways, keeping the *intent and emotional level* of the original in mind. The tone is light to moderately warm — no overinvestment.
+
+🔹 Option 1: Clean and natural. Just make it clearer, smoother, and slightly more confident. Stay close to the original.
+🔹 Option 2: Add a confident, self-assured tone. Sound like someone who's comfortable expressing interest, without sounding overly eager or emotional.
+🔹 Option 3: Offer a playful twist. Reword it with cheekiness, light humour, or flirtatious charm — without going too far or sounding unnatural.
+
+Keep each version casual, short, and human — like a real message you'd send. No robotic or over-romanticised language.
+
+Avoid anything too intense, poetic, or emotionally deep — match the vibe of the original.
+Return only the 3 improved options.`;
+
+        } catch (analysisError) {
+          console.warn("Classification failed, proceeding with default prompt:", analysisError);
+          
+          // Fallback to original prompt if classification fails
+          prompt = `You're a dating conversation coach helping someone improve a message they want to send.
 
 Here's their original message:
 "${userInput}"
@@ -134,6 +223,7 @@ Keep each version casual, short, and human — like a real message you'd send. N
 
 Avoid anything too intense, poetic, or emotionally deep — match the vibe of the original.
 Return only the 3 improved options.`;
+        }
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();
