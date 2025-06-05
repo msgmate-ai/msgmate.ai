@@ -142,55 +142,12 @@ const LandingPage = () => {
                         {/* iPhone Frame */}
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
-                            {/* iPhone Screen Content */}
-                            <div className="bg-gradient-to-b from-blue-50 to-white">
-                              {/* Status Bar */}
-                              <div className="flex justify-between items-center px-6 pt-3 pb-2 text-xs font-medium">
-                                <span>9:41</span>
-                                <div className="flex items-center space-x-1">
-                                  <div className="flex space-x-1">
-                                    <div className="w-1 h-1 bg-black rounded-full"></div>
-                                    <div className="w-1 h-1 bg-black rounded-full"></div>
-                                    <div className="w-1 h-1 bg-black rounded-full"></div>
-                                  </div>
-                                  <svg className="w-4 h-3" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M2 17h20v2H2zm1.15-4.05L4 11.47l.85 1.48L6 12.4l1.15.55L8 11.47 9.15 12.95 10.3 12.4 11.45 12.95 12.6 12.4 13.75 12.95 14.9 12.4 16.05 12.95 17.2 12.4 18.35 12.95 19.5 12.4 20.65 12.95 22 12.4V7H2v5.4l1.15.55z"/>
-                                  </svg>
-                                </div>
-                              </div>
-                              
-                              {/* App Header */}
-                              <div className="px-4 py-3 border-b border-gray-100">
-                                <h2 className="text-lg font-semibold text-center">Say It Better</h2>
-                                <p className="text-xs text-gray-600 text-center mt-1">You write the message, we'll help you say it better</p>
-                              </div>
-                              
-                              {/* Input Section */}
-                              <div className="p-4">
-                                <div className="bg-gray-50 rounded-xl p-3 mb-4">
-                                  <label className="text-xs text-gray-600 block mb-2">Your message:</label>
-                                  <div className="text-sm text-gray-800">hey want to grab coffee sometime</div>
-                                </div>
-                                
-                                {/* Generated Options */}
-                                <div className="space-y-3">
-                                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                                    <div className="text-xs text-blue-700 font-medium mb-1">Option 1 - Polished</div>
-                                    <div className="text-sm text-gray-800">"Hey, would you like to meet up for a coffee sometime soon?"</div>
-                                  </div>
-                                  
-                                  <div className="bg-green-50 border border-green-200 rounded-xl p-3">
-                                    <div className="text-xs text-green-700 font-medium mb-1">Option 2 - Engaging</div>
-                                    <div className="text-sm text-gray-800">"Hi! What's your favorite coffee spot? Maybe we could check it out together?"</div>
-                                  </div>
-                                  
-                                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-3">
-                                    <div className="text-xs text-purple-700 font-medium mb-1">Option 3 - Playful</div>
-                                    <div className="text-sm text-gray-800">"How about a coffee adventure? First one to spot a quirky mug wins!"</div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                            {/* Screen 1: Say It Better Input */}
+                            <img 
+                              src="/attached_assets/IMG_2155_1749143410365.png" 
+                              alt="Say It Better Input Screen"
+                              className="w-full h-auto object-contain"
+                            />
                           </div>
                         </div>
                       </div>
@@ -219,65 +176,12 @@ const LandingPage = () => {
                         {/* iPhone Frame */}
                         <div className="relative bg-black rounded-[2.5rem] p-2 shadow-2xl">
                           <div className="bg-white rounded-[2rem] overflow-hidden">
-                            {/* iPhone Screen Content */}
-                            <div className="bg-gradient-to-b from-green-50 to-white">
-                              {/* Status Bar */}
-                              <div className="flex justify-between items-center px-6 pt-3 pb-2 text-xs font-medium">
-                                <span>9:41</span>
-                                <div className="flex items-center space-x-1">
-                                  <div className="flex space-x-1">
-                                    <div className="w-1 h-1 bg-black rounded-full"></div>
-                                    <div className="w-1 h-1 bg-black rounded-full"></div>
-                                    <div className="w-1 h-1 bg-black rounded-full"></div>
-                                  </div>
-                                  <svg className="w-4 h-3" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M2 17h20v2H2zm1.15-4.05L4 11.47l.85 1.48L6 12.4l1.15.55L8 11.47 9.15 12.95 10.3 12.4 11.45 12.95 12.6 12.4 13.75 12.95 14.9 12.4 16.05 12.95 17.2 12.4 18.35 12.95 19.5 12.4 20.65 12.95 22 12.4V7H2v5.4l1.15.55z"/>
-                                  </svg>
-                                </div>
-                              </div>
-                              
-                              {/* App Header */}
-                              <div className="px-4 py-3 border-b border-gray-100">
-                                <h2 className="text-lg font-semibold text-center">Help Me Craft a Message</h2>
-                                <p className="text-xs text-gray-600 text-center mt-1">Choose your tone and get perfect replies</p>
-                              </div>
-                              
-                              {/* Message Received Section */}
-                              <div className="p-4">
-                                <div className="bg-gray-50 rounded-xl p-3 mb-4">
-                                  <label className="text-xs text-gray-600 block mb-2">Message you received:</label>
-                                  <div className="text-sm text-gray-800">"How was your day?"</div>
-                                </div>
-                                
-                                {/* Tone Selection */}
-                                <div className="mb-4">
-                                  <label className="text-xs text-gray-600 block mb-2">Choose your tone:</label>
-                                  <div className="flex flex-wrap gap-2">
-                                    <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium border-2 border-blue-300">😊 Playful</span>
-                                    <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs">🤔 Curious</span>
-                                    <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs">💪 Confident</span>
-                                  </div>
-                                </div>
-                                
-                                {/* Generated Replies */}
-                                <div className="space-y-3">
-                                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                                    <div className="text-xs text-blue-700 font-medium mb-1">Option 1</div>
-                                    <div className="text-sm text-gray-800">"It was a rollercoaster! Started off slow but ended on a high note. How about yours?"</div>
-                                  </div>
-                                  
-                                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                                    <div className="text-xs text-blue-700 font-medium mb-1">Option 2</div>
-                                    <div className="text-sm text-gray-800">"Pretty good, thanks! Managed to conquer my to-do list, so I'm feeling victorious."</div>
-                                  </div>
-                                  
-                                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                                    <div className="text-xs text-blue-700 font-medium mb-1">Option 3</div>
-                                    <div className="text-sm text-gray-800">"Oh, you know, saving the world one email at a time. How did your day treat you?"</div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                            {/* Screen 1: Help Me Craft Input */}
+                            <img 
+                              src="/attached_assets/IMG_2156_1749143410365.png" 
+                              alt="Help Me Craft Input Screen"
+                              className="w-full h-auto object-contain"
+                            />
                           </div>
                         </div>
                       </div>
