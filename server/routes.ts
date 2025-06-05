@@ -119,21 +119,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         // Build the enhanced coaching prompt using userInput
-        prompt = `You're a dating communication coach helping someone improve a message they want to send.
+        prompt = `You're a dating conversation coach helping someone improve a message they want to send.
 
 Here's their original message:
 "${userInput}"
 
-Rewrite this message in 3 different styles, keeping the core meaning but shifting how it's said:
+Rewrite this message in 3 distinct ways, keeping the *intent and emotional level* of the original in mind. The tone is light to moderately warm — no overinvestment.
 
-1️⃣ Option 1: Clean up the original. Just improve clarity and flow — keep the same tone.
-2️⃣ Option 2: Add confidence or romantic flair. Say it like someone who's sure of the connection and speaks with warmth or directness.
-3️⃣ Option 3: Reimagine it with a creative or emotional twist — go playful, poetic, sincere, or a little bold. Give the user something they wouldn't have thought of themselves.
+🔹 Option 1: Clean and natural. Just make it clearer, smoother, and slightly more confident. Stay close to the original.
+🔹 Option 2: Add a confident, self-assured tone. Sound like someone who's comfortable expressing interest, without sounding overly eager or emotional.
+🔹 Option 3: Offer a playful twist. Reword it with cheekiness, light humour, or flirtatious charm — without going too far or sounding unnatural.
 
-Each version should feel *human*, emotionally aware, and easy to send in a real dating chat.
+Keep each version casual, short, and human — like a real message you'd send. No robotic or over-romanticised language.
 
-Avoid anything robotic, overly formal, or cringey.
-Return only the 3 improved message options.`;
+Avoid anything too intense, poetic, or emotionally deep — match the vibe of the original.
+Return only the 3 improved options.`;
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();
