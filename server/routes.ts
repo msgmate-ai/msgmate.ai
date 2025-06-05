@@ -129,7 +129,9 @@ Return 3 short, distinct rewrites:
 2. Engaging version – ask something curious or spark a more interesting reply
 3. Playful version – add light humour or a creative twist (if appropriate)
 
-Keep the tone casual and natural. No formal phrasing, no intense emotion. If the original message is very neutral, keep all three versions aligned to that baseline.`;
+Keep the tone casual and natural. No formal phrasing, no intense emotion. If the original message is very neutral, keep all three versions aligned to that baseline.
+
+Language requirements: Use UK English spelling and phrasing. STRICTLY AVOID American expressions including: "blast," "downtown," "you guys," "totally," "super fun," "crazy night," "awesome," "amazing time," "hang out." Instead use UK-appropriate alternatives like "brilliant," "fantastic," "lovely," "wonderful," "meet up," "see each other," "get together." Keep language neutral or subtly British-influenced.`;
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();
