@@ -6,6 +6,8 @@ import Footer from '@/components/footer';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import msgMateLogo from '@/assets/msgmate-logo.png';
+import sayItBetterScreen from '@assets/IMG_2155_1749143410365.png';
+import helpMeCraftScreen from '@assets/IMG_2156_1749143410365.png';
 
 const LandingPage = () => {
   const { user } = useAuth();
@@ -144,7 +146,7 @@ const LandingPage = () => {
                           <div className="bg-white rounded-[2rem] overflow-hidden">
                             {/* Screen 1: Say It Better Input */}
                             <img 
-                              src="/attached_assets/IMG_2155_1749143410365.png" 
+                              src={sayItBetterScreen} 
                               alt="Say It Better Input Screen"
                               className="w-full h-auto object-contain"
                             />
@@ -178,7 +180,7 @@ const LandingPage = () => {
                           <div className="bg-white rounded-[2rem] overflow-hidden">
                             {/* Screen 1: Help Me Craft Input */}
                             <img 
-                              src="/attached_assets/IMG_2156_1749143410365.png" 
+                              src={helpMeCraftScreen} 
                               alt="Help Me Craft Input Screen"
                               className="w-full h-auto object-contain"
                             />
