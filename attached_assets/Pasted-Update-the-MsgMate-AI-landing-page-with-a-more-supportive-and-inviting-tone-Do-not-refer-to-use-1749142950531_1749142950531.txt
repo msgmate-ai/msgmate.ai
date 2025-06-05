@@ -1,0 +1,39 @@
+Update the MsgMate.AI landing page with a more supportive and inviting tone. Do **not** refer to users as “emotionally aware daters.” Instead, highlight how MsgMate helps people *say it better with confidence, authenticity, and charm*. Use the phrase “Your personal AI Wingmate” as a friendly framing device throughout.
+
+**Key sections to revise and include:**
+
+1. **Headline & CTA Section**
+   - Keep the current logo and tagline.
+   - Replace any reference to "emotionally aware" with:
+     > “Helping you say it better – with confidence, charm, and authenticity.”
+   - Emphasise:
+     > “Limited Free Testing Subscriptions Available” with a warm, inviting call-to-action to join the beta.
+
+2. **Tool Highlights Section**
+   - Don’t refer to “two tools.” Instead say:
+     > “Explore our message helper features – perfect for any stage of the conversation.”
+   - Use iPhone screenshots provided by the user (not mockups) to show both:
+     - “Say It Better” (user writes a message, gets 3 refined options).
+     - “Help Me Craft a Message” (user receives a message, chooses tone, gets 3 replies).
+
+3. **Tone Section**
+   - Title: “Express Yourself in Any Tone”
+   - Text: “Free beta includes access to our core tones – perfect for every type of dating conversation.”
+   - Display tone cards: Playful, Curious, Confident, and Charming.
+
+4. **“Perfect for Thoughtful Daters” Section**
+   - Keep the existing visuals and structure. 
+   - Bullet points:
+     - “Value Connection – You care about meaningful conversations and real connection.”
+     - “Want to Stay Authentic – You want help expressing yourself better, without sounding fake or robotic.”
+     - “Overthink Messages – You often know what you want to say, but struggle with how to phrase it just right.”
+
+5. **Final Call to Action**
+   - Heading: “Ready to Transform Your Dating Conversations?”
+   - Invite users again to join the free beta with:
+     > “Be part of our early access group and help shape the future of confident, enjoyable dating conversations.”
+
+**Important Notes:**
+- Use the **user-supplied iPhone screenshots** to show actual app features.
+- Match the tone of all text to be encouraging, warm, and confidence-building.
+- Do not replace the current main app or home screen. This is a **standalone promotional landing page** designed to collect waiting list emails.

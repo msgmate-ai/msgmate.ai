@@ -64,7 +64,7 @@ const LandingPage = () => {
               </h1>
               
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Never overthink a message again. MsgMate helps emotionally aware daters express themselves with confidence, charm, and authenticity.
+                Helping you say it better – with confidence, charm, and authenticity. Never overthink a message again.
               </p>
 
               {/* Urgency Banner */}
@@ -114,10 +114,10 @@ const LandingPage = () => {
           <div className="py-16 bg-white rounded-3xl shadow-xl mb-16">
             <div className="max-w-6xl mx-auto px-8">
               <h2 className="text-4xl font-bold text-center mb-4 text-gray-900">
-                Two Powerful Tools, One Smart Assistant
+                Message Helper Features
               </h2>
               <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
-                Whether you're crafting the perfect reply or improving your own message, MsgMate has you covered.
+                Explore our message helper features – perfect for any stage of the conversation.
               </p>
               
               <div className="grid md:grid-cols-2 gap-12">
@@ -205,7 +205,7 @@ const LandingPage = () => {
                 Express Yourself in Any Tone
               </h2>
               <p className="text-lg text-gray-600 mb-12">
-                Free beta includes access to our core tones - perfect for any dating conversation
+                Free beta includes access to our core tones – perfect for every type of dating conversation.
               </p>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -248,7 +248,7 @@ const LandingPage = () => {
                     </svg>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">Value Connection</h3>
-                  <p className="text-gray-600">You care about meaningful conversations and authentic connections, not just hookups.</p>
+                  <p className="text-gray-600">You care about meaningful conversations and real connection.</p>
                 </div>
                 
                 <div className="text-center">
@@ -258,7 +258,7 @@ const LandingPage = () => {
                     </svg>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">Want to Stay Authentic</h3>
-                  <p className="text-gray-600">You want help expressing yourself better, but you never want to sound fake or robotic.</p>
+                  <p className="text-gray-600">You want help expressing yourself better, without sounding fake or robotic.</p>
                 </div>
                 
                 <div className="text-center">
@@ -268,7 +268,7 @@ const LandingPage = () => {
                     </svg>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">Overthink Messages</h3>
-                  <p className="text-gray-600">Sometimes you know what you want to say but struggle with how to phrase it perfectly.</p>
+                  <p className="text-gray-600">You often know what you want to say, but struggle with how to phrase it just right.</p>
                 </div>
               </div>
             </div>
@@ -281,7 +281,7 @@ const LandingPage = () => {
                 Ready to Transform Your Dating Conversations?
               </h2>
               <p className="text-xl text-gray-600 mb-8">
-                Join our exclusive beta and be among the first to experience the future of confident dating communication.
+                Be part of our early access group and help shape the future of confident, enjoyable dating conversations.
               </p>
               
               <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto mb-8">
