@@ -124,11 +124,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 Here's the original message:
 "${userInput}"
 
-Please rewrite it to sound more natural, confident, and emotionally in tune — while keeping the meaning and vibe of the original.
+Your task is to rewrite it with more clarity, confidence, and emotional awareness — but offer some variation between the rewrites.
 
-Keep the message casual and authentic, not overly formal or exaggerated. Make small adjustments to clarity, tone, and flow.
+🔹 Option 1: Stay close to the original. Clean it up, make it flow better, but preserve its exact vibe.
+🔹 Option 2: Slightly elevate the message — make it a little more thoughtful, confident, or emotionally expressive.
+🔹 Option 3: Offer a fresh angle. Reframe the message to show more personality, vulnerability, or playfulness — depending on the vibe of the original.
 
-Return 2–3 improved versions only.`;
+Keep each version short, casual, and natural. Avoid being robotic or overly formal.
+
+Return 3 distinct improved versions of the message, each in a conversational style.`;
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();

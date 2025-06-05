@@ -88,6 +88,8 @@ FORMAT YOUR RESPONSE AS JSON with this exact structure:
           content: prompt
         }
       ],
+      temperature: mode === "say_it_better" ? 0.85 : 0.7,
+      max_tokens: mode === "say_it_better" ? 300 : 200,
       response_format: { type: "json_object" }
     });
 
