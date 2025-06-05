@@ -118,22 +118,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "User input is required for Say It Better mode" });
         }
         
-        // Build the enhanced coaching prompt using userInput
-        prompt = `You're a dating conversation coach helping someone improve a message they want to send.
+        // Build the context-aware coaching prompt using userInput
+        prompt = `You are helping someone improve a message they want to send in a dating conversation.
 
-Here's their original message:
+Here's the original message:
 "${userInput}"
 
-Rewrite this message in 3 distinct ways, keeping the *intent and emotional level* of the original in mind. The tone is light to moderately warm — no overinvestment.
+First, quickly assess the tone and energy level of the message. Then, rewrite it with more clarity, confidence, and natural emotional flow — while offering 3 distinct versions that reflect different useful directions.
 
-🔹 Option 1: Clean and natural. Just make it clearer, smoother, and slightly more confident. Stay close to the original.
-🔹 Option 2: Add a confident, self-assured tone. Sound like someone who's comfortable expressing interest, without sounding overly eager or emotional.
-🔹 Option 3: Offer a playful twist. Reword it with cheekiness, light humour, or flirtatious charm — without going too far or sounding unnatural.
+🟦 Option 1: Clean and Polished  
+Improve grammar and flow, while preserving the tone, intention, and vibe.
 
-Keep each version casual, short, and human — like a real message you'd send. No robotic or over-romanticised language.
+🟨 Option 2: Confident and Composed  
+Make it slightly more direct, self-assured, or emotionally clear — but keep it appropriate to the original energy level.
 
-Avoid anything too intense, poetic, or emotionally deep — match the vibe of the original.
-Return only the 3 improved options.`;
+🟪 Option 3: Playful, Open, or Fresh  
+If the original feels light or fun, offer a version with a warm or cheeky twist.  
+If the original is sincere or awkward, offer a version with more personality or vulnerability instead of humor.
+
+Keep all versions short, natural, and conversational. Avoid robotic or overly formal tone.
+
+Return only the 3 rewritten messages, no labels or explanation.`;
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();
