@@ -131,7 +131,7 @@ Return 3 short, distinct rewrites:
 
 Keep the tone casual and natural. No formal phrasing, no intense emotion. If the original message is very neutral, keep all three versions aligned to that baseline.
 
-Use proper UK English spelling (colour, favourite, realise) and British phrasing throughout. Avoid American slang words or expressions completely.`;
+Use neutral, standard English without any regional slang, dialect words, or cultural expressions. Avoid terms like 'cuppa', 'fancy', 'brilliant', 'lovely', or other regional language. Keep responses clear and universally understandable.`;
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();
