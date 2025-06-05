@@ -1,238 +1,328 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import Footer from '@/components/footer';
 import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 import msgMateLogo from '@/assets/msgmate-logo.png';
 
 const LandingPage = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Set page title
   useEffect(() => {
-    document.title = "MsgMate.AI - Your personal AI Wingmate";
+    document.title = "MsgMate.AI - Your Personal AI Wingmate for Dating";
   }, []);
 
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    
+    setIsSubmitting(true);
+    
+    // Simulate API call for beta signup
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast({
+        title: "Success!",
+        description: "You've been added to our beta waiting list. We'll be in touch soon!",
+      });
+      setEmail('');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30">
       <main className="flex-1">
         <div className="container px-4 mx-auto">
           {/* Hero Section */}
-          <div className="py-8 md:py-16 flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1 space-y-6">
-              <div className="flex flex-col items-center md:items-start">
+          <div className="py-12 md:py-20 text-center">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-8">
                 <img 
                   src={msgMateLogo} 
                   alt="MsgMate.AI Logo" 
-                  className="w-auto h-auto max-w-full md:max-w-md mb-6"
+                  className="w-auto h-auto max-w-sm mx-auto mb-6"
                 />
               </div>
-              <p className="text-lg text-muted-foreground">
-                Struggle with what to say on dating apps? MsgMate helps you reply with confidence, start great conversations, and decode tricky messages — all with one smart tool.
+              
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Your Personal AI Wingmate for 
+                <span className="text-blue-600"> Confident Dating</span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Never overthink a message again. MsgMate helps emotionally aware daters express themselves with confidence, charm, and authenticity.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="font-semibold">
-                  <Link href="/app">Try for Free</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg">
+
+              {/* Urgency Banner */}
+              <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-xl mb-8 shadow-lg">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-bold text-lg">Limited Free Testing Subscriptions Available</span>
+                </div>
+                <p className="text-orange-100">Join the exclusive beta and help shape the future of dating conversations</p>
+              </div>
+
+              {/* Email Signup Form */}
+              <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto mb-12">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="flex-1 text-lg p-4 border-2 border-gray-200 focus:border-blue-500"
+                    required
+                  />
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    disabled={isSubmitting}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 text-lg whitespace-nowrap"
+                  >
+                    {isSubmitting ? 'Joining...' : 'Join Free Beta'}
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-500 mt-3">Limited spots available • No spam, ever</p>
+              </form>
+
+              <div className="text-center mb-16">
+                <p className="text-gray-600 mb-4">Already have an account?</p>
+                <Button asChild variant="outline" size="lg" className="border-2">
                   <Link href="/auth">Sign In</Link>
                 </Button>
               </div>
-              <div className="pt-4 text-sm text-muted-foreground">
-                <p>No registration required to try basic features.</p>
-              </div>
             </div>
-
           </div>
 
           {/* Features Section */}
-          <div className="py-16 bg-gradient-to-b from-background to-muted/30 rounded-3xl my-12">
-            <h2 className="text-4xl font-bold text-center mb-16 text-primary">Features</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 px-8">
-              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
-                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
-                <div className="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                  <h3 className="text-2xl font-bold">Reply Generator</h3>
-                  <p className="text-muted-foreground my-3">Create perfect replies in multiple tones for any message you receive.</p>
-                  <div className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold">
-                    Available in Free Tier
+          <div className="py-16 bg-white rounded-3xl shadow-xl mb-16">
+            <div className="max-w-6xl mx-auto px-8">
+              <h2 className="text-4xl font-bold text-center mb-4 text-gray-900">
+                Two Powerful Tools, One Smart Assistant
+              </h2>
+              <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
+                Whether you're crafting the perfect reply or improving your own message, MsgMate has you covered.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-12">
+                {/* Say It Better Feature */}
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-2xl">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900">Say It Better</h3>
+                    </div>
+                    <p className="text-gray-700 mb-6 text-lg">
+                      You write the message, we'll help you say it better. Get three distinct rewrites that keep your voice but add polish, engagement, or playful charm.
+                    </p>
+                    
+                    {/* Example Screenshot Placeholder */}
+                    <div className="bg-white p-4 rounded-xl border-2 border-gray-200 shadow-sm">
+                      <div className="text-sm text-gray-500 mb-3">Your original:</div>
+                      <div className="bg-gray-50 p-3 rounded-lg mb-4 text-gray-700">
+                        "hey want to grab coffee sometime"
+                      </div>
+                      <div className="text-sm text-gray-500 mb-3">MsgMate's suggestions:</div>
+                      <div className="space-y-2">
+                        <div className="bg-blue-50 p-3 rounded-lg text-sm">
+                          <span className="font-medium text-blue-700">Polished:</span> "Hey, would you like to meet up for a coffee sometime soon?"
+                        </div>
+                        <div className="bg-green-50 p-3 rounded-lg text-sm">
+                          <span className="font-medium text-green-700">Engaging:</span> "Hi! What's your favorite coffee spot? Maybe we could check it out together?"
+                        </div>
+                        <div className="bg-purple-50 p-3 rounded-lg text-sm">
+                          <span className="font-medium text-purple-700">Playful:</span> "How do you feel about a coffee adventure sometime? First one to spot a quirky mug wins!"
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
-                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
-                <div className="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                  </svg>
-                  <h3 className="text-2xl font-bold">Conversation Starters</h3>
-                  <p className="text-muted-foreground my-3">Generate engaging conversation starters based on profiles and interests.</p>
-                  <div className="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-600 rounded-full text-sm font-bold">
-                    Basic+ Subscription
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
-                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
-                <div className="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                  </svg>
-                  <h3 className="text-2xl font-bold">Message Coach</h3>
-                  <p className="text-muted-foreground my-3">Get professional feedback on your draft messages with tone analysis and suggestions.</p>
-                  <div className="inline-block px-3 py-1 bg-purple-500/10 text-purple-600 rounded-full text-sm font-bold">
-                    Pro Subscription
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-card border-2 hover:border-primary transition-colors duration-300 shadow-lg rounded-xl p-8 space-y-5 hover:shadow-xl relative overflow-hidden group">
-                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300"></div>
-                <div className="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 16v-4"></path>
-                    <path d="M12 8h.01"></path>
-                  </svg>
-                  <h3 className="text-2xl font-bold">Message Decoder</h3>
-                  <p className="text-muted-foreground my-3">Analyze received messages to understand hidden meanings and intents.</p>
-                  <div className="inline-block px-3 py-1 bg-purple-500/10 text-purple-600 rounded-full text-sm font-bold">
-                    Pro Subscription
+
+                {/* Help Me Craft Feature */}
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-2xl">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900">Help Me Craft a Message</h3>
+                    </div>
+                    <p className="text-gray-700 mb-6 text-lg">
+                      Received a message and not sure how to respond? Choose your tone and get three perfectly crafted replies that match your vibe.
+                    </p>
+                    
+                    {/* Example Screenshot Placeholder */}
+                    <div className="bg-white p-4 rounded-xl border-2 border-gray-200 shadow-sm">
+                      <div className="text-sm text-gray-500 mb-3">Message you received:</div>
+                      <div className="bg-gray-50 p-3 rounded-lg mb-4 text-gray-700">
+                        "How was your day?"
+                      </div>
+                      <div className="text-sm text-gray-500 mb-3">Choose your tone: <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">Playful</span></div>
+                      <div className="space-y-2">
+                        <div className="bg-blue-50 p-3 rounded-lg text-sm border-l-4 border-blue-400">
+                          "It was a rollercoaster! Started off slow but ended on a high note. How about yours?"
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-lg text-sm border-l-4 border-blue-400">
+                          "Pretty good, thanks! Managed to conquer my to-do list, so I'm feeling quite victorious."
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-lg text-sm border-l-4 border-blue-400">
+                          "Oh, you know, saving the world one email at a time. How did your day treat you?"
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Pricing Summary */}
-          <div className="py-16 mb-12">
-            <h2 className="text-4xl font-bold text-center mb-16 text-primary">Pricing Plans</h2>
-            <div className="grid md:grid-cols-3 gap-8 px-6">
-              {/* Free Plan */}
-              <div className="bg-card border-2 border-muted hover:border-primary transition-all duration-300 rounded-2xl overflow-hidden shadow-lg group hover:shadow-xl">
-                <div className="p-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-primary/20 group-hover:via-primary/10 group-hover:to-transparent transition-all duration-500"></div>
-                <div className="px-8 pt-8 pb-4">
-                  <h3 className="text-2xl font-bold">Free</h3>
-                  <div className="mt-4 mb-6">
-                    <span className="text-4xl font-extrabold">£0</span>
-                    <span className="text-base text-muted-foreground">/month</span>
-                  </div>
-                  <div className="text-sm text-muted-foreground mb-6">Perfect for trying out MsgMate.AI</div>
+          {/* Available Tones Section */}
+          <div className="py-16 mb-16">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                Express Yourself in Any Tone
+              </h2>
+              <p className="text-lg text-gray-600 mb-12">
+                Free beta includes access to our core tones - perfect for any dating conversation
+              </p>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="bg-white p-6 rounded-xl shadow-md border-2 border-blue-200">
+                  <div className="text-3xl mb-3">😊</div>
+                  <h3 className="font-bold text-gray-900 mb-2">Playful</h3>
+                  <p className="text-sm text-gray-600">Light and fun responses</p>
                 </div>
-                <div className="px-8 pb-8">
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span>5 Basic Tones</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span>10 messages per month</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span>No credit card required</span>
-                    </li>
-                  </ul>
-                  <Button asChild className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-300" variant="outline">
-                    <Link href="/app">Get Started</Link>
-                  </Button>
+                <div className="bg-white p-6 rounded-xl shadow-md border-2 border-green-200">
+                  <div className="text-3xl mb-3">🤔</div>
+                  <h3 className="font-bold text-gray-900 mb-2">Curious</h3>
+                  <p className="text-sm text-gray-600">Thoughtful questions</p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-md border-2 border-purple-200">
+                  <div className="text-3xl mb-3">💪</div>
+                  <h3 className="font-bold text-gray-900 mb-2">Confident</h3>
+                  <p className="text-sm text-gray-600">Self-assured communication</p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-md border-2 border-pink-200">
+                  <div className="text-3xl mb-3">✨</div>
+                  <h3 className="font-bold text-gray-900 mb-2">Charming</h3>
+                  <p className="text-sm text-gray-600">Smooth and appealing</p>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Basic+ Plan */}
-              <div className="bg-card border-2 border-primary rounded-2xl overflow-hidden shadow-xl transform scale-105 relative z-10">
-                <div className="p-1 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent"></div>
-                <div className="absolute -top-5 inset-x-0 flex justify-center">
-                  <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-bold shadow-lg">
-                    Most Popular
+          {/* Who This Is For Section */}
+          <div className="py-16 bg-gradient-to-r from-gray-50 to-blue-50 rounded-3xl mb-16">
+            <div className="max-w-4xl mx-auto text-center px-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                Perfect for Thoughtful Daters
+              </h2>
+              
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
                   </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Value Connection</h3>
+                  <p className="text-gray-600">You care about meaningful conversations and authentic connections, not just hookups.</p>
                 </div>
-                <div className="px-8 pt-10 pb-4">
-                  <h3 className="text-2xl font-bold">Basic+</h3>
-                  <div className="mt-4 mb-6">
-                    <span className="text-4xl font-extrabold">£4.99</span>
-                    <span className="text-base text-muted-foreground">/month</span>
+                
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
                   </div>
-                  <div className="text-sm text-muted-foreground mb-6">Enhanced dating conversation support</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Want to Stay Authentic</h3>
+                  <p className="text-gray-600">You want help expressing yourself better, but you never want to sound fake or robotic.</p>
                 </div>
-                <div className="px-8 pb-8">
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span><span className="font-semibold">10 Tones</span> including empathetic, humorous</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span><span className="font-semibold">Conversation Starters</span> for dating profiles</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span><span className="font-semibold">100 messages</span> per month</span>
-                    </li>
-                  </ul>
-                  <Button asChild className="w-full bg-primary hover:bg-primary/90">
-                    <Link href="/auth">Subscribe</Link>
-                  </Button>
+                
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Overthink Messages</h3>
+                  <p className="text-gray-600">Sometimes you know what you want to say but struggle with how to phrase it perfectly.</p>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Pro Plan */}
-              <div className="bg-card border-2 border-muted hover:border-primary transition-all duration-300 rounded-2xl overflow-hidden shadow-lg group hover:shadow-xl">
-                <div className="p-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-primary/20 group-hover:via-primary/10 group-hover:to-transparent transition-all duration-500"></div>
-                <div className="px-8 pt-8 pb-4">
-                  <h3 className="text-2xl font-bold">Pro</h3>
-                  <div className="mt-4 mb-6">
-                    <span className="text-4xl font-extrabold">£9.99</span>
-                    <span className="text-base text-muted-foreground">/month</span>
-                  </div>
-                  <div className="text-sm text-muted-foreground mb-6">Complete dating messaging toolkit</div>
-                </div>
-                <div className="px-8 pb-8">
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span><span className="font-semibold">15 Tones</span> including flirty, assertive</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span><span className="font-semibold">All premium features</span> included</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span><span className="font-semibold">400 messages</span> per month</span>
-                    </li>
-                  </ul>
-                  <Button asChild className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-300" variant="outline">
-                    <Link href="/auth">Subscribe</Link>
+          {/* Final CTA Section */}
+          <div className="py-16 text-center">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                Ready to Transform Your Dating Conversations?
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                Join our exclusive beta and be among the first to experience the future of confident dating communication.
+              </p>
+              
+              <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto mb-8">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="flex-1 text-lg p-4 border-2 border-gray-200 focus:border-blue-500"
+                    required
+                  />
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    disabled={isSubmitting}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-8 py-4 text-lg whitespace-nowrap shadow-lg"
+                  >
+                    {isSubmitting ? 'Joining...' : 'Join Free Beta'}
                   </Button>
+                </div>
+              </form>
+
+              <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Limited spots only
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  No spam, ever
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Free to try
                 </div>
               </div>
             </div>
