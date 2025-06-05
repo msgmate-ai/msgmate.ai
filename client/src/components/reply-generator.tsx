@@ -250,7 +250,7 @@ const ReplyGenerator = () => {
           >
             <div className="text-left">
               <h3 className="font-medium mb-1">Say It Better</h3>
-              <p className="text-sm text-gray-600">You've got the idea, we'll help you express it.</p>
+              <p className="text-sm text-gray-600">You write the message, we'll help you say it better.</p>
             </div>
           </button>
           <button
