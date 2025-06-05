@@ -1,0 +1,49 @@
+// TASK: Enhance Say It Better mode to return three distinct rewrites of the user’s original message — for dating chats.
+
+// GOAL:
+Move beyond grammar. Offer subtle, interesting alternatives that preserve the user’s vibe while adding flow, curiosity, or light playfulness. The user should feel like they’re seeing three real, usable versions of their idea — not three clones.
+
+// ✅ HOW IT SHOULD FEEL:
+- Natural and casual
+- Never overly formal or robotic
+- No romantic or intense tones unless clearly present in the original
+
+// 🔁 RETURN THREE DISTINCT VERSIONS:
+1. ✅ **Polished Version**  
+   - Keep the message’s meaning and tone  
+   - Improve clarity, rhythm, and flow without changing intent
+
+2. ✅ **Curious / Engaging Version**  
+   - Slightly reframe or rephrase the message to be more open-ended or thought-provoking  
+   - Invite a stronger response or create more conversational spark
+
+3. ✅ **Playful / Creative Version**  
+   - Add a light twist, wordplay, or cheeky nudge — only if the tone allows  
+   - If the original is flat or awkward, make this version more fun or surprising — but don’t force it
+
+––––––––––––––––––––––––––––––––––––––––––
+
+📥 EXAMPLE INPUT:
+"today’s been a bit meh, how about you?"
+
+📤 EXPECTED OUTPUT:
+1. Today’s been kind of quiet — how about you?
+2. Been a slow one… curious what’s kept you going today?
+3. My day’s been so meh I’m about to start narrating it like a documentary — save me?
+
+––––––––––––––––––––––––––––––––––––––––––
+
+📦 FINAL PROMPT TO MODEL:
+
+```text
+You are helping someone improve a message they want to send in a dating conversation.
+
+Here’s their original message:
+"[userInput]"
+
+Return 3 short, distinct rewrites:
+1. Polished version – same meaning, smoother flow
+2. Engaging version – ask something curious or spark a more interesting reply
+3. Playful version – add light humour or a creative twist (if appropriate)
+
+Keep the tone casual and natural. No formal phrasing, no intense emotion. If the original message is very neutral, keep all three versions aligned to that baseline.

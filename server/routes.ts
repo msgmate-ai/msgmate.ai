@@ -119,21 +119,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         // Build the enhanced coaching prompt using userInput
-        prompt = `You're a dating conversation coach helping someone improve a message they want to send.
+        prompt = `You are helping someone improve a message they want to send in a dating conversation.
 
 Here's their original message:
 "${userInput}"
 
-Rewrite this message in 3 distinct ways, keeping the *intent and emotional level* of the original in mind. The tone is light to moderately warm — no overinvestment.
+Return 3 short, distinct rewrites:
+1. Polished version – same meaning, smoother flow
+2. Engaging version – ask something curious or spark a more interesting reply
+3. Playful version – add light humour or a creative twist (if appropriate)
 
-🔹 Option 1: Clean and natural. Just make it clearer, smoother, and slightly more confident. Stay close to the original.
-🔹 Option 2: Add a confident, self-assured tone. Sound like someone who's comfortable expressing interest, without sounding overly eager or emotional.
-🔹 Option 3: Offer a playful twist. Reword it with cheekiness, light humour, or flirtatious charm — without going too far or sounding unnatural.
-
-Keep each version casual, short, and human — like a real message you'd send. No robotic or over-romanticised language.
-
-Avoid anything too intense, poetic, or emotionally deep — match the vibe of the original.
-Return only the 3 improved options.`;
+Keep the tone casual and natural. No formal phrasing, no intense emotion. If the original message is very neutral, keep all three versions aligned to that baseline.`;
         
         // Rule-based tone detection (for analytics purposes)
         const input = userInput.toLowerCase();
