@@ -1,4 +1,4 @@
-import { users, subscriptions, type User, type InsertUser, type Subscription, type InsertSubscription } from "@shared/schema";
+import { users, subscriptions, waitlist, type User, type InsertUser, type Subscription, type InsertSubscription, type Waitlist, type InsertWaitlist } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import session from "express-session";
@@ -31,6 +31,9 @@ export interface IStorage {
   setSMSVerificationCode(userId: number, code: string, expires: Date): Promise<User>;
   verifySMSCode(userId: number, code: string): Promise<User | undefined>;
   updatePhoneNumber(userId: number, phoneNumber: string): Promise<User>;
+  // Waitlist methods
+  addToWaitlist(email: string): Promise<Waitlist>;
+  getWaitlistByEmail(email: string): Promise<Waitlist | undefined>;
   sessionStore: any; // Using any for session store to avoid type issues
 }
 
@@ -285,6 +288,22 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return updatedUser;
+  }
+
+  async addToWaitlist(email: string): Promise<Waitlist> {
+    const [waitlistEntry] = await db
+      .insert(waitlist)
+      .values({ email })
+      .returning();
+    return waitlistEntry;
+  }
+
+  async getWaitlistByEmail(email: string): Promise<Waitlist | undefined> {
+    const [waitlistEntry] = await db
+      .select()
+      .from(waitlist)
+      .where(eq(waitlist.email, email));
+    return waitlistEntry || undefined;
   }
 }
 

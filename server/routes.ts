@@ -47,6 +47,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up Stripe webhook handler
   app.post('/api/webhook', handleStripeWebhook);
   
+  // Waitlist endpoint
+  app.post('/api/waitlist', async (req, res, next) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email || !email.includes('@')) {
+        return res.status(400).json({ success: false, message: "Valid email is required" });
+      }
+
+      // Check if email already exists in waitlist
+      const existingEntry = await storage.getWaitlistByEmail(email);
+      if (existingEntry) {
+        return res.status(200).json({ success: true, message: "Email already on waitlist" });
+      }
+
+      // Add to waitlist
+      await storage.addToWaitlist(email);
+      
+      res.json({ success: true, message: "Successfully added to waitlist" });
+    } catch (error: any) {
+      console.error("Waitlist error:", error);
+      res.status(500).json({ success: false, message: "Failed to add to waitlist" });
+    }
+  });
+
   // Analytics logging endpoint
   app.post('/api/log-event', async (req, res, next) => {
     try {
