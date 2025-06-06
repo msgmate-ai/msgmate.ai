@@ -85,11 +85,16 @@ const LandingPage = () => {
 
               {/* Early CTA Button */}
               <div className="flex justify-center mb-12">
-                <Link href="/auth">
-                  <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition-all duration-200">
-                    Join Free Beta
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+                  onClick={() => {
+                    const emailSection = document.getElementById('email-signup');
+                    emailSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  Join Limited Waiting List
+                </Button>
               </div>
 
               {/* Urgency Banner */}
@@ -104,7 +109,7 @@ const LandingPage = () => {
               </div>
 
               {/* Email Signup Form */}
-              <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto mb-12">
+              <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto mb-12" id="email-signup">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Input
                     type="email"
@@ -433,11 +438,15 @@ const LandingPage = () => {
       {/* Floating CTA Button for Mobile */}
       {showFloatingCTA && (
         <div className="fixed bottom-4 right-4 z-50 md:hidden">
-          <Link href="/auth">
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200">
-              Join Beta
-            </Button>
-          </Link>
+          <Button 
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+            onClick={() => {
+              const emailSection = document.getElementById('email-signup');
+              emailSection?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Join Waiting List
+          </Button>
         </div>
       )}
     </div>
