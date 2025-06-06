@@ -99,20 +99,6 @@ const LandingPage = () => {
                 Helping you say it better – with confidence, charm, and authenticity. Never overthink a message again.
               </p>
 
-              {/* Early CTA Button */}
-              <div className="flex justify-center mb-12">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
-                  onClick={() => {
-                    const emailSection = document.getElementById('email-signup');
-                    emailSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  Join Limited Waiting List
-                </Button>
-              </div>
-
               {/* Urgency Banner */}
               <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-xl mb-8 shadow-lg">
                 <div className="flex items-center justify-center gap-2 mb-2">
@@ -126,22 +112,22 @@ const LandingPage = () => {
 
               {/* Email Signup Form */}
               <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto mb-12" id="email-signup">
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col gap-3">
                   <Input
                     type="email"
                     placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="flex-1 text-lg p-4 border-2 border-gray-200 focus:border-blue-500"
+                    className="text-lg p-4 border-2 border-gray-200 focus:border-blue-500"
                     required
                   />
                   <Button 
                     type="submit" 
                     size="lg" 
                     disabled={isSubmitting}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 text-lg whitespace-nowrap"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
                   >
-                    {isSubmitting ? 'Joining...' : 'Join Free Beta'}
+                    {isSubmitting ? 'Joining...' : 'Join Limited Waiting List'}
                   </Button>
                 </div>
                 <p className="text-sm text-gray-500 mt-3">Limited spots available • No spam, ever</p>
@@ -420,7 +406,7 @@ const LandingPage = () => {
                     disabled={isSubmitting}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-8 py-4 text-lg whitespace-nowrap shadow-lg"
                   >
-                    {isSubmitting ? 'Joining...' : 'Join Free Beta'}
+                    {isSubmitting ? 'Joining...' : 'Join Limited Waiting List'}
                   </Button>
                 </div>
               </form>
