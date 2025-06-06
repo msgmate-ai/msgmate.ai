@@ -309,9 +309,6 @@ const ReplyGenerator = () => {
               <label className="block text-sm font-medium text-secondary-dark mb-3">
                 Choose your reply tone
               </label>
-              <p className="text-sm text-gray-500 mb-4 italic">
-                Pick a tone that matches your mood or goal for the reply.
-              </p>
               <div className="space-y-4">
                 {toneGroups.map((group, groupIndex) => (
                   <div key={groupIndex} className="border border-gray-200 rounded-lg p-4">

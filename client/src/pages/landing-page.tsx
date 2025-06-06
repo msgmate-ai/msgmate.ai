@@ -16,22 +16,10 @@ const LandingPage = () => {
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showFloatingCTA, setShowFloatingCTA] = useState(false);
   
   // Set page title
   useEffect(() => {
     document.title = "MsgMate.AI - Your Personal AI Wingmate for Dating";
-  }, []);
-
-  // Scroll detection for floating CTA
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-      setShowFloatingCTA(scrollPercent > 25);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -82,15 +70,6 @@ const LandingPage = () => {
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Helping you say it better – with confidence, charm, and authenticity. Never overthink a message again.
               </p>
-
-              {/* Early CTA Button */}
-              <div className="flex justify-center mb-12">
-                <Link href="/auth">
-                  <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition-all duration-200">
-                    Join Free Beta
-                  </Button>
-                </Link>
-              </div>
 
               {/* Urgency Banner */}
               <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-xl mb-8 shadow-lg">
@@ -266,32 +245,24 @@ const LandingPage = () => {
                   <p className="text-gray-600">Generate engaging opening lines based on profiles and shared interests to break the ice naturally.</p>
                 </div>
                 
-                {/* Section Header for Message Coach and Decoder */}
-                <div className="md:col-span-2">
-                  <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
-                    Upgrade Your Messaging Skills
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-white p-6 rounded-xl shadow-md text-center">
-                      <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
-                      </div>
-                      <h4 className="text-xl font-bold text-gray-900 mb-3">Message Coach</h4>
-                      <p className="text-gray-600">Get detailed feedback on tone, clarity, and emotional impact to improve your messaging skills over time.</p>
-                    </div>
-                    
-                    <div className="bg-white p-6 rounded-xl shadow-md text-center">
-                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                      </div>
-                      <h4 className="text-xl font-bold text-gray-900 mb-3">Message Decoder</h4>
-                      <p className="text-gray-600">Understand hidden meanings, subtext, and intentions behind messages you receive for better responses.</p>
-                    </div>
+                <div className="bg-white p-6 rounded-xl shadow-md text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
                   </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Message Coach</h3>
+                  <p className="text-gray-600">Get detailed feedback on tone, clarity, and emotional impact to improve your messaging skills over time.</p>
+                </div>
+                
+                <div className="bg-white p-6 rounded-xl shadow-md text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Message Decoder</h3>
+                  <p className="text-gray-600">Understand hidden meanings, subtext, and intentions behind messages you receive for better responses.</p>
                 </div>
               </div>
             </div>
@@ -429,17 +400,6 @@ const LandingPage = () => {
         </div>
       </main>
       <Footer />
-      
-      {/* Floating CTA Button for Mobile */}
-      {showFloatingCTA && (
-        <div className="fixed bottom-4 right-4 z-50 md:hidden">
-          <Link href="/auth">
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200">
-              Join Beta
-            </Button>
-          </Link>
-        </div>
-      )}
     </div>
   );
 };
