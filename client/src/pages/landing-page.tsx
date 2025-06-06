@@ -40,14 +40,30 @@ const LandingPage = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call for beta signup
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast({
-        title: "Success!",
-        description: "You've been added to our beta waiting list. We'll be in touch soon!",
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       });
-      setEmail('');
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({
+          title: "Success!",
+          description: "You've been added to our beta waiting list. We'll be in touch soon!",
+        });
+        setEmail('');
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       toast({
         title: "Error",
