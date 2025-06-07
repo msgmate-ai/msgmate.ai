@@ -8,6 +8,11 @@ import { setupVite, serveStatic, log } from "./vite";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Polyfill for import.meta.dirname in Railway environment
+if (!import.meta.dirname) {
+  import.meta.dirname = __dirname;
+}
+
 const app = express();
 
 
