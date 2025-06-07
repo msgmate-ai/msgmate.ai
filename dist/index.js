@@ -1688,6 +1688,9 @@ async function setupVite(app2, server) {
 // server/index.ts
 var __filename = fileURLToPath(import.meta.url);
 var __dirname = path4.dirname(__filename);
+if (!import.meta.dirname) {
+  import.meta.dirname = __dirname;
+}
 var app = express2();
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
