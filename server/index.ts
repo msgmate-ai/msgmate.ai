@@ -79,7 +79,13 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // Use absolute path for Railway container compatibility
+    const publicPath = path.resolve(__dirname, './public');
+    
+    app.use(express.static(publicPath));
+    app.get('*', (_, res) => {
+      res.sendFile(path.join(publicPath, 'index.html'));
+    });
   }
 
 
