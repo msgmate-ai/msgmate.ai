@@ -1,8 +1,19 @@
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Support __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
+
+// Serve static files from public directory in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, 'public')));
+}
 
 // Add CORS headers for proper cookie handling
 app.use((req, res, next) => {
@@ -72,6 +83,13 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     serveStatic(app);
+  }
+
+  // Fallback route for client-side routing in production
+  if (process.env.NODE_ENV === "production") {
+    app.get('*', (_, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    });
   }
 
   // Use Railway's PORT environment variable or fallback to 5000 for local development
