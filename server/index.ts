@@ -10,10 +10,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Serve static files from public directory in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, 'public')));
-}
+
 
 // Add CORS headers for proper cookie handling
 app.use((req, res, next) => {
@@ -85,12 +82,7 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Fallback route for client-side routing in production
-  if (process.env.NODE_ENV === "production") {
-    app.get('*', (_, res) => {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    });
-  }
+
 
   // Use Railway's PORT environment variable or fallback to 5000 for local development
   const port = parseInt(process.env.PORT || "5000");
