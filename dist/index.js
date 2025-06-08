@@ -1684,6 +1684,18 @@ async function setupVite(app2, server) {
     }
   });
 }
+function serveStatic(app2) {
+  const distPath = path3.resolve(import.meta.dirname, "public");
+  if (!fs2.existsSync(distPath)) {
+    throw new Error(
+      `Could not find the build directory: ${distPath}, make sure to build the client first`
+    );
+  }
+  app2.use(express.static(distPath));
+  app2.use("*", (_req, res) => {
+    res.sendFile(path3.resolve(distPath, "index.html"));
+  });
+}
 
 // server/index.ts
 var __filename = fileURLToPath(import.meta.url);
@@ -1741,8 +1753,13 @@ app.use((req, res, next) => {
     res.status(status).json({ message });
     throw err;
   });
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
+  if (app.get("env") === "development" && !process.env.RAILWAY_ENVIRONMENT) {
+    try {
+      await setupVite(app, server);
+    } catch (error) {
+      console.log("Vite setup failed, falling back to static serving:", error.message);
+      serveStatic(app);
+    }
   } else {
     const publicPath = path4.resolve(__dirname, "./public");
     app.use(express2.static(publicPath));
