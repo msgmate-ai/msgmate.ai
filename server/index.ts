@@ -86,10 +86,15 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
+  if (app.get("env") === "development" && !process.env.RAILWAY_ENVIRONMENT) {
+    try {
+      await setupVite(app, server);
+    } catch (error: any) {
+      console.log('Vite setup failed, falling back to static serving:', error.message);
+      serveStatic(app);
+    }
   } else {
-    // Use absolute path for Railway container compatibility
+    // Production mode - serve static files
     const publicPath = path.resolve(__dirname, './public');
     
     app.use(express.static(publicPath));
